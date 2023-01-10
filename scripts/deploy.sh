@@ -22,6 +22,9 @@ cd ~
 cd $APP_NAME
 ./gradlew bootJar
 
+# kill 8080 port
+fuser -k -n tcp 8080
+
 echo ">>>> $APP_NAME execute."
 cd build/libs
 java -jar $JAR_NAME &
