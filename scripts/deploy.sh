@@ -25,7 +25,7 @@ fuser -k -n tcp 8080
 
 echo ">>>> $APP_NAME execute."
 cd build/libs
-java -jar $JAR_NAME &
+nohup java -jar $JAR_NAME &
 
 sleep 20
 CURRENT_PID=$(pgrep -f $APP_NAME)
