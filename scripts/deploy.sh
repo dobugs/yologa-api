@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ~/.bash_profile
-
 APP_NAME=yologa-api
 JAR_NAME=yologa-api-0.0.1-SNAPSHOT.jar
 
