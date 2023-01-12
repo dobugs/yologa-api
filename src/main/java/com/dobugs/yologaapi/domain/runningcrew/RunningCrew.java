@@ -3,8 +3,6 @@ package com.dobugs.yologaapi.domain.runningcrew;
 import java.time.LocalDateTime;
 
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 
 import com.dobugs.yologaapi.domain.BaseEntity;
 
@@ -34,7 +32,7 @@ public class RunningCrew extends BaseEntity {
     private Geometry arrival;
 
     @Enumerated(value = EnumType.STRING)
-    private RunningCrewStatus status;
+    private RunningCrewProgression status;
 
     @Embedded
     private Capacity capacity;
