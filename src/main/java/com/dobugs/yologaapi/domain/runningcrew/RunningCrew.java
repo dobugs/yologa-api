@@ -43,10 +43,10 @@ public class RunningCrew extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime scheduledEndDate;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime implementedStartDate;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime implementedEndDate;
 
     @Embedded
