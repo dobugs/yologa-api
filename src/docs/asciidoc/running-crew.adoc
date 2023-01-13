@@ -1,0 +1,30 @@
+= 러닝크루 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 러닝크루 생성
+Request
+include::{snippets}/running-crew/create/http-request.adoc[]
+Response
+include::{snippets}/running-crew/create/http-response.adoc[]
+
+== 러닝크루 상세정보 조회
+Request
+include::{snippets}/running-crew/findById/http-request.adoc[]
+Response
+include::{snippets}/running-crew/findById/http-response.adoc[]
+
+== 러닝크루 수정
+Request
+include::{snippets}/running-crew/update/http-request.adoc[]
+Response
+include::{snippets}/running-crew/update/http-response.adoc[]
+
+== 러닝크루 삭제
+Request
+include::{snippets}/running-crew/delete/http-request.adoc[]
+Response
+include::{snippets}/running-crew/delete/http-response.adoc[]

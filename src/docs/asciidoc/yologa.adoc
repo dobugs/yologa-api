@@ -1,0 +1,11 @@
+= YOLOGA API 명세
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+== API
+=== RunningCrew API
+* link:running-crew.html[러닝크루 API, window=_blank]
