@@ -1,14 +1,14 @@
 package com.dobugs.yologaapi.service.dto.common;
 
-public class LocationDto {
+public class LocationsDto {
 
     private CoordinatesDto departure;
     private CoordinatesDto arrival;
 
-    private LocationDto() {
+    private LocationsDto() {
     }
 
-    public LocationDto(final CoordinatesDto departure, final CoordinatesDto arrival) {
+    public LocationsDto(final CoordinatesDto departure, final CoordinatesDto arrival) {
         this.departure = departure;
         this.arrival = arrival;
     }

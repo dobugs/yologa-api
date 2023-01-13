@@ -18,7 +18,7 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
-import com.dobugs.yologaapi.service.dto.common.LocationDto;
+import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,11 +54,11 @@ class RunningCrewServiceTest {
 
     private RunningCrewCreateRequest createRunningCrewRequest() {
         final CoordinatesDto coordinatesDto = new CoordinatesDto(123.456, 123.456);
-        final LocationDto locationDto = new LocationDto(coordinatesDto, coordinatesDto);
+        final LocationsDto locationsDto = new LocationsDto(coordinatesDto, coordinatesDto);
         final DateDto dateDto = new DateDto(NOW, AFTER_ONE_HOUR);
 
         return new RunningCrewCreateRequest(
-            "title", locationDto, 10, dateDto, AFTER_ONE_HOUR, "description"
+            "title", locationsDto, 10, dateDto, AFTER_ONE_HOUR, "description"
         );
     }
 }
