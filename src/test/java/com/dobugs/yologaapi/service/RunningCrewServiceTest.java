@@ -1,5 +1,8 @@
 package com.dobugs.yologaapi.service;
 
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createMockRunningCrew;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewCreateRequest;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewUpdateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,7 +10,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,18 +17,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.locationtech.jts.geom.Point;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.dobugs.yologaapi.domain.runningcrew.Capacity;
-import com.dobugs.yologaapi.domain.runningcrew.Deadline;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
-import com.dobugs.yologaapi.domain.runningcrew.RunningCrewProgression;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
-import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
-import com.dobugs.yologaapi.service.dto.common.DateDto;
-import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
@@ -34,20 +29,6 @@ import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RunningCrew 서비스 테스트")
 class RunningCrewServiceTest {
-
-    private static final double LATITUDE = 123.456;
-    private static final double LONGITUDE = 123.456;
-
-    private static final String RUNNING_CREW_TITLE = "title";
-    private static final int RUNNING_CREW_CAPACITY = 10;
-    private static final String RUNNING_CREW_DESCRIPTION = "description";
-
-    private static final CoordinatesDto COORDINATES_DTO = new CoordinatesDto(LATITUDE, LONGITUDE);
-    private static final LocationsDto LOCATIONS_DTO = new LocationsDto(COORDINATES_DTO, COORDINATES_DTO);
-
-    private static final LocalDateTime NOW = LocalDateTime.now();
-    private static final LocalDateTime AFTER_ONE_HOUR = LocalDateTime.now().plusHours(1);
-    private static final DateDto DATE_DTO = new DateDto(NOW, AFTER_ONE_HOUR);
 
     @Mock
     private RunningCrewRepository runningCrewRepository;
@@ -134,32 +115,5 @@ class RunningCrewServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
         }
-    }
-
-    private RunningCrewCreateRequest createRunningCrewCreateRequest() {
-        return new RunningCrewCreateRequest(
-            RUNNING_CREW_TITLE, LOCATIONS_DTO, RUNNING_CREW_CAPACITY, DATE_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
-        );
-    }
-
-    private RunningCrewUpdateRequest createRunningCrewUpdateRequest() {
-        return new RunningCrewUpdateRequest(
-            RUNNING_CREW_TITLE, LOCATIONS_DTO, RUNNING_CREW_CAPACITY, DATE_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
-        );
-    }
-
-    private RunningCrew createMockRunningCrew() {
-        final Point point = mock(Point.class);
-        given(point.getX()).willReturn(LATITUDE);
-        given(point.getY()).willReturn(LONGITUDE);
-
-        final RunningCrew runningCrew = mock(RunningCrew.class);
-        given(runningCrew.getDeparture()).willReturn(point);
-        given(runningCrew.getArrival()).willReturn(point);
-        given(runningCrew.getStatus()).willReturn(RunningCrewProgression.CREATED);
-        given(runningCrew.getCapacity()).willReturn(new Capacity(RUNNING_CREW_CAPACITY));
-        given(runningCrew.getDeadline()).willReturn(new Deadline(AFTER_ONE_HOUR));
-
-        return runningCrew;
     }
 }
