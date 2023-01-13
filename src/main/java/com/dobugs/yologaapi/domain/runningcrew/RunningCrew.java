@@ -2,7 +2,7 @@ package com.dobugs.yologaapi.domain.runningcrew;
 
 import java.time.LocalDateTime;
 
-import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
@@ -16,7 +16,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
 public class RunningCrew extends BaseEntity {
 
@@ -28,10 +33,10 @@ public class RunningCrew extends BaseEntity {
     private Long memberId;
 
     @Column(nullable = false, columnDefinition = "Geometry")
-    private Geometry departure;
+    private Point departure;
 
     @Column(nullable = false, columnDefinition = "Geometry")
-    private Geometry arrival;
+    private Point arrival;
 
     @Enumerated(value = EnumType.STRING)
     private RunningCrewProgression status;
@@ -60,16 +65,14 @@ public class RunningCrew extends BaseEntity {
     @Column(nullable = false, length = 500)
     private String description;
 
-    protected RunningCrew() {
-    }
-
     public RunningCrew(final Long memberId, final Coordinates departure, final Coordinates arrival,
         final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
         final Deadline deadline, final String title, final String description
     ) {
+        validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
         this.memberId = memberId;
-        this.departure = wktToGeometry(departure);
-        this.arrival = wktToGeometry(arrival);
+        this.departure = wktToPoint(departure);
+        this.arrival = wktToPoint(arrival);
         this.status = RunningCrewProgression.CREATED;
         this.capacity = capacity;
         this.scheduledStartDate = scheduledStartDate;
@@ -79,16 +82,36 @@ public class RunningCrew extends BaseEntity {
         this.description = description;
     }
 
-    private Geometry wktToGeometry(final Coordinates coordinates) {
-        final String wellKnownText = String.format("POINT(%f %f)", coordinates.latitude(), coordinates.longitude());
-        try {
-            return new WKTReader().read(wellKnownText);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException(e.getMessage());
+    public void update(
+        final Coordinates departure, final Coordinates arrival,
+        final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
+        final Deadline deadline, final String title, final String description
+    ) {
+        validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
+        this.departure = wktToPoint(departure);
+        this.arrival = wktToPoint(arrival);
+        this.capacity = capacity;
+        this.scheduledStartDate = scheduledStartDate;
+        this.scheduledEndDate = scheduledEndDate;
+        this.deadline = deadline;
+        this.title = title;
+        this.description = description;
+    }
+
+    private void validateStartIsBeforeThanEnd(final LocalDateTime start, final LocalDateTime end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException(
+                String.format("시작 시간은 종료 시간보다 앞서있어야 합니다. [start : %s / end : %s]", start, end)
+            );
         }
     }
 
-    public Long getId() {
-        return id;
+    private Point  wktToPoint(final Coordinates coordinates) {
+        final String wellKnownText = String.format("POINT(%f %f)", coordinates.latitude(), coordinates.longitude());
+        try {
+            return (Point) new WKTReader().read(wellKnownText);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }

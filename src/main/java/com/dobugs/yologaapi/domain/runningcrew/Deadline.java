@@ -4,15 +4,17 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Embeddable
 public class Deadline {
 
     @Column(name = "deadline", nullable = false)
     private LocalDateTime value;
-
-    protected Deadline() {
-    }
 
     public Deadline(final LocalDateTime value) {
         validateDeadlineIsAfterThanNow(value);
