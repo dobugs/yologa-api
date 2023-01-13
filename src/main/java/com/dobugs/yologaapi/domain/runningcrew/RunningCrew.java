@@ -3,6 +3,8 @@ package com.dobugs.yologaapi.domain.runningcrew;
 import java.time.LocalDateTime;
 
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 import com.dobugs.yologaapi.domain.BaseEntity;
 
@@ -43,10 +45,10 @@ public class RunningCrew extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime scheduledEndDate;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime implementedStartDate;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime implementedEndDate;
 
     @Embedded
@@ -59,5 +61,34 @@ public class RunningCrew extends BaseEntity {
     private String description;
 
     protected RunningCrew() {
+    }
+
+    public RunningCrew(final Long memberId, final Coordinates departure, final Coordinates arrival,
+        final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
+        final Deadline deadline, final String title, final String description
+    ) {
+        this.memberId = memberId;
+        this.departure = wktToGeometry(departure);
+        this.arrival = wktToGeometry(arrival);
+        this.status = RunningCrewProgression.CREATED;
+        this.capacity = capacity;
+        this.scheduledStartDate = scheduledStartDate;
+        this.scheduledEndDate = scheduledEndDate;
+        this.deadline = deadline;
+        this.title = title;
+        this.description = description;
+    }
+
+    private Geometry wktToGeometry(final Coordinates coordinates) {
+        final String wellKnownText = String.format("POINT(%f %f)", coordinates.latitude(), coordinates.longitude());
+        try {
+            return new WKTReader().read(wellKnownText);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 }
