@@ -33,6 +33,7 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java:8.0.26'
 }
 
+/* RestDocs Start */
 ext {
     snippetsDir = file('build/generated-snippets')
 }
@@ -68,3 +69,4 @@ bootJar {
         into 'static/docs'
     }
 }
+/* RestDocs End */
