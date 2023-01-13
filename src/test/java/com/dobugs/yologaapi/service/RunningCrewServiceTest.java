@@ -35,8 +35,19 @@ import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 @DisplayName("RunningCrew 서비스 테스트")
 class RunningCrewServiceTest {
 
-    private static final LocalDateTime AFTER_ONE_HOUR = LocalDateTime.now().plusHours(1);
+    private static final double LATITUDE = 123.456;
+    private static final double LONGITUDE = 123.456;
+
+    private static final String RUNNING_CREW_TITLE = "title";
+    private static final int RUNNING_CREW_CAPACITY = 10;
+    private static final String RUNNING_CREW_DESCRIPTION = "description";
+
+    private static final CoordinatesDto COORDINATES_DTO = new CoordinatesDto(LATITUDE, LONGITUDE);
+    private static final LocationsDto LOCATIONS_DTO = new LocationsDto(COORDINATES_DTO, COORDINATES_DTO);
+
     private static final LocalDateTime NOW = LocalDateTime.now();
+    private static final LocalDateTime AFTER_ONE_HOUR = LocalDateTime.now().plusHours(1);
+    private static final DateDto DATE_DTO = new DateDto(NOW, AFTER_ONE_HOUR);
 
     @Mock
     private RunningCrewRepository runningCrewRepository;
@@ -126,35 +137,27 @@ class RunningCrewServiceTest {
     }
 
     private RunningCrewCreateRequest createRunningCrewCreateRequest() {
-        final CoordinatesDto coordinatesDto = new CoordinatesDto(123.456, 123.456);
-        final LocationsDto locationsDto = new LocationsDto(coordinatesDto, coordinatesDto);
-        final DateDto dateDto = new DateDto(NOW, AFTER_ONE_HOUR);
-
         return new RunningCrewCreateRequest(
-            "title", locationsDto, 10, dateDto, AFTER_ONE_HOUR, "description"
+            RUNNING_CREW_TITLE, LOCATIONS_DTO, RUNNING_CREW_CAPACITY, DATE_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
         );
     }
 
     private RunningCrewUpdateRequest createRunningCrewUpdateRequest() {
-        final CoordinatesDto coordinatesDto = new CoordinatesDto(123.456, 123.456);
-        final LocationsDto locationsDto = new LocationsDto(coordinatesDto, coordinatesDto);
-        final DateDto dateDto = new DateDto(NOW, AFTER_ONE_HOUR);
-
         return new RunningCrewUpdateRequest(
-            "title", locationsDto, 10, dateDto, AFTER_ONE_HOUR, "description"
+            RUNNING_CREW_TITLE, LOCATIONS_DTO, RUNNING_CREW_CAPACITY, DATE_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
         );
     }
 
     private RunningCrew createMockRunningCrew() {
         final Point point = mock(Point.class);
-        given(point.getX()).willReturn(123.456);
-        given(point.getY()).willReturn(123.456);
+        given(point.getX()).willReturn(LATITUDE);
+        given(point.getY()).willReturn(LONGITUDE);
 
         final RunningCrew runningCrew = mock(RunningCrew.class);
         given(runningCrew.getDeparture()).willReturn(point);
         given(runningCrew.getArrival()).willReturn(point);
         given(runningCrew.getStatus()).willReturn(RunningCrewProgression.CREATED);
-        given(runningCrew.getCapacity()).willReturn(new Capacity(10));
+        given(runningCrew.getCapacity()).willReturn(new Capacity(RUNNING_CREW_CAPACITY));
         given(runningCrew.getDeadline()).willReturn(new Deadline(AFTER_ONE_HOUR));
 
         return runningCrew;
