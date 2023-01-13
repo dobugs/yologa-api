@@ -67,6 +67,7 @@ public class RunningCrew extends BaseEntity {
         final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
         final Deadline deadline, final String title, final String description
     ) {
+        validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
         this.memberId = memberId;
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
@@ -84,6 +85,7 @@ public class RunningCrew extends BaseEntity {
         final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
         final Deadline deadline, final String title, final String description
     ) {
+        validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
         this.capacity = capacity;
@@ -92,6 +94,14 @@ public class RunningCrew extends BaseEntity {
         this.deadline = deadline;
         this.title = title;
         this.description = description;
+    }
+
+    private void validateStartIsBeforeThanEnd(final LocalDateTime start, final LocalDateTime end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException(
+                String.format("시작 시간은 종료 시간보다 앞서있어야 합니다. [start : %s / end : %s]", start, end)
+            );
+        }
     }
 
     private Point  wktToPoint(final Coordinates coordinates) {
