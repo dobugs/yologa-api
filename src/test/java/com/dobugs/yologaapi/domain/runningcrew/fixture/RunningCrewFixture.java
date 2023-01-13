@@ -18,6 +18,10 @@ import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RunningCrewFixture {
 
     public static final double LATITUDE = 123.456;
@@ -34,9 +38,6 @@ public class RunningCrewFixture {
 
     public static final CoordinatesDto COORDINATES_DTO = new CoordinatesDto(LATITUDE, LONGITUDE);
     public static final LocationsDto LOCATIONS_DTO = new LocationsDto(COORDINATES_DTO, COORDINATES_DTO);
-
-    private RunningCrewFixture() {
-    }
 
     private static RunningCrew createRunningCrew(
         final Long memberId, final Coordinates departure, final Coordinates arrival,

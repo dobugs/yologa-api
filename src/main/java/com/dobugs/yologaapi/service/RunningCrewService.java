@@ -15,15 +15,14 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Transactional
 @Service
 public class RunningCrewService {
 
     private final RunningCrewRepository runningCrewRepository;
-
-    public RunningCrewService(final RunningCrewRepository runningCrewRepository) {
-        this.runningCrewRepository = runningCrewRepository;
-    }
 
     public long create(final RunningCrewCreateRequest request) {
         final RunningCrew runningCrew = convertToRunningCrew(request);

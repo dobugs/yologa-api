@@ -16,7 +16,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
 public class RunningCrew extends BaseEntity {
 
@@ -59,9 +64,6 @@ public class RunningCrew extends BaseEntity {
 
     @Column(nullable = false, length = 500)
     private String description;
-
-    protected RunningCrew() {
-    }
 
     public RunningCrew(final Long memberId, final Coordinates departure, final Coordinates arrival,
         final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
@@ -111,57 +113,5 @@ public class RunningCrew extends BaseEntity {
         } catch (ParseException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getMemberId() {
-        return memberId;
-    }
-
-    public Point getDeparture() {
-        return departure;
-    }
-
-    public Point getArrival() {
-        return arrival;
-    }
-
-    public RunningCrewProgression getStatus() {
-        return status;
-    }
-
-    public Capacity getCapacity() {
-        return capacity;
-    }
-
-    public LocalDateTime getScheduledStartDate() {
-        return scheduledStartDate;
-    }
-
-    public LocalDateTime getScheduledEndDate() {
-        return scheduledEndDate;
-    }
-
-    public LocalDateTime getImplementedStartDate() {
-        return implementedStartDate;
-    }
-
-    public LocalDateTime getImplementedEndDate() {
-        return implementedEndDate;
-    }
-
-    public Deadline getDeadline() {
-        return deadline;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }

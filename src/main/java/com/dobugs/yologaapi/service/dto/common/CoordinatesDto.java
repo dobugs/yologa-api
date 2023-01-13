@@ -2,13 +2,16 @@ package com.dobugs.yologaapi.service.dto.common;
 
 import org.locationtech.jts.geom.Point;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class CoordinatesDto {
 
     private Double latitude;
     private Double longitude;
-
-    private CoordinatesDto() {
-    }
 
     public CoordinatesDto(final Double latitude, final Double longitude) {
         this.latitude = latitude;
@@ -20,13 +23,5 @@ public class CoordinatesDto {
             point.getX(),
             point.getY()
         );
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
     }
 }

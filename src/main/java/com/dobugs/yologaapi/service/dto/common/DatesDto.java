@@ -2,13 +2,16 @@ package com.dobugs.yologaapi.service.dto.common;
 
 import java.time.LocalDateTime;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class DatesDto {
 
     private DateDto scheduled;
     private DateDto implemented;
-
-    private DatesDto() {
-    }
 
     public DatesDto(final DateDto scheduled, final DateDto implemented) {
         this.scheduled = scheduled;
@@ -25,13 +28,5 @@ public class DatesDto {
             new DateDto(scheduledStartDate, scheduledEndDate),
             new DateDto(implementedStartDate, implementedEndDate)
         );
-    }
-
-    public DateDto getScheduled() {
-        return scheduled;
-    }
-
-    public DateDto getImplemented() {
-        return implemented;
     }
 }

@@ -17,15 +17,14 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/running-crews")
 @RestController
 public class RunningCrewController {
 
     private final RunningCrewService runningCrewService;
-
-    public RunningCrewController(final RunningCrewService runningCrewService) {
-        this.runningCrewService = runningCrewService;
-    }
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody final RunningCrewCreateRequest request) {

@@ -2,7 +2,12 @@ package com.dobugs.yologaapi.domain.runningcrew;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Embeddable
 public class Capacity {
 
@@ -10,9 +15,6 @@ public class Capacity {
 
     @Column(name = "capacity", nullable = false)
     private int value = MINIMUM;
-
-    protected Capacity() {
-    }
 
     public Capacity(final int value) {
         validateCapacityIsOverStandard(value);
@@ -23,9 +25,5 @@ public class Capacity {
         if (value < MINIMUM) {
             throw new IllegalArgumentException(String.format("인원은 %d 명이어야 합니다. [%d]", MINIMUM, value));
         }
-    }
-
-    public int getValue() {
-        return value;
     }
 }
