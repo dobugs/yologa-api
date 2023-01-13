@@ -79,6 +79,21 @@ public class RunningCrew extends BaseEntity {
         this.description = description;
     }
 
+    public void update(
+        final Coordinates departure, final Coordinates arrival,
+        final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
+        final Deadline deadline, final String title, final String description
+    ) {
+        this.departure = wktToPoint(departure);
+        this.arrival = wktToPoint(arrival);
+        this.capacity = capacity;
+        this.scheduledStartDate = scheduledStartDate;
+        this.scheduledEndDate = scheduledEndDate;
+        this.deadline = deadline;
+        this.title = title;
+        this.description = description;
+    }
+
     private Point  wktToPoint(final Coordinates coordinates) {
         final String wellKnownText = String.format("POINT(%f %f)", coordinates.latitude(), coordinates.longitude());
         try {

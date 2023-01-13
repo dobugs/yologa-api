@@ -1,6 +1,7 @@
 package com.dobugs.yologaapi.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -27,6 +28,7 @@ import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +55,7 @@ class RunningCrewServiceTest {
         @DisplayName("러닝크루를 생성한다")
         @Test
         void create() {
-            final RunningCrewCreateRequest request = createRunningCrewRequest();
+            final RunningCrewCreateRequest request = createRunningCrewCreateRequest();
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
             given(savedRunningCrew.getId()).willReturn(1L);
@@ -94,12 +96,51 @@ class RunningCrewServiceTest {
         }
     }
 
-    private RunningCrewCreateRequest createRunningCrewRequest() {
+    @DisplayName("러닝크루 수정 테스트")
+    @Nested
+    public class updateTest {
+
+        @DisplayName("러닝크루를 수정한다")
+        @Test
+        void update() {
+            final long runningCrewId = 1L;
+            final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
+
+            final RunningCrew savedRunningCrew = mock(RunningCrew.class);
+            given(runningCrewRepository.findById(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
+
+            assertThatCode(() -> runningCrewService.update(runningCrewId, request))
+                .doesNotThrowAnyException();
+        }
+
+        @DisplayName("존재하지 않는 아이디로 러닝크루를 수정할 수 없다")
+        @Test
+        void isShouldExist() {
+            final long notExistId = 0L;
+            final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
+
+            assertThatThrownBy(() -> runningCrewService.update(notExistId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("러닝크루가 존재하지 않습니다.");
+        }
+    }
+
+    private RunningCrewCreateRequest createRunningCrewCreateRequest() {
         final CoordinatesDto coordinatesDto = new CoordinatesDto(123.456, 123.456);
         final LocationsDto locationsDto = new LocationsDto(coordinatesDto, coordinatesDto);
         final DateDto dateDto = new DateDto(NOW, AFTER_ONE_HOUR);
 
         return new RunningCrewCreateRequest(
+            "title", locationsDto, 10, dateDto, AFTER_ONE_HOUR, "description"
+        );
+    }
+
+    private RunningCrewUpdateRequest createRunningCrewUpdateRequest() {
+        final CoordinatesDto coordinatesDto = new CoordinatesDto(123.456, 123.456);
+        final LocationsDto locationsDto = new LocationsDto(coordinatesDto, coordinatesDto);
+        final DateDto dateDto = new DateDto(NOW, AFTER_ONE_HOUR);
+
+        return new RunningCrewUpdateRequest(
             "title", locationsDto, 10, dateDto, AFTER_ONE_HOUR, "description"
         );
     }

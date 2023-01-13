@@ -6,12 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dobugs.yologaapi.service.RunningCrewService;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
 @RequestMapping("/api/v1/running-crews")
@@ -34,5 +36,14 @@ public class RunningCrewController {
     public ResponseEntity<RunningCrewResponse> findById(@PathVariable final Long runningCrewId) {
         final RunningCrewResponse response = runningCrewService.findById(runningCrewId);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/{runningCrewId}")
+    public ResponseEntity<Void> update(
+        @PathVariable final Long runningCrewId,
+        @RequestBody final RunningCrewUpdateRequest request
+    ) {
+        runningCrewService.update(runningCrewId, request);
+        return ResponseEntity.ok().build();
     }
 }
