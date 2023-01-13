@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -38,18 +39,23 @@ class RunningCrewServiceTest {
         runningCrewService = new RunningCrewService(runningCrewRepository);
     }
 
-    @DisplayName("러닝크루를 생성한다")
-    @Test
-    void test() {
-        final RunningCrewCreateRequest request = createRunningCrewRequest();
+    @DisplayName("러닝크루 생성 테스트")
+    @Nested
+    public class createTest {
 
-        final RunningCrew savedRunningCrew = mock(RunningCrew.class);
-        given(savedRunningCrew.getId()).willReturn(1L);
-        given(runningCrewRepository.save(any())).willReturn(savedRunningCrew);
+        @DisplayName("러닝크루를 생성한다")
+        @Test
+        void create() {
+            final RunningCrewCreateRequest request = createRunningCrewRequest();
 
-        final long runningCrewId = runningCrewService.create(request);
+            final RunningCrew savedRunningCrew = mock(RunningCrew.class);
+            given(savedRunningCrew.getId()).willReturn(1L);
+            given(runningCrewRepository.save(any())).willReturn(savedRunningCrew);
 
-        assertThat(runningCrewId).isNotNull();
+            final long runningCrewId = runningCrewService.create(request);
+
+            assertThat(runningCrewId).isNotNull();
+        }
     }
 
     private RunningCrewCreateRequest createRunningCrewRequest() {
