@@ -14,9 +14,11 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrewProgression;
 import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
+import com.dobugs.yologaapi.service.dto.common.DatesDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -35,6 +37,8 @@ public class RunningCrewFixture {
     public static final LocalDateTime NOW = LocalDateTime.now();
     public static final LocalDateTime AFTER_ONE_HOUR = LocalDateTime.now().plusHours(1);
     public static final DateDto DATE_DTO = new DateDto(NOW, AFTER_ONE_HOUR);
+    public static final DateDto NOT_IMPLEMENTED_DATE_DTO = new DateDto(null, null);
+    public static final DatesDto DATES_DTO = new DatesDto(DATE_DTO, NOT_IMPLEMENTED_DATE_DTO);
 
     public static final CoordinatesDto COORDINATES_DTO = new CoordinatesDto(LATITUDE, LONGITUDE);
     public static final LocationsDto LOCATIONS_DTO = new LocationsDto(COORDINATES_DTO, COORDINATES_DTO);
@@ -82,6 +86,13 @@ public class RunningCrewFixture {
     public static RunningCrewUpdateRequest createRunningCrewUpdateRequest() {
         return new RunningCrewUpdateRequest(
             RUNNING_CREW_TITLE, LOCATIONS_DTO, RUNNING_CREW_CAPACITY, DATE_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
+        );
+    }
+
+    public static RunningCrewResponse createRunningCrewResponse(final Long runningCrewId) {
+        return new RunningCrewResponse(
+            runningCrewId, RUNNING_CREW_TITLE, 1L, LOCATIONS_DTO, RunningCrewProgression.CREATED.name(),
+            RUNNING_CREW_CAPACITY, DATES_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
         );
     }
 
