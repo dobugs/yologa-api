@@ -2,7 +2,7 @@ package com.dobugs.yologaapi.domain.runningcrew;
 
 import java.time.LocalDateTime;
 
-import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
@@ -28,10 +28,10 @@ public class RunningCrew extends BaseEntity {
     private Long memberId;
 
     @Column(nullable = false, columnDefinition = "Geometry")
-    private Geometry departure;
+    private Point departure;
 
     @Column(nullable = false, columnDefinition = "Geometry")
-    private Geometry arrival;
+    private Point arrival;
 
     @Enumerated(value = EnumType.STRING)
     private RunningCrewProgression status;
@@ -68,8 +68,8 @@ public class RunningCrew extends BaseEntity {
         final Deadline deadline, final String title, final String description
     ) {
         this.memberId = memberId;
-        this.departure = wktToGeometry(departure);
-        this.arrival = wktToGeometry(arrival);
+        this.departure = wktToPoint(departure);
+        this.arrival = wktToPoint(arrival);
         this.status = RunningCrewProgression.CREATED;
         this.capacity = capacity;
         this.scheduledStartDate = scheduledStartDate;
@@ -79,10 +79,10 @@ public class RunningCrew extends BaseEntity {
         this.description = description;
     }
 
-    private Geometry wktToGeometry(final Coordinates coordinates) {
+    private Point  wktToPoint(final Coordinates coordinates) {
         final String wellKnownText = String.format("POINT(%f %f)", coordinates.latitude(), coordinates.longitude());
         try {
-            return new WKTReader().read(wellKnownText);
+            return (Point) new WKTReader().read(wellKnownText);
         } catch (ParseException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
