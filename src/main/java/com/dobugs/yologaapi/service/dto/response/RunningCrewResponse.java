@@ -6,11 +6,10 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.service.dto.common.DatesDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 @Getter
 public class RunningCrewResponse {
 
