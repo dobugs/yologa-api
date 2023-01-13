@@ -116,4 +116,21 @@ class RunningCrewServiceTest {
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
         }
     }
+
+    @DisplayName("러닝크루 삭제 테스트")
+    @Nested
+    public class deleteTest {
+
+        @DisplayName("러닝크루를 삭제한다")
+        @Test
+        void delete() {
+            final long runningCrewId = 1L;
+
+            runningCrewService.delete(runningCrewId);
+
+            assertThatThrownBy(() -> runningCrewService.findById(runningCrewId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("러닝크루가 존재하지 않습니다.");
+        }
+    }
 }

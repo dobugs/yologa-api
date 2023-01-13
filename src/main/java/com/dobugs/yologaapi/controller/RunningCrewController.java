@@ -3,6 +3,7 @@ package com.dobugs.yologaapi.controller;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +45,12 @@ public class RunningCrewController {
         @RequestBody final RunningCrewUpdateRequest request
     ) {
         runningCrewService.update(runningCrewId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{runningCrewId}")
+    public ResponseEntity<Void> delete(@PathVariable final Long runningCrewId) {
+        runningCrewService.delete(runningCrewId);
         return ResponseEntity.ok().build();
     }
 }

@@ -45,6 +45,10 @@ public class RunningCrewService {
         update(request, savedRunningCrew);
     }
 
+    public void delete(final Long runningCrewId) {
+        runningCrewRepository.deleteById(runningCrewId);
+    }
+
     private RunningCrew findRunningCrewBy(final Long runningCrewId) {
         return runningCrewRepository.findById(runningCrewId)
             .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));
