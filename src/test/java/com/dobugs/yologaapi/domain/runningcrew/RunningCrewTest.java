@@ -2,11 +2,13 @@ package com.dobugs.yologaapi.domain.runningcrew;
 
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.AFTER_ONE_HOUR;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.COORDINATES;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.NOW;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.RUNNING_CREW_CAPACITY;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.RUNNING_CREW_DESCRIPTION;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.RUNNING_CREW_TITLE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrew;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewWith;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
@@ -21,6 +23,16 @@ class RunningCrewTest {
     @DisplayName("러닝크루 객체 생성 테스트")
     @Nested
     public class createTest {
+
+        @DisplayName("러닝크루를 생성한다")
+        @Test
+        void create() {
+            assertThatCode(() -> new RunningCrew(
+                    1L, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                    NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                    RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            )).doesNotThrowAnyException();
+        }
 
         @DisplayName("시작 시간은 종료 시간보다 앞서있어야 한다")
         @Test
@@ -39,6 +51,22 @@ class RunningCrewTest {
     @DisplayName("러닝크루 수정 테스트")
     @Nested
     public class updateTest {
+
+        @DisplayName("러닝크루를 수정한다")
+        @Test
+        void update() {
+            final RunningCrew runningCrew = new RunningCrew(
+                1L, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            );
+
+            assertThatCode(() -> runningCrew.update(
+                COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            )).doesNotThrowAnyException();
+        }
 
         @DisplayName("시작 시간은 종료 시간보다 앞서있어야 한다")
         @Test
