@@ -24,4 +24,8 @@ public class Capacity {
             throw new IllegalArgumentException(String.format("인원은 %d 명이어야 합니다. [%d]", MINIMUM, value));
         }
     }
+
+    public int getValue() {
+        return value;
+    }
 }

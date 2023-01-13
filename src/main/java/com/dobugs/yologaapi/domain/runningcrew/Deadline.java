@@ -24,4 +24,8 @@ public class Deadline {
             throw new IllegalArgumentException(String.format("마감 기한이 현재 시간보다 이전입니다. [%s]", value));
         }
     }
+
+    public LocalDateTime getValue() {
+        return value;
+    }
 }

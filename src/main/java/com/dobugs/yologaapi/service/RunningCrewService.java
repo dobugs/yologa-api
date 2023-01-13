@@ -10,8 +10,9 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
-import com.dobugs.yologaapi.service.dto.common.LocationDto;
+import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
 @Transactional
 @Service
@@ -30,12 +31,20 @@ public class RunningCrewService {
         return savedRunningCrew.getId();
     }
 
+    @Transactional(readOnly = true)
+    public RunningCrewResponse findById(final Long runningCrewId) {
+        final RunningCrew runningCrew = runningCrewRepository.findById(runningCrewId)
+            .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));
+
+        return RunningCrewResponse.from(runningCrew);
+    }
+
     private RunningCrew convertToRunningCrew(final RunningCrewCreateRequest request) {
         final long memberId = 1L;
 
-        final LocationDto locationDto = request.location();
-        final Coordinates departure = convertToCoordinates(locationDto.getDeparture());
-        final Coordinates arrival = convertToCoordinates(locationDto.getArrival());
+        final LocationsDto locationsDto = request.location();
+        final Coordinates departure = convertToCoordinates(locationsDto.getDeparture());
+        final Coordinates arrival = convertToCoordinates(locationsDto.getArrival());
 
         final DateDto dateDto = request.date();
         return new RunningCrew(memberId, departure, arrival, new Capacity(request.capacity()),

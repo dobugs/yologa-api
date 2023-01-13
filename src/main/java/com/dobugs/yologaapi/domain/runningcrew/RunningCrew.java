@@ -91,4 +91,52 @@ public class RunningCrew extends BaseEntity {
     public Long getId() {
         return id;
     }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public Point getDeparture() {
+        return departure;
+    }
+
+    public Point getArrival() {
+        return arrival;
+    }
+
+    public RunningCrewProgression getStatus() {
+        return status;
+    }
+
+    public Capacity getCapacity() {
+        return capacity;
+    }
+
+    public LocalDateTime getScheduledStartDate() {
+        return scheduledStartDate;
+    }
+
+    public LocalDateTime getScheduledEndDate() {
+        return scheduledEndDate;
+    }
+
+    public LocalDateTime getImplementedStartDate() {
+        return implementedStartDate;
+    }
+
+    public LocalDateTime getImplementedEndDate() {
+        return implementedEndDate;
+    }
+
+    public Deadline getDeadline() {
+        return deadline;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
