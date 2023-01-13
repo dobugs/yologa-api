@@ -96,6 +96,11 @@ jacocoTestReport {
 
 jacocoTestCoverageVerification {
 
+    def exceptions = [
+            "*.exception.*",
+            "*.*Application"
+    ]
+
     violationRules {
         rule {
             enabled = true
@@ -104,8 +109,10 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.50
+                minimum = 0.90
             }
+
+            excludes = [] + exceptions
         }
     }
 }
