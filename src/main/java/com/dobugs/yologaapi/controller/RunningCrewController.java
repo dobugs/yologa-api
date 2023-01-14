@@ -52,4 +52,10 @@ public class RunningCrewController {
         runningCrewService.delete(runningCrewId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{runningCrewId}/start")
+    public ResponseEntity<Void> start(@PathVariable final Long runningCrewId) {
+        runningCrewService.start(runningCrewId);
+        return ResponseEntity.ok().build();
+    }
 }

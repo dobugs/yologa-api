@@ -8,6 +8,7 @@ import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.RUNNING_CREW_TITLE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrew;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -86,6 +87,33 @@ class RunningCrewTest {
             )
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("시작 시간은 종료 시간보다 앞서있어야 합니다.");
+        }
+    }
+
+    @DisplayName("러닝크루 시작 테스트")
+    @Nested
+    public class startTest {
+
+        @DisplayName("러닝크루를 시작한다")
+        @Test
+        void start() {
+            final RunningCrew runningCrew = createRunningCrew();
+
+            runningCrew.start();
+
+            assertThat(runningCrew.getImplementedStartDate()).isNotNull();
+        }
+
+        @DisplayName("이미 시작된 러닝크루는 다시 시작할 수 없다")
+        @Test
+        void runningCrewHasAlreadyBegun() {
+            final RunningCrew runningCrew = createRunningCrew();
+
+            runningCrew.start();
+
+            assertThatThrownBy(runningCrew::start)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 시작되었습니다.");
         }
     }
 }

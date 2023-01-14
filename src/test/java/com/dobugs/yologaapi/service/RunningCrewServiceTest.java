@@ -148,4 +148,31 @@ class RunningCrewServiceTest {
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
         }
     }
+
+    @DisplayName("러닝크루 시작 테스트")
+    @Nested
+    public class startTest {
+
+        @DisplayName("러닝크루를 시작한다")
+        @Test
+        void start() {
+            final long runningCrewId = 1L;
+
+            final RunningCrew savedRunningCrew = mock(RunningCrew.class);
+            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+
+            assertThatCode(() -> runningCrewService.start(runningCrewId))
+                .doesNotThrowAnyException();
+        }
+
+        @DisplayName("존재하지 않는 아이디로 러닝크루를 시작할 수 없다")
+        @Test
+        void isShouldExist() {
+            final long notExistId = 0L;
+
+            assertThatThrownBy(() -> runningCrewService.start(notExistId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("러닝크루가 존재하지 않습니다.");
+        }
+    }
 }

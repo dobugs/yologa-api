@@ -28,3 +28,9 @@ Request
 include::{snippets}/running-crew/delete/http-request.adoc[]
 Response
 include::{snippets}/running-crew/delete/http-response.adoc[]
+
+== 러닝크루 시작
+Request
+include::{snippets}/running-crew/start/http-request.adoc[]
+Response
+include::{snippets}/running-crew/start/http-response.adoc[]
