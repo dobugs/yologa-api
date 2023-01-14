@@ -116,4 +116,43 @@ class RunningCrewTest {
                 .hasMessageContaining("이미 시작되었습니다.");
         }
     }
+
+    @DisplayName("러닝크루 종료 테스트")
+    @Nested
+    public class endTest {
+
+        @DisplayName("러닝크루를 종료한다")
+        @Test
+        void end() {
+            final RunningCrew runningCrew = createRunningCrew();
+
+            runningCrew.start();
+            runningCrew.end();
+
+            assertThat(runningCrew.getImplementedEndDate()).isNotNull();
+        }
+
+        @DisplayName("시작되지 않은 러닝크루는 종료할 수 없다")
+        @Test
+        void runningCrewHasNotStarted() {
+            final RunningCrew runningCrew = createRunningCrew();
+
+            assertThatThrownBy(runningCrew::end)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("아직 시작하지 않았습니다.");
+        }
+
+        @DisplayName("이미 시작된 러닝크루는 다시 종료할 수 없다")
+        @Test
+        void runningCrewHasAlreadyEnded() {
+            final RunningCrew runningCrew = createRunningCrew();
+
+            runningCrew.start();
+            runningCrew.end();
+
+            assertThatThrownBy(runningCrew::end)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 종료되었습니다.");
+        }
+    }
 }

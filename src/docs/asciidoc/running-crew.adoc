@@ -34,3 +34,9 @@ Request
 include::{snippets}/running-crew/start/http-request.adoc[]
 Response
 include::{snippets}/running-crew/start/http-response.adoc[]
+
+== 러닝크루 종료
+Request
+include::{snippets}/running-crew/end/http-request.adoc[]
+Response
+include::{snippets}/running-crew/end/http-response.adoc[]

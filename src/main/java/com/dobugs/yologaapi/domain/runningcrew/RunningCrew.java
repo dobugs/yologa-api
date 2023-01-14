@@ -103,6 +103,12 @@ public class RunningCrew extends BaseEntity {
         implementedStartDate = LocalDateTime.now();
     }
 
+    public void end() {
+        validateRunningCrewStart();
+        validateRunningCrewDoesNotEnd();
+        implementedEndDate = LocalDateTime.now();
+    }
+
     private void validateStartIsBeforeThanEnd(final LocalDateTime start, final LocalDateTime end) {
         if (start.isAfter(end)) {
             throw new IllegalArgumentException(
@@ -114,6 +120,18 @@ public class RunningCrew extends BaseEntity {
     private void validateRunningCrewDoesNotStart() {
         if (implementedStartDate != null) {
             throw new IllegalArgumentException(String.format("이미 시작되었습니다. [%s]", implementedStartDate));
+        }
+    }
+
+    private void validateRunningCrewStart() {
+        if (implementedStartDate == null) {
+            throw new IllegalArgumentException("아직 시작하지 않았습니다.");
+        }
+    }
+
+    private void validateRunningCrewDoesNotEnd() {
+        if (implementedEndDate != null) {
+            throw new IllegalArgumentException(String.format("이미 종료되었습니다. [%s]", implementedEndDate));
         }
     }
 

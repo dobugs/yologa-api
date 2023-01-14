@@ -144,4 +144,19 @@ class RunningCrewControllerTest {
             )
         ;
     }
+
+    @DisplayName("러닝크루를 종료한다")
+    @Test
+    void end() throws Exception {
+        final long runningCrewId = 1L;
+
+        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/end"))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "running-crew/end",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
 }
