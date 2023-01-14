@@ -26,8 +26,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RunningCrewFixture {
 
-    public static final double LATITUDE = 123.456;
-    public static final double LONGITUDE = 123.456;
+    public static final double LATITUDE = 37.530160973856;
+    public static final double LONGITUDE = 127.12379233466;
     public static final Coordinates COORDINATES = new Coordinates(LATITUDE, LONGITUDE);
 
     public static final String RUNNING_CREW_TITLE = "title";
