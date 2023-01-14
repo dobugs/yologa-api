@@ -14,7 +14,6 @@ import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
-import com.dobugs.yologaapi.service.dto.request.PageDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
@@ -39,8 +38,7 @@ public class RunningCrewService {
 
     @Transactional(readOnly = true)
     public RunningCrewFindNearbyResponse findNearby(final RunningCrewFindNearbyRequest request) {
-        final PageDto pageDto = request.pageDto();
-        final Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize());
+        final Pageable pageable = PageRequest.of(request.page(), request.size());
         final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(
             request.latitude(), request.longitude(), request.radius(), pageable
         );

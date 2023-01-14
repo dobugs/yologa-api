@@ -26,7 +26,6 @@ import org.springframework.data.domain.Page;
 
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
-import com.dobugs.yologaapi.service.dto.request.PageDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
@@ -73,7 +72,7 @@ class RunningCrewServiceTest {
         @Test
         void findNearby() {
             final RunningCrewFindNearbyRequest request = new RunningCrewFindNearbyRequest(
-                LATITUDE, LONGITUDE, 3000, new PageDto(0, 10)
+                LATITUDE, LONGITUDE, 3000, 0, 10
             );
 
             final Page<RunningCrew> page = mock(Page.class);
