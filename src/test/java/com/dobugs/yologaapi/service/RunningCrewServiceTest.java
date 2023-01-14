@@ -70,7 +70,7 @@ class RunningCrewServiceTest {
 
             final RunningCrew savedRunningCrew = createMockRunningCrew();
             given(savedRunningCrew.getId()).willReturn(runningCrewId);
-            given(runningCrewRepository.findById(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
+            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
 
             final RunningCrewResponse response = runningCrewService.findById(runningCrewId);
 
@@ -99,7 +99,7 @@ class RunningCrewServiceTest {
             final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
-            given(runningCrewRepository.findById(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
+            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
 
             assertThatCode(() -> runningCrewService.update(runningCrewId, request))
                 .doesNotThrowAnyException();
@@ -126,9 +126,24 @@ class RunningCrewServiceTest {
         void delete() {
             final long runningCrewId = 1L;
 
+            final RunningCrew savedRunningCrew = mock(RunningCrew.class);
+            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+
             runningCrewService.delete(runningCrewId);
 
+            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.empty());
+
             assertThatThrownBy(() -> runningCrewService.findById(runningCrewId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("러닝크루가 존재하지 않습니다.");
+        }
+
+        @DisplayName("존재하지 않는 아이디로 러닝크루를 삭제할 수 없다")
+        @Test
+        void isShouldExist() {
+            final long notExistId = 0L;
+
+            assertThatThrownBy(() -> runningCrewService.delete(notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
         }
