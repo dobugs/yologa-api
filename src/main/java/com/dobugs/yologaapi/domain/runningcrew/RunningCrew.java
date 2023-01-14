@@ -136,7 +136,7 @@ public class RunningCrew extends BaseEntity {
     }
 
     private Point  wktToPoint(final Coordinates coordinates) {
-        final String wellKnownText = String.format("POINT(%f %f)", coordinates.latitude(), coordinates.longitude());
+        final String wellKnownText = String.format("POINT(%f %f)", coordinates.longitude(), coordinates.latitude());
         try {
             return (Point) new WKTReader().read(wellKnownText);
         } catch (ParseException e) {
