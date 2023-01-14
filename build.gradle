@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.0.1'
     id 'io.spring.dependency-management' version '1.1.0'
     id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id "jacoco"
 }
 
 group = 'com.dobugs'
@@ -70,3 +71,49 @@ bootJar {
     }
 }
 /* RestDocs End */
+
+/* JaCoCo Start */
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+test {
+    finalizedBy 'jacocoTestReport'
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        csv.enabled true
+        xml.enabled false
+
+        html.destination file("$buildDir/reports/jacoco/html")
+        csv.destination file("$buildDir/reports/jacoco/jacoco.csv")
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+
+    def exceptions = [
+            "*.exception.*",
+            "*.*Application"
+    ]
+
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.90
+            }
+
+            excludes = [] + exceptions
+        }
+    }
+}
+/* JaCoCo End */
