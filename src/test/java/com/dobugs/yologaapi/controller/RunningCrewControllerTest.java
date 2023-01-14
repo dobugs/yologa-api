@@ -1,6 +1,9 @@
 package com.dobugs.yologaapi.controller;
 
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LATITUDE;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LONGITUDE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewCreateRequest;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewSummaryResponse;
 import static org.hamcrest.Matchers.is;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewResponse;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewUpdateRequest;
@@ -18,6 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,10 +35,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.dobugs.yologaapi.service.RunningCrewService;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -71,6 +79,32 @@ class RunningCrewControllerTest {
             .andExpect(header().string("location", BASIC_URL + "/" + runningCrewId))
             .andDo(document(
                 "running-crew/create",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
+
+    @DisplayName("내 주변 러닝크루 목록을 조회한다")
+    @Test
+    void findNearby() throws Exception {
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("latitude", String.valueOf(LATITUDE));
+        params.add("longitude", String.valueOf(LONGITUDE));
+        params.add("radius", String.valueOf(3000));
+        params.add("page", String.valueOf(0));
+        params.add("size", String.valueOf(10));
+
+        final RunningCrewFindNearbyResponse response = new RunningCrewFindNearbyResponse(
+            1, 0, 10, List.of(createRunningCrewSummaryResponse())
+        );
+        given(runningCrewService.findNearby(any())).willReturn(response);
+
+        mockMvc.perform(get(BASIC_URL)
+                .params(params))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "running-crew/findNearby",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()))
             )

@@ -1,5 +1,8 @@
 package com.dobugs.yologaapi.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +14,11 @@ import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
+import com.dobugs.yologaapi.service.dto.request.PageDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +35,16 @@ public class RunningCrewService {
         final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
 
         return savedRunningCrew.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public RunningCrewFindNearbyResponse findNearby(final RunningCrewFindNearbyRequest request) {
+        final PageDto pageDto = request.pageDto();
+        final Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize());
+        final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(
+            request.latitude(), request.longitude(), request.radius(), pageable
+        );
+        return RunningCrewFindNearbyResponse.from(runningCrews);
     }
 
     @Transactional(readOnly = true)

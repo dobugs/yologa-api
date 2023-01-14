@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dobugs.yologaapi.service.RunningCrewService;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,12 @@ public class RunningCrewController {
     public ResponseEntity<Void> create(@RequestBody final RunningCrewCreateRequest request) {
         final long runningCrewId = runningCrewService.create(request);
         return ResponseEntity.created(URI.create("/api/v1/running-crews/" + runningCrewId)).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<RunningCrewFindNearbyResponse> findNearby(@ModelAttribute final RunningCrewFindNearbyRequest request) {
+        final RunningCrewFindNearbyResponse response = runningCrewService.findNearby(request);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{runningCrewId}")
