@@ -1,5 +1,8 @@
 package com.dobugs.yologaapi.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +15,9 @@ import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +37,15 @@ public class RunningCrewService {
     }
 
     @Transactional(readOnly = true)
+    public RunningCrewFindNearbyResponse findNearby(final RunningCrewFindNearbyRequest request) {
+        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(
+            request.latitude(), request.longitude(), request.radius(), pageable
+        );
+        return RunningCrewFindNearbyResponse.from(runningCrews);
+    }
+
+    @Transactional(readOnly = true)
     public RunningCrewResponse findById(final Long runningCrewId) {
         final RunningCrew runningCrew = findRunningCrewBy(runningCrewId);
 
@@ -45,11 +59,25 @@ public class RunningCrewService {
     }
 
     public void delete(final Long runningCrewId) {
-        runningCrewRepository.deleteById(runningCrewId);
+        final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
+
+        savedRunningCrew.delete();
+    }
+
+    public void start(final Long runningCrewId) {
+        final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
+
+        savedRunningCrew.start();
+    }
+
+    public void end(final Long runningCrewId) {
+        final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
+
+        savedRunningCrew.end();
     }
 
     private RunningCrew findRunningCrewBy(final Long runningCrewId) {
-        return runningCrewRepository.findById(runningCrewId)
+        return runningCrewRepository.findByIdAndArchived(runningCrewId, true)
             .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));
     }
 

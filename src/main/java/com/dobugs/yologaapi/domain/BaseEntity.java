@@ -15,7 +15,7 @@ import jakarta.persistence.MappedSuperclass;
 public abstract class BaseEntity {
 
     @Column
-    private Boolean archived;
+    private boolean archived = true;
 
     @Column
     private LocalDateTime archivedAt;
@@ -25,4 +25,9 @@ public abstract class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public void delete() {
+        archived = false;
+        archivedAt = LocalDateTime.now();
+    }
 }

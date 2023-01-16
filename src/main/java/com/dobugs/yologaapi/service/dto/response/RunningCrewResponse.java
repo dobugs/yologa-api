@@ -6,22 +6,8 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.service.dto.common.DatesDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
-@Getter
-public class RunningCrewResponse {
-
-    private final Long id;
-    private final String title;
-    private final Long host;
-    private final LocationsDto locationsDto;
-    private final String status;
-    private final int capacity;
-    private final DatesDto date;
-    private final LocalDateTime deadline;
-    private final String description;
+public record RunningCrewResponse(Long id, String title, Long host, LocationsDto locationsDto, String status,
+                                  int capacity, DatesDto date, LocalDateTime deadline, String description) {
 
     public static RunningCrewResponse from(final RunningCrew runningCrew) {
         return new RunningCrewResponse(
