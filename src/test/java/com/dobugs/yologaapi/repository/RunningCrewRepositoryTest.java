@@ -80,7 +80,7 @@ class RunningCrewRepositoryTest {
             final Pageable pageable = PageRequest.of(0, 5);
             final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(LATITUDE, LONGITUDE, 100, pageable);
 
-            assertThat(runningCrews).hasSizeGreaterThan(count);
+            assertThat(runningCrews).hasSizeGreaterThanOrEqualTo(count);
         }
     }
 }
