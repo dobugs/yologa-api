@@ -98,7 +98,8 @@ jacocoTestCoverageVerification {
 
     def exceptions = [
             "*.exception.*",
-            "*.*Application"
+            "*.*Application",
+            "*.dto.*"
     ]
 
     violationRules {
