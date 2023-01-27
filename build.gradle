@@ -40,8 +40,6 @@ ext {
 }
 
 test {
-    exclude 'com/dobugs/yologaapi/repository/*'
-
     outputs.dir snippetsDir
     useJUnitPlatform()
 }
@@ -101,8 +99,7 @@ jacocoTestCoverageVerification {
     def exceptions = [
             "*.exception.*",
             "*.*Application",
-            "*.dto.*",
-            "*.BaseEntity"
+            "*.dto.*"
     ]
 
     violationRules {
