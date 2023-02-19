@@ -36,9 +36,6 @@ dependencies {
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-    // h2
-    runtimeOnly 'com.h2database:h2'
-
     // mysql
     runtimeOnly 'mysql:mysql-connector-java:8.0.28'
 }
