@@ -174,8 +174,10 @@ class RunningCrewControllerTest {
     @Test
     void start() throws Exception {
         final long runningCrewId = 1L;
+        final String accessToken = "accessToken";
 
-        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/start"))
+        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/start")
+                .header("Authorization", accessToken))
             .andExpect(status().isOk())
             .andDo(document(
                 "running-crew/start",
@@ -189,8 +191,10 @@ class RunningCrewControllerTest {
     @Test
     void end() throws Exception {
         final long runningCrewId = 1L;
+        final String accessToken = "accessToken";
 
-        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/end"))
+        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/end")
+                .header("Authorization", accessToken))
             .andExpect(status().isOk())
             .andDo(document(
                 "running-crew/end",

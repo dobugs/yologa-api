@@ -239,26 +239,44 @@ class RunningCrewServiceTest {
     @Nested
     public class start {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+
         @DisplayName("러닝크루를 시작한다")
         @Test
         void success() {
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 1L;
+
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
             given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
 
-            assertThatCode(() -> runningCrewService.start(runningCrewId))
+            assertThatCode(() -> runningCrewService.start(serviceToken, runningCrewId))
                 .doesNotThrowAnyException();
         }
 
         @DisplayName("존재하지 않는 아이디로 러닝크루를 시작할 수 없다")
         @Test
         void isShouldExist() {
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long notExistId = 0L;
 
-            assertThatThrownBy(() -> runningCrewService.start(notExistId))
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+
+            assertThatThrownBy(() -> runningCrewService.start(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
+        }
+
+        private String createToken(final Long memberId, final String provider, final String token) {
+            return Jwts.builder()
+                .claim("memberId", memberId)
+                .claim("provider", provider)
+                .claim("token", token)
+                .compact();
         }
     }
 
@@ -266,26 +284,44 @@ class RunningCrewServiceTest {
     @Nested
     public class end {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+
         @DisplayName("러닝크루를 종료한다")
         @Test
         void success() {
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 1L;
+
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
             given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
 
-            assertThatCode(() -> runningCrewService.end(runningCrewId))
+            assertThatCode(() -> runningCrewService.end(serviceToken, runningCrewId))
                 .doesNotThrowAnyException();
         }
 
         @DisplayName("존재하지 않는 아이디로 러닝크루를 종료할 수 없다")
         @Test
         void isShouldExist() {
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long notExistId = 0L;
 
-            assertThatThrownBy(() -> runningCrewService.end(notExistId))
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+
+            assertThatThrownBy(() -> runningCrewService.end(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
+        }
+
+        private String createToken(final Long memberId, final String provider, final String token) {
+            return Jwts.builder()
+                .claim("memberId", memberId)
+                .claim("provider", provider)
+                .claim("token", token)
+                .compact();
         }
     }
 }

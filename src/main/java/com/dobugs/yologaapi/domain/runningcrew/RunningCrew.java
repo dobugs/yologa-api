@@ -105,12 +105,14 @@ public class RunningCrew extends BaseEntity {
         deleteEntity();
     }
 
-    public void start() {
+    public void start(final Long memberId) {
+        validateMemberIsHost(memberId);
         validateRunningCrewDoesNotStart();
         implementedStartDate = LocalDateTime.now();
     }
 
-    public void end() {
+    public void end(final Long memberId) {
+        validateMemberIsHost(memberId);
         validateRunningCrewStart();
         validateRunningCrewDoesNotEnd();
         implementedEndDate = LocalDateTime.now();

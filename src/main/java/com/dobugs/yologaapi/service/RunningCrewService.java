@@ -71,14 +71,18 @@ public class RunningCrewService {
         savedRunningCrew.delete(memberId);
     }
 
-    public void start(final Long runningCrewId) {
+    public void start(final String serviceToken, final Long runningCrewId) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.start();
+        savedRunningCrew.start(memberId);
     }
 
-    public void end(final Long runningCrewId) {
+    public void end(final String serviceToken, final Long runningCrewId) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.end();
+        savedRunningCrew.end(memberId);
     }
 
     private RunningCrew findRunningCrewBy(final Long runningCrewId) {

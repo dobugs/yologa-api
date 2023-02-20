@@ -155,14 +155,27 @@ class RunningCrewTest {
     @Nested
     public class start {
 
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루를 시작한다")
         @Test
         void success() {
             final RunningCrew runningCrew = createRunningCrew();
 
-            runningCrew.start();
+            runningCrew.start(HOST_ID);
 
             assertThat(runningCrew.getImplementedStartDate()).isNotNull();
+        }
+
+        @DisplayName("호스트가 아닐 경우 예외가 발생한다")
+        @Test
+        void memberIsNotHost() {
+            final long memberId = 0L;
+            final RunningCrew runningCrew = createRunningCrew();
+
+            assertThatThrownBy(() -> runningCrew.start(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("호스트가 아닙니다.");
         }
 
         @DisplayName("이미 시작된 러닝크루는 다시 시작할 수 없다")
@@ -170,9 +183,9 @@ class RunningCrewTest {
         void runningCrewHasAlreadyBegun() {
             final RunningCrew runningCrew = createRunningCrew();
 
-            runningCrew.start();
+            runningCrew.start(HOST_ID);
 
-            assertThatThrownBy(runningCrew::start)
+            assertThatThrownBy(() -> runningCrew.start(HOST_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 시작되었습니다.");
         }
@@ -182,15 +195,30 @@ class RunningCrewTest {
     @Nested
     public class end {
 
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루를 종료한다")
         @Test
         void success() {
             final RunningCrew runningCrew = createRunningCrew();
 
-            runningCrew.start();
-            runningCrew.end();
+            runningCrew.start(HOST_ID);
+            runningCrew.end(HOST_ID);
 
             assertThat(runningCrew.getImplementedEndDate()).isNotNull();
+        }
+
+        @DisplayName("호스트가 아닐 경우 예외가 발생한다")
+        @Test
+        void memberIsNotHost() {
+            final long memberId = 0L;
+            final RunningCrew runningCrew = createRunningCrew();
+
+            runningCrew.start(HOST_ID);
+
+            assertThatThrownBy(() -> runningCrew.end(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("호스트가 아닙니다.");
         }
 
         @DisplayName("시작되지 않은 러닝크루는 종료할 수 없다")
@@ -198,20 +226,20 @@ class RunningCrewTest {
         void runningCrewHasNotStarted() {
             final RunningCrew runningCrew = createRunningCrew();
 
-            assertThatThrownBy(runningCrew::end)
+            assertThatThrownBy(() -> runningCrew.end(HOST_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("아직 시작하지 않았습니다.");
         }
 
-        @DisplayName("이미 시작된 러닝크루는 다시 종료할 수 없다")
+        @DisplayName("이미 종료된 러닝크루는 다시 종료할 수 없다")
         @Test
         void runningCrewHasAlreadyEnded() {
             final RunningCrew runningCrew = createRunningCrew();
 
-            runningCrew.start();
-            runningCrew.end();
+            runningCrew.start(HOST_ID);
+            runningCrew.end(HOST_ID);
 
-            assertThatThrownBy(runningCrew::end)
+            assertThatThrownBy(() -> runningCrew.end(HOST_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 종료되었습니다.");
         }

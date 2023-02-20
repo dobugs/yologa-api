@@ -71,14 +71,20 @@ public class RunningCrewController {
     }
 
     @PostMapping("/{runningCrewId}/start")
-    public ResponseEntity<Void> start(@PathVariable final Long runningCrewId) {
-        runningCrewService.start(runningCrewId);
+    public ResponseEntity<Void> start(
+        @RequestHeader("Authorization") final String accessToken,
+        @PathVariable final Long runningCrewId
+    ) {
+        runningCrewService.start(accessToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{runningCrewId}/end")
-    public ResponseEntity<Void> end(@PathVariable final Long runningCrewId) {
-        runningCrewService.end(runningCrewId);
+    public ResponseEntity<Void> end(
+        @RequestHeader("Authorization") final String accessToken,
+        @PathVariable final Long runningCrewId
+    ) {
+        runningCrewService.end(accessToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 }
