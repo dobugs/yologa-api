@@ -3,6 +3,7 @@ package com.dobugs.yologaapi.service;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LATITUDE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LONGITUDE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createMockRunningCrew;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrew;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewCreateRequest;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewUpdateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +40,10 @@ import io.jsonwebtoken.Jwts;
 @DisplayName("RunningCrew 서비스 테스트")
 class RunningCrewServiceTest {
 
+    private static final Long MEMBER_ID = 0L;
+    private static final String PROVIDER = "google";
+    private static final String ACCESS_TOKEN = "accessToken";
+
     private RunningCrewService runningCrewService;
 
     @Mock
@@ -52,20 +57,23 @@ class RunningCrewServiceTest {
         runningCrewService = new RunningCrewService(runningCrewRepository, tokenGenerator);
     }
 
+    private String createToken(final Long memberId, final String provider, final String token) {
+        return Jwts.builder()
+            .claim("memberId", memberId)
+            .claim("provider", provider)
+            .claim("token", token)
+            .compact();
+    }
+
     @DisplayName("러닝크루 생성 테스트")
     @Nested
     public class create {
-
-        private static final Long MEMBER_ID = 0L;
-        private static final String PROVIDER = "google";
-        private static final String ACCESS_TOKEN = "accessToken";
 
         @DisplayName("러닝크루를 생성한다")
         @Test
         void success() {
             final RunningCrewCreateRequest request = createRunningCrewCreateRequest();
             final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
@@ -75,14 +83,6 @@ class RunningCrewServiceTest {
             final long runningCrewId = runningCrewService.create(serviceToken, request);
 
             assertThat(runningCrewId).isNotNull();
-        }
-
-        private String createToken(final Long memberId, final String provider, final String token) {
-            return Jwts.builder()
-                .claim("memberId", memberId)
-                .claim("provider", provider)
-                .claim("token", token)
-                .compact();
         }
     }
 
@@ -142,17 +142,12 @@ class RunningCrewServiceTest {
     @Nested
     public class update {
 
-        private static final Long MEMBER_ID = 0L;
-        private static final String PROVIDER = "google";
-        private static final String ACCESS_TOKEN = "accessToken";
-
         @DisplayName("러닝크루를 수정한다")
         @Test
         void success() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 0L;
             final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
@@ -165,23 +160,14 @@ class RunningCrewServiceTest {
         @DisplayName("존재하지 않는 아이디로 러닝크루를 수정할 수 없다")
         @Test
         void isShouldExist() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long notExistRunningCrewId = 0L;
             final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             assertThatThrownBy(() -> runningCrewService.update(serviceToken, notExistRunningCrewId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
-        }
-
-        private String createToken(final Long memberId, final String provider, final String token) {
-            return Jwts.builder()
-                .claim("memberId", memberId)
-                .claim("provider", provider)
-                .claim("token", token)
-                .compact();
         }
     }
 
@@ -189,49 +175,31 @@ class RunningCrewServiceTest {
     @Nested
     public class delete {
 
-        private static final Long MEMBER_ID = 0L;
-        private static final String PROVIDER = "google";
-        private static final String ACCESS_TOKEN = "accessToken";
-
         @DisplayName("러닝크루를 삭제한다")
         @Test
         void success() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 1L;
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
-            final RunningCrew savedRunningCrew = mock(RunningCrew.class);
+            final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
             given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
 
             runningCrewService.delete(serviceToken, runningCrewId);
 
-            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.empty());
-
-            assertThatThrownBy(() -> runningCrewService.findById(runningCrewId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("러닝크루가 존재하지 않습니다.");
+            assertThat(savedRunningCrew.isArchived()).isFalse();
         }
 
         @DisplayName("존재하지 않는 아이디로 러닝크루를 삭제할 수 없다")
         @Test
         void isShouldExist() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long notExistId = 0L;
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             assertThatThrownBy(() -> runningCrewService.delete(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
-        }
-
-        private String createToken(final Long memberId, final String provider, final String token) {
-            return Jwts.builder()
-                .claim("memberId", memberId)
-                .claim("provider", provider)
-                .claim("token", token)
-                .compact();
         }
     }
 
@@ -239,44 +207,31 @@ class RunningCrewServiceTest {
     @Nested
     public class start {
 
-        private static final Long MEMBER_ID = 0L;
-        private static final String PROVIDER = "google";
-        private static final String ACCESS_TOKEN = "accessToken";
-
         @DisplayName("러닝크루를 시작한다")
         @Test
         void success() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 1L;
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
-            final RunningCrew savedRunningCrew = mock(RunningCrew.class);
+            final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
             given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
 
-            assertThatCode(() -> runningCrewService.start(serviceToken, runningCrewId))
-                .doesNotThrowAnyException();
+            runningCrewService.start(serviceToken, runningCrewId);
+
+            assertThat(savedRunningCrew.getImplementedStartDate()).isNotNull();
         }
 
         @DisplayName("존재하지 않는 아이디로 러닝크루를 시작할 수 없다")
         @Test
         void isShouldExist() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long notExistId = 0L;
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             assertThatThrownBy(() -> runningCrewService.start(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
-        }
-
-        private String createToken(final Long memberId, final String provider, final String token) {
-            return Jwts.builder()
-                .claim("memberId", memberId)
-                .claim("provider", provider)
-                .claim("token", token)
-                .compact();
         }
     }
 
@@ -284,44 +239,32 @@ class RunningCrewServiceTest {
     @Nested
     public class end {
 
-        private static final Long MEMBER_ID = 0L;
-        private static final String PROVIDER = "google";
-        private static final String ACCESS_TOKEN = "accessToken";
-
         @DisplayName("러닝크루를 종료한다")
         @Test
         void success() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 1L;
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
-            final RunningCrew savedRunningCrew = mock(RunningCrew.class);
+            final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
             given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+            runningCrewService.start(serviceToken, runningCrewId);
 
-            assertThatCode(() -> runningCrewService.end(serviceToken, runningCrewId))
-                .doesNotThrowAnyException();
+            runningCrewService.end(serviceToken, runningCrewId);
+
+            assertThat(savedRunningCrew.getImplementedEndDate()).isNotNull();
         }
 
         @DisplayName("존재하지 않는 아이디로 러닝크루를 종료할 수 없다")
         @Test
         void isShouldExist() {
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long notExistId = 0L;
-
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             assertThatThrownBy(() -> runningCrewService.end(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("러닝크루가 존재하지 않습니다.");
-        }
-
-        private String createToken(final Long memberId, final String provider, final String token) {
-            return Jwts.builder()
-                .claim("memberId", memberId)
-                .claim("provider", provider)
-                .claim("token", token)
-                .compact();
         }
     }
 }
