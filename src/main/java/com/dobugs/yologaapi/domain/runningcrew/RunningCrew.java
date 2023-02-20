@@ -83,10 +83,12 @@ public class RunningCrew extends BaseEntity {
     }
 
     public void update(
+        final Long memberId,
         final Coordinates departure, final Coordinates arrival,
         final Capacity capacity, final LocalDateTime scheduledStartDate, final LocalDateTime scheduledEndDate,
         final Deadline deadline, final String title, final String description
     ) {
+        validateMemberIsHost(memberId);
         validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
@@ -98,15 +100,28 @@ public class RunningCrew extends BaseEntity {
         this.description = description;
     }
 
-    public void start() {
+    public void delete(final Long memberId) {
+        validateMemberIsHost(memberId);
+        deleteEntity();
+    }
+
+    public void start(final Long memberId) {
+        validateMemberIsHost(memberId);
         validateRunningCrewDoesNotStart();
         implementedStartDate = LocalDateTime.now();
     }
 
-    public void end() {
+    public void end(final Long memberId) {
+        validateMemberIsHost(memberId);
         validateRunningCrewStart();
         validateRunningCrewDoesNotEnd();
         implementedEndDate = LocalDateTime.now();
+    }
+
+    private void validateMemberIsHost(final Long memberId) {
+        if (!this.memberId.equals(memberId)) {
+            throw new IllegalArgumentException(String.format("호스트가 아닙니다. [%s]", memberId));
+        }
     }
 
     private void validateStartIsBeforeThanEnd(final LocalDateTime start, final LocalDateTime end) {

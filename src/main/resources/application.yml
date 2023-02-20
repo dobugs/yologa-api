@@ -1,3 +1,6 @@
 spring:
   profiles:
     active: dev
+  config:
+    import:
+      - yologa-security/application-jwt.yml

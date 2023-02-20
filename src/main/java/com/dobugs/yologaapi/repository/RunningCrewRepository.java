@@ -11,7 +11,7 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 
 public interface RunningCrewRepository extends JpaRepository<RunningCrew, Long> {
 
-    Optional<RunningCrew> findByIdAndArchived(final Long id, final boolean archived);
+    Optional<RunningCrew> findByIdAndArchivedIsTrue(final Long id);
 
     @Query(
         value = "SELECT *\n"
