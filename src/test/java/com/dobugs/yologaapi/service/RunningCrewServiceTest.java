@@ -120,7 +120,7 @@ class RunningCrewServiceTest {
 
             final RunningCrew savedRunningCrew = createMockRunningCrew();
             given(savedRunningCrew.getId()).willReturn(runningCrewId);
-            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
 
             final RunningCrewResponse response = runningCrewService.findById(runningCrewId);
 
@@ -151,7 +151,7 @@ class RunningCrewServiceTest {
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
-            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
 
             assertThatCode(() -> runningCrewService.update(serviceToken, runningCrewId, request))
                 .doesNotThrowAnyException();
@@ -183,7 +183,7 @@ class RunningCrewServiceTest {
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
-            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
 
             runningCrewService.delete(serviceToken, runningCrewId);
 
@@ -215,7 +215,7 @@ class RunningCrewServiceTest {
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
-            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
 
             runningCrewService.start(serviceToken, runningCrewId);
 
@@ -247,7 +247,7 @@ class RunningCrewServiceTest {
             given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
 
             final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
-            given(runningCrewRepository.findByIdAndArchived(runningCrewId, true)).willReturn(Optional.of(savedRunningCrew));
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
             runningCrewService.start(serviceToken, runningCrewId);
 
             runningCrewService.end(serviceToken, runningCrewId);
