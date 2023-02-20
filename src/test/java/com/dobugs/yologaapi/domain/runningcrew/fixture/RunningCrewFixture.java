@@ -64,14 +64,6 @@ public class RunningCrewFixture {
             .build();
     }
 
-    public static RunningCrew createRunningCrew() {
-        return createRunningCrew(
-            1L, COORDINATES, COORDINATES, RUNNING_CREW_CAPACITY,
-            NOW, AFTER_ONE_HOUR, AFTER_ONE_HOUR,
-            RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
-        );
-    }
-
     public static RunningCrew createRunningCrew(final Long hostId) {
         return createRunningCrew(
             hostId, COORDINATES, COORDINATES, RUNNING_CREW_CAPACITY,

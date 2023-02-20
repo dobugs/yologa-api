@@ -35,12 +35,14 @@ class RunningCrewRepositoryTest {
     @Nested
     public class findByIdAndArchived {
 
+        private static final Long HOST_ID = 0L;
+
         @DisplayName("삭제되지 않은 러닝크루를 조회한다")
         @Test
         void archivedIsTrue() {
             final boolean archived = true;
 
-            final RunningCrew runningCrew = createRunningCrew();
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
             runningCrewRepository.save(runningCrew);
 
             final Optional<RunningCrew> actual = runningCrewRepository.findByIdAndArchived(runningCrew.getId(), archived);
@@ -53,7 +55,7 @@ class RunningCrewRepositoryTest {
         void archivedIsFalse() {
             final boolean archived = false;
 
-            final RunningCrew runningCrew = createRunningCrew();
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
             final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
             savedRunningCrew.deleteEntity();
             entityManager.flush();
@@ -68,13 +70,15 @@ class RunningCrewRepositoryTest {
     @Nested
     public class findNearby {
 
+        private static final Long HOST_ID = 0L;
+
         @DisplayName("내 주변에 있는 러닝크루 목록을 조회한다")
         @Test
         void success() {
             final int count = 3;
 
             for (int i = 0; i < count; i++) {
-                runningCrewRepository.save(createRunningCrew());
+                runningCrewRepository.save(createRunningCrew(HOST_ID));
             }
 
             final Pageable pageable = PageRequest.of(0, 5);
