@@ -6,9 +6,11 @@
 :toclevels: 3
 :sectlinks:
 
-== API
-=== 러닝크루 API
-* link:running-crew.html[러닝크루 API, window=_blank]
+:dobugs-member-server-url: http://54.180.137.18:8080
+:dobugs-member-server-rest-docs-paht: /docs
+:dobugs-member-server-auth-html: /auth.html
+:dobugs-member-server-member-html: /member.html
 
-=== 인증 API
-* http://54.180.137.18:8080/docs/auth.html[인증 API, window=_blank]
+* link:running-crew.html[러닝크루 API, window=_blank]
+* {dobugs-member-server-url}{dobugs-member-server-rest-docs-paht}{dobugs-member-server-auth-html}[인증 API, window=_blank]
+* {dobugs-member-server-url}{dobugs-member-server-rest-docs-paht}{dobugs-member-server-member-html}[사용자 API, window=_blank]
