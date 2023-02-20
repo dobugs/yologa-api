@@ -55,7 +55,7 @@ class RunningCrewRepositoryTest {
 
             final RunningCrew runningCrew = createRunningCrew();
             final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
-            savedRunningCrew.delete();
+            savedRunningCrew.deleteEntity();
             entityManager.flush();
 
             final Optional<RunningCrew> actual = runningCrewRepository.findByIdAndArchived(runningCrew.getId(), archived);

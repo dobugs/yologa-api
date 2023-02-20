@@ -19,6 +19,8 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
+import com.dobugs.yologaapi.support.TokenGenerator;
+import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,9 +30,13 @@ import lombok.RequiredArgsConstructor;
 public class RunningCrewService {
 
     private final RunningCrewRepository runningCrewRepository;
+    private final TokenGenerator tokenGenerator;
 
-    public long create(final RunningCrewCreateRequest request) {
-        final RunningCrew runningCrew = convertToRunningCrew(request);
+    public long create(final String serviceToken, final RunningCrewCreateRequest request) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
+
+        final RunningCrew runningCrew = convertToRunningCrew(memberId, request);
         final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
 
         return savedRunningCrew.getId();
@@ -48,31 +54,30 @@ public class RunningCrewService {
     @Transactional(readOnly = true)
     public RunningCrewResponse findById(final Long runningCrewId) {
         final RunningCrew runningCrew = findRunningCrewBy(runningCrewId);
-
         return RunningCrewResponse.from(runningCrew);
     }
 
-    public void update(final Long runningCrewId, final RunningCrewUpdateRequest request) {
+    public void update(final String serviceToken, final Long runningCrewId, final RunningCrewUpdateRequest request) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-
-        update(request, savedRunningCrew);
+        update(memberId, request, savedRunningCrew);
     }
 
-    public void delete(final Long runningCrewId) {
+    public void delete(final String serviceToken, final Long runningCrewId) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-
-        savedRunningCrew.delete();
+        savedRunningCrew.delete(memberId);
     }
 
     public void start(final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-
         savedRunningCrew.start();
     }
 
     public void end(final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-
         savedRunningCrew.end();
     }
 
@@ -81,11 +86,12 @@ public class RunningCrewService {
             .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));
     }
 
-    private void update(final RunningCrewUpdateRequest request, final RunningCrew savedRunningCrew) {
+    private void update(final Long memberId, final RunningCrewUpdateRequest request, final RunningCrew savedRunningCrew) {
         final LocationsDto locationsDto = request.location();
         final DateDto dateDto = request.date();
 
         savedRunningCrew.update(
+            memberId,
             convertToCoordinates(locationsDto.getDeparture()), convertToCoordinates(locationsDto.getArrival()),
             new Capacity(request.capacity()),
             dateDto.getStart(), dateDto.getEnd(),
@@ -94,9 +100,7 @@ public class RunningCrewService {
         );
     }
 
-    private RunningCrew convertToRunningCrew(final RunningCrewCreateRequest request) {
-        final long memberId = 1L;
-
+    private RunningCrew convertToRunningCrew(final Long memberId, final RunningCrewCreateRequest request) {
         final LocationsDto locationsDto = request.location();
         final Coordinates departure = convertToCoordinates(locationsDto.getDeparture());
         final Coordinates arrival = convertToCoordinates(locationsDto.getArrival());

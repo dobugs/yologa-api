@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +31,11 @@ public class RunningCrewController {
     private final RunningCrewService runningCrewService;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody final RunningCrewCreateRequest request) {
-        final long runningCrewId = runningCrewService.create(request);
+    public ResponseEntity<Void> create(
+        @RequestHeader("Authorization") final String accessToken,
+        @RequestBody final RunningCrewCreateRequest request
+    ) {
+        final long runningCrewId = runningCrewService.create(accessToken, request);
         return ResponseEntity.created(URI.create("/api/v1/running-crews/" + runningCrewId)).build();
     }
 
@@ -49,16 +53,20 @@ public class RunningCrewController {
 
     @PutMapping("/{runningCrewId}")
     public ResponseEntity<Void> update(
+        @RequestHeader("Authorization") final String accessToken,
         @PathVariable final Long runningCrewId,
         @RequestBody final RunningCrewUpdateRequest request
     ) {
-        runningCrewService.update(runningCrewId, request);
+        runningCrewService.update(accessToken, runningCrewId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{runningCrewId}")
-    public ResponseEntity<Void> delete(@PathVariable final Long runningCrewId) {
-        runningCrewService.delete(runningCrewId);
+    public ResponseEntity<Void> delete(
+        @RequestHeader("Authorization") final String accessToken,
+        @PathVariable final Long runningCrewId
+    ) {
+        runningCrewService.delete(accessToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 

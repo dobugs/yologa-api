@@ -32,9 +32,9 @@ public class RunningCrewFixture {
     public static final double LONGITUDE = 127.12379233466;
     public static final Coordinates COORDINATES = new Coordinates(LATITUDE, LONGITUDE);
 
-    public static final String RUNNING_CREW_TITLE = "title";
+    public static final String RUNNING_CREW_TITLE = "열심히 달릴 사람~~";
     public static final int RUNNING_CREW_CAPACITY = 10;
-    public static final String RUNNING_CREW_DESCRIPTION = "description";
+    public static final String RUNNING_CREW_DESCRIPTION = "정말 열심히 달릴 사람만 모집해요!!! XD";
 
     public static final LocalDateTime NOW = LocalDateTime.now();
     public static final LocalDateTime AFTER_ONE_HOUR = LocalDateTime.now().plusHours(1);

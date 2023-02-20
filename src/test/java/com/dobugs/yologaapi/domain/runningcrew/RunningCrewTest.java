@@ -53,20 +53,43 @@ class RunningCrewTest {
     @Nested
     public class updateTest {
 
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루를 수정한다")
         @Test
         void update() {
             final RunningCrew runningCrew = new RunningCrew(
-                1L, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
                 NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
                 RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
             );
 
             assertThatCode(() -> runningCrew.update(
+                HOST_ID,
                 COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
                 NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
                 RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
             )).doesNotThrowAnyException();
+        }
+
+        @DisplayName("호스트가 아닌 경우 예외가 발생한다")
+        @Test
+        void memberIsNotHost() {
+            final long memberId = 0L;
+
+            final RunningCrew runningCrew = new RunningCrew(
+                HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            );
+
+            assertThatThrownBy(() -> runningCrew.update(
+                memberId,
+                COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("호스트가 아닙니다.");
         }
 
         @DisplayName("시작 시간은 종료 시간보다 앞서있어야 한다")
@@ -79,6 +102,7 @@ class RunningCrewTest {
 
             assertThatThrownBy(
                 () -> runningCrew.update(
+                    HOST_ID,
                     COORDINATES, COORDINATES,
                     new Capacity(RUNNING_CREW_CAPACITY), start, end,
                     new Deadline(AFTER_ONE_HOUR),
@@ -87,6 +111,43 @@ class RunningCrewTest {
             )
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("시작 시간은 종료 시간보다 앞서있어야 합니다.");
+        }
+    }
+
+    @DisplayName("러닝크루 삭제 테스트")
+    @Nested
+    public class delete {
+
+        private static final Long HOST_ID = 1L;
+
+        @DisplayName("러닝크루를 삭제한다")
+        @Test
+        void success() {
+            final RunningCrew runningCrew = new RunningCrew(
+                HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            );
+
+            runningCrew.delete(HOST_ID);
+
+            assertThat(runningCrew.isArchived()).isFalse();
+        }
+
+        @DisplayName("호스트가 아닐 경우 예외가 발생한다")
+        @Test
+        void memberIsNotHost() {
+            final long memberId = 0L;
+
+            final RunningCrew runningCrew = new RunningCrew(
+                HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            );
+
+            assertThatThrownBy(() -> runningCrew.delete(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("호스트가 아닙니다.");
         }
     }
 
