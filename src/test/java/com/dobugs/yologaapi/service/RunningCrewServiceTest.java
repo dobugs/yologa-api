@@ -54,7 +54,7 @@ class RunningCrewServiceTest {
 
     @DisplayName("러닝크루 생성 테스트")
     @Nested
-    public class createTest {
+    public class create {
 
         private static final Long MEMBER_ID = 0L;
         private static final String PROVIDER = "google";
@@ -62,7 +62,7 @@ class RunningCrewServiceTest {
 
         @DisplayName("러닝크루를 생성한다")
         @Test
-        void create() {
+        void success() {
             final RunningCrewCreateRequest request = createRunningCrewCreateRequest();
             final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
 
@@ -88,11 +88,11 @@ class RunningCrewServiceTest {
 
     @DisplayName("내 주변 러닝크루 목록 조회 테스트")
     @Nested
-    public class findNearbyTest {
+    public class findNearby {
 
         @DisplayName("내 주변 러닝크루의 목록을 조회한다")
         @Test
-        void findNearby() {
+        void success() {
             final RunningCrewFindNearbyRequest request = new RunningCrewFindNearbyRequest(
                 LATITUDE, LONGITUDE, 3000, 0, 10
             );
@@ -111,11 +111,11 @@ class RunningCrewServiceTest {
 
     @DisplayName("러닝크루 상세정보 조회 테스트")
     @Nested
-    public class findByIdTest {
+    public class findById {
 
         @DisplayName("러닝크루의 상세정보를 조회한다")
         @Test
-        void findById() {
+        void success() {
             final long runningCrewId = 1L;
 
             final RunningCrew savedRunningCrew = createMockRunningCrew();
@@ -140,7 +140,7 @@ class RunningCrewServiceTest {
 
     @DisplayName("러닝크루 수정 테스트")
     @Nested
-    public class updateTest {
+    public class update {
 
         private static final Long MEMBER_ID = 0L;
         private static final String PROVIDER = "google";
@@ -148,7 +148,7 @@ class RunningCrewServiceTest {
 
         @DisplayName("러닝크루를 수정한다")
         @Test
-        void update() {
+        void success() {
             final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 0L;
             final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
@@ -187,7 +187,7 @@ class RunningCrewServiceTest {
 
     @DisplayName("러닝크루 삭제 테스트")
     @Nested
-    public class deleteTest {
+    public class delete {
 
         private static final Long MEMBER_ID = 0L;
         private static final String PROVIDER = "google";
@@ -195,7 +195,7 @@ class RunningCrewServiceTest {
 
         @DisplayName("러닝크루를 삭제한다")
         @Test
-        void delete() {
+        void success() {
             final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
             final long runningCrewId = 1L;
 
@@ -237,11 +237,11 @@ class RunningCrewServiceTest {
 
     @DisplayName("러닝크루 시작 테스트")
     @Nested
-    public class startTest {
+    public class start {
 
         @DisplayName("러닝크루를 시작한다")
         @Test
-        void start() {
+        void success() {
             final long runningCrewId = 1L;
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
@@ -264,11 +264,11 @@ class RunningCrewServiceTest {
 
     @DisplayName("러닝크루 종료 테스트")
     @Nested
-    public class endTest {
+    public class end {
 
         @DisplayName("러닝크루를 종료한다")
         @Test
-        void end() {
+        void success() {
             final long runningCrewId = 1L;
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);

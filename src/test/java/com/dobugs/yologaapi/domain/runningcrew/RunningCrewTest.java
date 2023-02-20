@@ -23,11 +23,11 @@ class RunningCrewTest {
 
     @DisplayName("러닝크루 객체 생성 테스트")
     @Nested
-    public class createTest {
+    public class create {
 
         @DisplayName("러닝크루를 생성한다")
         @Test
-        void create() {
+        void success() {
             assertThatCode(() -> new RunningCrew(
                     1L, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
                     NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
@@ -51,13 +51,13 @@ class RunningCrewTest {
 
     @DisplayName("러닝크루 수정 테스트")
     @Nested
-    public class updateTest {
+    public class update {
 
         private static final Long HOST_ID = 1L;
 
         @DisplayName("러닝크루를 수정한다")
         @Test
-        void update() {
+        void success() {
             final RunningCrew runningCrew = new RunningCrew(
                 HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
                 NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
@@ -153,11 +153,11 @@ class RunningCrewTest {
 
     @DisplayName("러닝크루 시작 테스트")
     @Nested
-    public class startTest {
+    public class start {
 
         @DisplayName("러닝크루를 시작한다")
         @Test
-        void start() {
+        void success() {
             final RunningCrew runningCrew = createRunningCrew();
 
             runningCrew.start();
@@ -180,11 +180,11 @@ class RunningCrewTest {
 
     @DisplayName("러닝크루 종료 테스트")
     @Nested
-    public class endTest {
+    public class end {
 
         @DisplayName("러닝크루를 종료한다")
         @Test
-        void end() {
+        void success() {
             final RunningCrew runningCrew = createRunningCrew();
 
             runningCrew.start();

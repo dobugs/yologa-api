@@ -33,7 +33,7 @@ class RunningCrewRepositoryTest {
 
     @DisplayName("아이디와 삭제 여부를 통해서 러닝크루를 조회한다")
     @Nested
-    public class findByIdAndArchivedTest {
+    public class findByIdAndArchived {
 
         @DisplayName("삭제되지 않은 러닝크루를 조회한다")
         @Test
@@ -66,11 +66,11 @@ class RunningCrewRepositoryTest {
 
     @DisplayName("내 주변에 있는 러닝크루 목록을 조회한다")
     @Nested
-    public class findNearbyTest {
+    public class findNearby {
 
         @DisplayName("내 주변에 있는 러닝크루 목록을 조회한다")
         @Test
-        void findNearby() {
+        void success() {
             final int count = 3;
 
             for (int i = 0; i < count; i++) {
