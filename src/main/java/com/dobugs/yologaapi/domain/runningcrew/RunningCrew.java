@@ -1,8 +1,6 @@
 package com.dobugs.yologaapi.domain.runningcrew;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
@@ -10,7 +8,6 @@ import org.locationtech.jts.io.WKTReader;
 
 import com.dobugs.yologaapi.domain.BaseEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -19,8 +16,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,9 +41,8 @@ public class RunningCrew extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private ProgressionType status;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "running_crew_id")
-    private List<Participant> participant = new ArrayList<>();
+    @Embedded
+    private Participants participant;
 
     @Embedded
     private Capacity capacity;
@@ -83,7 +77,7 @@ public class RunningCrew extends BaseEntity {
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
         this.status = ProgressionType.CREATED;
-        this.participant.add(new Participant(memberId));
+        this.participant = new Participants(memberId);
         this.capacity = capacity;
         this.scheduledStartDate = scheduledStartDate;
         this.scheduledEndDate = scheduledEndDate;
@@ -100,6 +94,8 @@ public class RunningCrew extends BaseEntity {
     ) {
         validateMemberIsHost(memberId);
         validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
+        this.participant.validateCapacityIsOver(capacity);
+
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
         this.capacity = capacity;

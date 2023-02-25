@@ -61,11 +61,7 @@ class RunningCrewTest {
         @DisplayName("러닝크루를 수정한다")
         @Test
         void success() {
-            final RunningCrew runningCrew = new RunningCrew(
-                HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
-                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
-                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
-            );
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
 
             assertThatCode(() -> runningCrew.update(
                 HOST_ID,
@@ -79,12 +75,7 @@ class RunningCrewTest {
         @Test
         void memberIsNotHost() {
             final long memberId = -1L;
-
-            final RunningCrew runningCrew = new RunningCrew(
-                HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
-                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
-                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
-            );
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
 
             assertThatThrownBy(() -> runningCrew.update(
                 memberId,
@@ -100,19 +91,14 @@ class RunningCrewTest {
         void startShouldBeBeforeThanEnd() {
             final LocalDateTime start = LocalDateTime.now();
             final LocalDateTime end = start.minusDays(1);
-
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
 
-            assertThatThrownBy(
-                () -> runningCrew.update(
-                    HOST_ID,
-                    COORDINATES, COORDINATES,
-                    new Capacity(RUNNING_CREW_CAPACITY), start, end,
-                    new Deadline(AFTER_ONE_HOUR),
-                    RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
-                )
-            )
-                .isInstanceOf(IllegalArgumentException.class)
+            assertThatThrownBy(() -> runningCrew.update(
+                HOST_ID,
+                COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
+                start, end, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            )).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("시작 시간은 종료 시간보다 앞서있어야 합니다.");
         }
     }
