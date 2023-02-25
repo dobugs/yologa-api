@@ -30,7 +30,8 @@ public class TokenGenerator {
     }
 
     public UserTokenResponse extract(final String serviceToken) {
-        final Claims claims = extractClaims(serviceToken);
+        final String jwt = serviceToken.replace("Bearer ", "");
+        final Claims claims = extractClaims(jwt);
         final Long memberId = extractMemberId(claims);
         final String token = extractToken(claims);
         final String provider = extractProvider(claims);
