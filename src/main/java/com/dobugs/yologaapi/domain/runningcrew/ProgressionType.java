@@ -1,6 +1,6 @@
 package com.dobugs.yologaapi.domain.runningcrew;
 
-public enum RunningCrewProgression {
+public enum ProgressionType {
 
     CREATED,
     READY,

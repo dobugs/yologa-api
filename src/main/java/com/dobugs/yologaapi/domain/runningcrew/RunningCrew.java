@@ -44,7 +44,7 @@ public class RunningCrew extends BaseEntity {
     private Point arrival;
 
     @Enumerated(value = EnumType.STRING)
-    private RunningCrewProgression status;
+    private ProgressionType status;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "running_crew_id")
@@ -82,7 +82,7 @@ public class RunningCrew extends BaseEntity {
         this.memberId = memberId;
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
-        this.status = RunningCrewProgression.CREATED;
+        this.status = ProgressionType.CREATED;
         this.participant.add(new Participant(memberId));
         this.capacity = capacity;
         this.scheduledStartDate = scheduledStartDate;
@@ -118,6 +118,7 @@ public class RunningCrew extends BaseEntity {
     public void start(final Long memberId) {
         validateMemberIsHost(memberId);
         validateRunningCrewDoesNotStart();
+        status = ProgressionType.IN_PROGRESS;
         implementedStartDate = LocalDateTime.now();
     }
 
@@ -125,6 +126,7 @@ public class RunningCrew extends BaseEntity {
         validateMemberIsHost(memberId);
         validateRunningCrewStart();
         validateRunningCrewDoesNotEnd();
+        status = ProgressionType.COMPLETED;
         implementedEndDate = LocalDateTime.now();
     }
 

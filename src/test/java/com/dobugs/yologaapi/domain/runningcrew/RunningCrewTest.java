@@ -11,6 +11,7 @@ import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 
@@ -166,7 +167,10 @@ class RunningCrewTest {
 
             runningCrew.start(HOST_ID);
 
-            assertThat(runningCrew.getImplementedStartDate()).isNotNull();
+            assertAll(
+                () -> assertThat(runningCrew.getImplementedStartDate()).isNotNull(),
+                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.IN_PROGRESS)
+            );
         }
 
         @DisplayName("호스트가 아닐 경우 예외가 발생한다")
@@ -207,7 +211,10 @@ class RunningCrewTest {
             runningCrew.start(HOST_ID);
             runningCrew.end(HOST_ID);
 
-            assertThat(runningCrew.getImplementedEndDate()).isNotNull();
+            assertAll(
+                () -> assertThat(runningCrew.getImplementedEndDate()).isNotNull(),
+                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.COMPLETED)
+            );
         }
 
         @DisplayName("호스트가 아닐 경우 예외가 발생한다")

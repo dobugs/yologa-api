@@ -11,7 +11,7 @@ import com.dobugs.yologaapi.domain.runningcrew.Capacity;
 import com.dobugs.yologaapi.domain.runningcrew.Coordinates;
 import com.dobugs.yologaapi.domain.runningcrew.Deadline;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
-import com.dobugs.yologaapi.domain.runningcrew.RunningCrewProgression;
+import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
 import com.dobugs.yologaapi.service.dto.common.DatesDto;
@@ -88,7 +88,7 @@ public class RunningCrewFixture {
 
     public static RunningCrewSummaryResponse createRunningCrewSummaryResponse() {
         return new RunningCrewSummaryResponse(
-            1L, LOCATION_DTO, RunningCrewProgression.CREATED.name(), LocalDateTime.now()
+            1L, LOCATION_DTO, ProgressionType.CREATED.name(), LocalDateTime.now()
         );
     }
 
@@ -100,7 +100,7 @@ public class RunningCrewFixture {
 
     public static RunningCrewResponse createRunningCrewResponse(final Long runningCrewId) {
         return new RunningCrewResponse(
-            runningCrewId, RUNNING_CREW_TITLE, 1L, LOCATIONS_DTO, RunningCrewProgression.CREATED.name(),
+            runningCrewId, RUNNING_CREW_TITLE, 1L, LOCATIONS_DTO, ProgressionType.CREATED.name(),
             RUNNING_CREW_CAPACITY, DATES_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
         );
     }
@@ -113,7 +113,7 @@ public class RunningCrewFixture {
         final RunningCrew runningCrew = mock(RunningCrew.class);
         given(runningCrew.getDeparture()).willReturn(point);
         given(runningCrew.getArrival()).willReturn(point);
-        given(runningCrew.getStatus()).willReturn(RunningCrewProgression.CREATED);
+        given(runningCrew.getStatus()).willReturn(ProgressionType.CREATED);
         given(runningCrew.getCapacity()).willReturn(new Capacity(RUNNING_CREW_CAPACITY));
         given(runningCrew.getDeadline()).willReturn(new Deadline(AFTER_ONE_HOUR));
 
