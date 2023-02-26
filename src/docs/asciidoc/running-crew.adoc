@@ -52,3 +52,9 @@ Request
 include::{snippets}/participation/participate/http-request.adoc[]
 Response
 include::{snippets}/participation/participate/http-response.adoc[]
+
+== 러닝크루 참여 요청 취소
+Request
+include::{snippets}/participation/cancel/http-request.adoc[]
+Response
+include::{snippets}/participation/cancel/http-response.adoc[]

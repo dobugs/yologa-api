@@ -135,6 +135,12 @@ public class RunningCrew extends BaseEntity {
         participants.add(this, memberId);
     }
 
+    public void cancel(final Long memberId) {
+        validateMemberIsNotHost(memberId);
+        participants.validateMemberIsRequested(memberId);
+        participants.delete(memberId);
+    }
+
     private void validateMemberIsHost(final Long memberId) {
         if (!this.memberId.equals(memberId)) {
             throw new IllegalArgumentException(String.format("호스트가 아닙니다. [%s]", memberId));

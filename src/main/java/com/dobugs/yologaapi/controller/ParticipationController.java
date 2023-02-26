@@ -26,4 +26,13 @@ public class ParticipationController {
         participationService.participate(accessToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<Void> cancel(
+        @RequestHeader("Authorization") final String accessToken,
+        @PathVariable final Long runningCrewId
+    ) {
+        participationService.cancel(accessToken, runningCrewId);
+        return ResponseEntity.ok().build();
+    }
 }

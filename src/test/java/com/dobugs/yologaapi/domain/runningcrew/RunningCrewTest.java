@@ -258,12 +258,12 @@ class RunningCrewTest {
 
             runningCrew.participate(memberId);
 
-            final List<Long> idsOfParticipants = runningCrew.getParticipants()
+            final Participant participant = runningCrew.getParticipants()
                 .getValue()
                 .stream()
-                .map(Participant::getMemberId)
-                .toList();
-            assertThat(idsOfParticipants).contains(memberId);
+                .filter(value -> value.getMemberId().equals(memberId))
+                .findFirst().get();
+            assertThat(participant.getStatus()).isEqualTo(ParticipantType.REQUESTED);
         }
 
         @DisplayName("호스트일 경우 예외가 발생한다")
@@ -324,6 +324,53 @@ class RunningCrewTest {
             assertThatThrownBy(() -> runningCrew.participate(memberId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 시작되었습니다.");
+        }
+    }
+
+    @DisplayName("참여 요청 취소 테스트")
+    @Nested
+    public class cancel {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("러닝크루에 참여 요청했던 것을 취소한다")
+        @Test
+        void success() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            runningCrew.participate(memberId);
+            runningCrew.cancel(memberId);
+
+            final List<Long> idsOfParticipants = runningCrew.getParticipants()
+                .getValue()
+                .stream()
+                .map(Participant::getMemberId)
+                .toList();
+            assertThat(idsOfParticipants).doesNotContain(memberId);
+        }
+
+        @DisplayName("호스트일 경우 예외가 발생한다")
+        @Test
+        void memberIsHost() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.participate(memberId);
+
+            assertThatThrownBy(() -> runningCrew.cancel(HOST_ID))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("러닝크루의 호스트입니다.");
+        }
+
+        @DisplayName("참여 요청하지 않았었으면 예외가 발생한다")
+        @Test
+        void memberIsNotRequested() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            assertThatThrownBy(() -> runningCrew.cancel(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여자가 아닙니다.");
         }
     }
 }

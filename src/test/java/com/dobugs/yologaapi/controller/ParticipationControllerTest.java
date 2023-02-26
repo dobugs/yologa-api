@@ -40,7 +40,7 @@ class ParticipationControllerTest {
     @MockBean
     private ParticipationService participationService;
 
-    @DisplayName("러닝크루에 참여 요청읋 한다")
+    @DisplayName("러닝크루에 참여 요청을 한다")
     @Test
     void participate() throws Exception {
         final String accessToken = "accessToken";
@@ -51,6 +51,23 @@ class ParticipationControllerTest {
             .andExpect(status().isOk())
             .andDo(document(
                 "participation/participate",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
+
+    @DisplayName("러닝크루에 참여 요청을 취소한다")
+    @Test
+    void cancel() throws Exception {
+        final String accessToken = "accessToken";
+        final long runningCrewId = 1L;
+
+        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/cancel")
+                .header("Authorization", accessToken))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "participation/cancel",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()))
             )

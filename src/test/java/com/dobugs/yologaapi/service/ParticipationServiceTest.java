@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.dobugs.yologaapi.domain.runningcrew.Participant;
+import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.support.TokenGenerator;
@@ -70,12 +71,39 @@ class ParticipationServiceTest {
 
             participationService.participate(serviceToken, runningCrewId);
 
-            final List<Long> idsOfParticipants = runningCrew.getParticipants()
+            final Participant participant = runningCrew.getParticipants()
                 .getValue()
                 .stream()
-                .map(Participant::getMemberId)
-                .toList();
-            assertThat(idsOfParticipants).contains(MEMBER_ID);
+                .filter(value -> value.getMemberId().equals(MEMBER_ID))
+                .findFirst().get();
+            assertThat(participant.getStatus()).isEqualTo(ParticipantType.REQUESTED);
+        }
+    }
+
+    @DisplayName("참여 요청 취소 테스트")
+    @Nested
+    public class cancel {
+
+        @DisplayName("러닝크루에 참여 요청 취소를 한다")
+        @Test
+        void success() {
+            final long runningCrewId = 0L;
+
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
+
+            participationService.participate(serviceToken, runningCrewId);
+            participationService.cancel(serviceToken, runningCrewId);
+
+            final Optional<Participant> participant = runningCrew.getParticipants()
+                .getValue()
+                .stream()
+                .filter(value -> value.getMemberId().equals(MEMBER_ID))
+                .findFirst();
+            assertThat(participant).isEmpty();
         }
     }
 }

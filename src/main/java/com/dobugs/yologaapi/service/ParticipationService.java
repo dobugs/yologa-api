@@ -26,6 +26,14 @@ public class ParticipationService {
         savedRunningCrew.participate(memberId);
     }
 
+    public void cancel(final String serviceToken, final Long runningCrewId) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
+
+        final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
+        savedRunningCrew.cancel(memberId);
+    }
+
     private RunningCrew findRunningCrewBy(final Long runningCrewId) {
         return runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)
             .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));

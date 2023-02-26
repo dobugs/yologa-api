@@ -46,4 +46,8 @@ public class Participant extends BaseEntity {
         this.status = ParticipantType.REQUESTED;
         this.runningCrew = runningCrew;
     }
+
+    public boolean isRequested() {
+        return status.isRequested();
+    }
 }

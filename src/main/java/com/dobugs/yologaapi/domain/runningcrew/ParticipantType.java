@@ -16,4 +16,8 @@ public enum ParticipantType {
     ParticipantType(final String name) {
         this.name = name;
     }
+
+    public boolean isRequested() {
+        return this == REQUESTED;
+    }
 }

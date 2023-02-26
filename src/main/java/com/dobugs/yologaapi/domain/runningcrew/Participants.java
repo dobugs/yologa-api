@@ -23,11 +23,13 @@ public class Participants {
     }
 
     public void add(final RunningCrew runningCrew, final Long memberId) {
-        final List<Long> participants = value.stream().map(Participant::getMemberId).toList();
-        if (participants.contains(memberId)) {
-            throw new IllegalArgumentException("이미 참여된 사용자입니다.");
-        }
+        validateMemberIsNotParticipant(memberId);
         value.add(new Participant(memberId, runningCrew));
+    }
+
+    public void delete(final Long memberId) {
+        final Participant participant = findParticipant(memberId);
+        value.remove(participant);
     }
 
     public void validateCapacityIsOver(final Capacity capacity) {
@@ -43,5 +45,19 @@ public class Participants {
                 throw new IllegalArgumentException(String.format("이미 참여중입니다. [%s, %s]", memberId, participant.getStatus().getName()));
             }
         }
+    }
+
+    public void validateMemberIsRequested(final Long memberId) {
+        final Participant participant = findParticipant(memberId);
+        if (!participant.isRequested()) {
+            throw new IllegalArgumentException(String.format("참여 요청인 상태가 아닙니다. [%s, %s]", memberId, participant.getStatus().getName()));
+        }
+    }
+
+    private Participant findParticipant(final Long memberId) {
+        return value.stream()
+            .filter(value -> value.getMemberId().equals(memberId))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(String.format("참여자가 아닙니다. [%s]", memberId)));
     }
 }
