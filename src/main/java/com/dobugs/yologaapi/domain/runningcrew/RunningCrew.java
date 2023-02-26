@@ -42,7 +42,7 @@ public class RunningCrew extends BaseEntity {
     private ProgressionType status;
 
     @Embedded
-    private Participants participant;
+    private Participants participants;
 
     @Embedded
     private Capacity capacity;
@@ -77,7 +77,7 @@ public class RunningCrew extends BaseEntity {
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
         this.status = ProgressionType.CREATED;
-        this.participant = new Participants(memberId);
+        this.participants = new Participants(this);
         this.capacity = capacity;
         this.scheduledStartDate = scheduledStartDate;
         this.scheduledEndDate = scheduledEndDate;
@@ -94,7 +94,7 @@ public class RunningCrew extends BaseEntity {
     ) {
         validateMemberIsHost(memberId);
         validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
-        this.participant.validateCapacityIsOver(capacity);
+        this.participants.validateCapacityIsOver(capacity);
 
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);

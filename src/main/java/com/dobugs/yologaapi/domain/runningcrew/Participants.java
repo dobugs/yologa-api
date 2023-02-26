@@ -4,25 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Embeddable
 public class Participants {
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "running_crew_id")
+    @OneToMany(mappedBy = "runningCrew", cascade = CascadeType.ALL)
     private List<Participant> value = new ArrayList<>();
 
-    public Participants(final Long memberId) {
-        value.add(new Participant(memberId));
+    public Participants(final RunningCrew runningCrew) {
+        value.add(new Participant(runningCrew.getMemberId(), runningCrew));
     }
 
-    public void add(final Long memberId) {
+    public void add(final RunningCrew runningCrew, final Long memberId) {
         final List<Long> participants = value.stream().map(Participant::getMemberId).toList();
         if (participants.contains(memberId)) {
             throw new IllegalArgumentException("이미 참여된 사용자입니다.");
         }
-        value.add(new Participant(memberId));
+        value.add(new Participant(memberId, runningCrew));
     }
 
     public void validateCapacityIsOver(final Capacity capacity) {
