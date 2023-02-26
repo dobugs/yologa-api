@@ -72,4 +72,29 @@ class ParticipantsTest {
                 .hasMessageContaining("참여자 수용인원이 다 찼습니다.");
         }
     }
+
+    @DisplayName("참여자인지 검증 테스트")
+    @Nested
+    public class validateMemberIsNotParticipant {
+
+        @DisplayName("참여자가 아닐 경우 예외가 발생하지 않는다")
+        @Test
+        void memberIsNotParticipant() {
+            final long memberId = 2L;
+            final Participants participants = new Participants(runningCrew);
+
+            assertThatCode(() -> participants.validateMemberIsNotParticipant(memberId))
+                .doesNotThrowAnyException();
+        }
+
+        @DisplayName("참여자일 경우 예외가 발생한다")
+        @Test
+        void memberIsParticipant() {
+            final Participants participants = new Participants(runningCrew);
+
+            assertThatThrownBy(() -> participants.validateMemberIsNotParticipant(HOST_ID))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 참여중입니다.");
+        }
+    }
 }

@@ -19,7 +19,7 @@ public class Participants {
     private List<Participant> value = new ArrayList<>();
 
     public Participants(final RunningCrew runningCrew) {
-        value.add(new Participant(runningCrew.getMemberId(), runningCrew));
+        value.add(new Participant(runningCrew));
     }
 
     public void add(final RunningCrew runningCrew, final Long memberId) {
@@ -34,6 +34,14 @@ public class Participants {
         final int numberOfParticipants = value.size();
         if (!capacity.isLeft(numberOfParticipants)) {
             throw new IllegalArgumentException("참여자 수용인원이 다 찼습니다.");
+        }
+    }
+
+    public void validateMemberIsNotParticipant(final Long memberId) {
+        for (final Participant participant : value) {
+            if (participant.getMemberId().equals(memberId)) {
+                throw new IllegalArgumentException(String.format("이미 참여중입니다. [%s, %s]", memberId, participant.getStatus().getName()));
+            }
         }
     }
 }

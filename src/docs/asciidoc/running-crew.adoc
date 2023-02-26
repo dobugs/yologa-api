@@ -46,3 +46,9 @@ Request
 include::{snippets}/running-crew/end/http-request.adoc[]
 Response
 include::{snippets}/running-crew/end/http-response.adoc[]
+
+== 러닝크루 참여 요청
+Request
+include::{snippets}/participation/participate/http-request.adoc[]
+Response
+include::{snippets}/participation/participate/http-response.adoc[]

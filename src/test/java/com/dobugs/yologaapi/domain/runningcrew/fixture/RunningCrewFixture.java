@@ -72,10 +72,26 @@ public class RunningCrewFixture {
         );
     }
 
-    public static RunningCrew createRunningCrewWith(final LocalDateTime start, final LocalDateTime end) {
+    public static RunningCrew createRunningCrewWithCapacity(final Long hostId, final int capacity) {
+        return createRunningCrew(
+            hostId, COORDINATES, COORDINATES, capacity,
+            NOW, AFTER_ONE_HOUR, AFTER_ONE_HOUR,
+            RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+        );
+    }
+
+    public static RunningCrew createRunningCrewWithScheduledDate(final LocalDateTime start, final LocalDateTime end) {
         return createRunningCrew(
             1L, COORDINATES, COORDINATES, RUNNING_CREW_CAPACITY,
             start, end, AFTER_ONE_HOUR,
+            RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+        );
+    }
+
+    public static RunningCrew createRunningCrewWithDeadline(final Long hostId, final LocalDateTime deadline) {
+        return createRunningCrew(
+            hostId, COORDINATES, COORDINATES, RUNNING_CREW_CAPACITY,
+            NOW, AFTER_ONE_HOUR, deadline,
             RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
         );
     }

@@ -1,10 +1,19 @@
 package com.dobugs.yologaapi.domain.runningcrew;
 
+import lombok.Getter;
+
+@Getter
 public enum ParticipantType {
 
-    REQUESTED,
-    PARTICIPATING,
-    REJECTED,
-    WITHDRAWN,
+    REQUESTED("참여 요청"),
+    PARTICIPATING("참여중"),
+    REJECTED("참여 거절"),
+    WITHDRAWN("탈퇴"),
     ;
+
+    private final String name;
+
+    ParticipantType(final String name) {
+        this.name = name;
+    }
 }

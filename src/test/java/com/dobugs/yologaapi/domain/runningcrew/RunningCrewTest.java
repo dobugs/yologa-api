@@ -7,13 +7,17 @@ import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.RUNNING_CREW_DESCRIPTION;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.RUNNING_CREW_TITLE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrew;
-import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewWith;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewWithDeadline;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewWithScheduledDate;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewWithCapacity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +49,7 @@ class RunningCrewTest {
             final LocalDateTime end = start.minusDays(1);
 
             assertThatThrownBy(
-                () -> createRunningCrewWith(start, end)
+                () -> createRunningCrewWithScheduledDate(start, end)
             )
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("시작 시간은 종료 시간보다 앞서있어야 합니다.");
@@ -237,6 +241,89 @@ class RunningCrewTest {
             assertThatThrownBy(() -> runningCrew.end(HOST_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 종료되었습니다.");
+        }
+    }
+
+    @DisplayName("참여 요청 테스트")
+    @Nested
+    public class participate {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("러닝크루에 참여 요청을 한다")
+        @Test
+        void success() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            runningCrew.participate(memberId);
+
+            final List<Long> idsOfParticipants = runningCrew.getParticipants()
+                .getValue()
+                .stream()
+                .map(Participant::getMemberId)
+                .toList();
+            assertThat(idsOfParticipants).contains(memberId);
+        }
+
+        @DisplayName("호스트일 경우 예외가 발생한다")
+        @Test
+        void memberIsHost() {
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            assertThatThrownBy(() -> runningCrew.participate(HOST_ID))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("러닝크루의 호스트입니다.");
+        }
+
+        @DisplayName("기존에 참여되어 있으면 예외가 발생한다")
+        @Test
+        void memberIsParticipant() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.participate(memberId);
+
+            assertThatThrownBy(() -> runningCrew.participate(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 참여중입니다.");
+        }
+
+        @DisplayName("수용 인원이 다 찼을 경우 예외가 발생한다")
+        @Test
+        void capacityIsFull() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrewWithCapacity(HOST_ID, 2);
+            runningCrew.participate(99L);
+
+            assertThatThrownBy(() -> runningCrew.participate(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여자 수용인원이 다 찼습니다.");
+        }
+
+        @DisplayName("마감 기한이 지났을 경우 예외가 발생한다")
+        @Test
+        void deadlineIsOver() throws InterruptedException {
+            final long memberId = 1L;
+            final int seconds = 1;
+            final RunningCrew runningCrew = createRunningCrewWithDeadline(HOST_ID, LocalDateTime.now().plusSeconds(seconds));
+
+            TimeUnit.SECONDS.sleep(seconds);
+
+            assertThatThrownBy(() -> runningCrew.participate(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("마감기한이 지났습니다.");
+        }
+
+        @DisplayName("러닝크루의 상태가 생성 또는 준비 상태가 아니면 예외가 발생한다")
+        @Test
+        void statusIsNotReady() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.start(HOST_ID);
+
+            assertThatThrownBy(() -> runningCrew.participate(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 시작되었습니다.");
         }
     }
 }

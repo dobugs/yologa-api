@@ -35,9 +35,15 @@ public class Participant extends BaseEntity {
     @JoinColumn(name = "running_crew_id")
     private RunningCrew runningCrew;
 
+    public Participant(final RunningCrew runningCrew) {
+        this.memberId = runningCrew.getMemberId();
+        this.status = ParticipantType.PARTICIPATING;
+        this.runningCrew = runningCrew;
+    }
+
     public Participant(final Long memberId, final RunningCrew runningCrew) {
         this.memberId = memberId;
-        this.status = ParticipantType.PARTICIPATING;
+        this.status = ParticipantType.REQUESTED;
         this.runningCrew = runningCrew;
     }
 }

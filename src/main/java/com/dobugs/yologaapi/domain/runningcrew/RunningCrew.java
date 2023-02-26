@@ -126,9 +126,24 @@ public class RunningCrew extends BaseEntity {
         implementedEndDate = LocalDateTime.now();
     }
 
+    public void participate(final Long memberId) {
+        validateMemberIsNotHost(memberId);
+        participants.validateMemberIsNotParticipant(memberId);
+        participants.validateCapacityIsOver(capacity);
+        deadline.validateDeadlineIsNotOver();
+        validateRunningCrewStatusIsReady();
+        participants.add(this, memberId);
+    }
+
     private void validateMemberIsHost(final Long memberId) {
         if (!this.memberId.equals(memberId)) {
             throw new IllegalArgumentException(String.format("호스트가 아닙니다. [%s]", memberId));
+        }
+    }
+
+    private void validateMemberIsNotHost(final Long memberId) {
+        if (this.memberId.equals(memberId)) {
+            throw new IllegalArgumentException(String.format("러닝크루의 호스트입니다. [%s]", memberId));
         }
     }
 
@@ -155,6 +170,12 @@ public class RunningCrew extends BaseEntity {
     private void validateRunningCrewDoesNotEnd() {
         if (implementedEndDate != null) {
             throw new IllegalArgumentException(String.format("이미 종료되었습니다. [%s]", implementedEndDate));
+        }
+    }
+
+    private void validateRunningCrewStatusIsReady() {
+        if (!status.isReady()) {
+            throw new IllegalArgumentException(String.format("이미 시작되었습니다. [%s]", status.getName()));
         }
     }
 
