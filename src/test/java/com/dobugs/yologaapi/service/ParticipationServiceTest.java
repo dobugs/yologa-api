@@ -70,12 +70,13 @@ class ParticipationServiceTest {
 
             participationService.participate(serviceToken, runningCrewId);
 
-            final Participant participant = runningCrew.getParticipants()
+            final Optional<Participant> participant = runningCrew.getParticipants()
                 .getValue()
                 .stream()
                 .filter(value -> value.getMemberId().equals(MEMBER_ID))
-                .findFirst().get();
-            assertThat(participant.getStatus()).isEqualTo(ParticipantType.REQUESTED);
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.REQUESTED);
         }
     }
 

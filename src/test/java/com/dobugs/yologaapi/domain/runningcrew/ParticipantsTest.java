@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -67,10 +68,11 @@ class ParticipantsTest {
 
             participants.cancel(memberId);
 
-            final Participant participant = participants.getValue().stream()
+            final Optional<Participant> participant = participants.getValue().stream()
                 .filter(value -> value.getMemberId().equals(memberId))
-                .findFirst().get();
-            assertThat(participant.getStatus()).isEqualTo(ParticipantType.CANCELLED);
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.CANCELLED);
         }
 
         @DisplayName("참여자가 아닐 경우 예외가 발생한다")
@@ -96,10 +98,11 @@ class ParticipantsTest {
 
             participants.withdraw(HOST_ID);
 
-            final Participant participant = participants.getValue().stream()
+            final Optional<Participant> participant = participants.getValue().stream()
                 .filter(value -> value.getMemberId().equals(HOST_ID))
-                .findFirst().get();
-            assertThat(participant.getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
         }
 
         @DisplayName("참여자가 아닐 경우 예외가 발생한다")
