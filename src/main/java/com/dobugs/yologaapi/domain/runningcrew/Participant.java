@@ -41,12 +41,13 @@ public class Participant extends BaseEntity {
         this.runningCrew = runningCrew;
     }
 
-    public static Participant host(final RunningCrew runningCrew) {
-        return new Participant(runningCrew.getMemberId(), ParticipantType.PARTICIPATING, runningCrew);
+    public static Participant requested(final RunningCrew runningCrew, final Long memberId) {
+        return new Participant(memberId, ParticipantType.REQUESTED, runningCrew);
     }
 
-    public static Participant member(final RunningCrew runningCrew, final Long memberId) {
-        return new Participant(memberId, ParticipantType.REQUESTED, runningCrew);
+    public void participate() {
+        validateMemberIsRequested(memberId);
+        this.status = ParticipantType.PARTICIPATING;
     }
 
     public void cancel() {

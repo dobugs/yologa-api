@@ -26,29 +26,47 @@ class ParticipantTest {
     @Nested
     public class create {
 
-        @DisplayName("호스트 객체를 생성한다")
-        @Test
-        void memberIsHost() {
-            final Participant host = Participant.host(runningCrew);
-
-            assertAll(
-                () -> assertThat(host.getMemberId()).isEqualTo(HOST_ID),
-                () -> assertThat(host.getStatus()).isEqualTo(ParticipantType.PARTICIPATING),
-                () -> assertThat(host.getRunningCrew()).isEqualTo(runningCrew)
-            );
-        }
-
         @DisplayName("참여자 객체를 생성한다")
         @Test
         void memberIsParticipant() {
             final long memberId = 1L;
-            final Participant member = Participant.member(runningCrew, memberId);
+            final Participant member = Participant.requested(runningCrew, memberId);
 
             assertAll(
                 () -> assertThat(member.getMemberId()).isEqualTo(memberId),
                 () -> assertThat(member.getStatus()).isEqualTo(ParticipantType.REQUESTED),
                 () -> assertThat(member.getRunningCrew()).isEqualTo(runningCrew)
             );
+        }
+    }
+
+    @DisplayName("참여 테스트")
+    @Nested
+    public class participate {
+
+        @DisplayName("참여한다")
+        @Test
+        void success() {
+            final long memberId = 1L;
+            final Participant member = Participant.requested(runningCrew, memberId);
+
+            member.participate();
+
+            assertThat(member.getStatus()).isEqualTo(ParticipantType.PARTICIPATING);
+        }
+
+        @DisplayName("참여 요청중이 아니면 예외가 발생한다")
+        @Test
+        void memberIsNotRequested() {
+            final long memberId = 1L;
+            final Participant member = Participant.requested(runningCrew, memberId);
+
+            member.participate();
+            member.withdraw();
+
+            assertThatThrownBy(member::participate)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여 요청인 상태가 아닙니다.");
         }
     }
 
@@ -60,7 +78,7 @@ class ParticipantTest {
         @Test
         void success() {
             final long memberId = 1L;
-            final Participant member = Participant.member(runningCrew, memberId);
+            final Participant member = Participant.requested(runningCrew, memberId);
 
             member.cancel();
 
@@ -70,9 +88,13 @@ class ParticipantTest {
         @DisplayName("참여 요청중이 아니면 예외가 발생한다")
         @Test
         void memberIsNotRequested() {
-            final Participant participant = Participant.host(runningCrew);
+            final long memberId = 1L;
+            final Participant member = Participant.requested(runningCrew, memberId);
 
-            assertThatThrownBy(participant::cancel)
+            member.participate();
+            member.withdraw();
+
+            assertThatThrownBy(member::cancel)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("참여 요청인 상태가 아닙니다.");
         }
@@ -85,18 +107,20 @@ class ParticipantTest {
         @DisplayName("탈퇴한다")
         @Test
         void success() {
-            final Participant participant = Participant.host(runningCrew);
+            final long memberId = 1L;
+            final Participant member = Participant.requested(runningCrew, memberId);
+            member.participate();
 
-            participant.withdraw();
+            member.withdraw();
 
-            assertThat(participant.getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
+            assertThat(member.getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
         }
 
         @DisplayName("참여중이 아니면 예외가 발생한다")
         @Test
         void memberIsNotParticipating() {
             final long memberId = 1L;
-            final Participant member = Participant.member(runningCrew, memberId);
+            final Participant member = Participant.requested(runningCrew, memberId);
 
             assertThatThrownBy(member::withdraw)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -112,7 +136,7 @@ class ParticipantTest {
         @Test
         void success() {
             final long memberId = 1L;
-            final Participant member = Participant.member(runningCrew, memberId);
+            final Participant member = Participant.requested(runningCrew, memberId);
 
             member.accept();
 
@@ -122,7 +146,11 @@ class ParticipantTest {
         @DisplayName("참여 요청중이 아니면 예외가 발생한다")
         @Test
         void memberIsNotRequested() {
-            final Participant member = Participant.host(runningCrew);
+            final long memberId = 1L;
+            final Participant member = Participant.requested(runningCrew, memberId);
+
+            member.participate();
+            member.withdraw();
 
             assertThatThrownBy(member::accept)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -138,7 +166,7 @@ class ParticipantTest {
         @Test
         void success() {
             final long memberId = 1L;
-            final Participant member = Participant.member(runningCrew, memberId);
+            final Participant member = Participant.requested(runningCrew, memberId);
 
             member.reject();
 
@@ -148,7 +176,11 @@ class ParticipantTest {
         @DisplayName("참여 요청중이 아니면 예외가 발생한다")
         @Test
         void memberIsNotRequested() {
-            final Participant member = Participant.host(runningCrew);
+            final long memberId = 1L;
+            final Participant member = Participant.requested(runningCrew, memberId);
+
+            member.participate();
+            member.withdraw();
 
             assertThatThrownBy(member::reject)
                 .isInstanceOf(IllegalArgumentException.class)

@@ -19,12 +19,14 @@ public class Participants {
     private List<Participant> value = new ArrayList<>();
 
     public Participants(final RunningCrew runningCrew) {
-        value.add(Participant.host(runningCrew));
+        final Participant participant = Participant.requested(runningCrew, runningCrew.getMemberId());
+        participant.participate();
+        value.add(participant);
     }
 
     public void temporaryJoin(final RunningCrew runningCrew, final Long memberId) {
         validateMemberIsNotParticipant(memberId);
-        value.add(Participant.member(runningCrew, memberId));
+        value.add(Participant.requested(runningCrew, memberId));
     }
 
     public void cancel(final Long memberId) {
