@@ -168,4 +168,34 @@ class ParticipationServiceTest {
             assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.PARTICIPATING);
         }
     }
+
+    @DisplayName("참여 요청 거절 테스트")
+    @Nested
+    public class reject {
+
+        @DisplayName("러닝크루 참여 요청을 거절한다")
+        @Test
+        void success() {
+            final long runningCrewId = 0L;
+
+            final String memberServiceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            final String hostServiceToken = createToken(HOST_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(memberServiceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            given(tokenGenerator.extract(hostServiceToken)).willReturn(new UserTokenResponse(HOST_ID, PROVIDER, ACCESS_TOKEN));
+
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
+
+            participationService.participate(memberServiceToken, runningCrewId);
+            participationService.reject(hostServiceToken, runningCrewId, MEMBER_ID);
+
+            final Optional<Participant> participant = runningCrew.getParticipants()
+                .getValue()
+                .stream()
+                .filter(value -> value.getMemberId().equals(MEMBER_ID))
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.REJECTED);
+        }
+    }
 }

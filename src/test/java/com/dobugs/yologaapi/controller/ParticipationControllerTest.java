@@ -108,4 +108,22 @@ class ParticipationControllerTest {
             )
         ;
     }
+
+    @DisplayName("러닝크루 참여 요청을 거절한다")
+    @Test
+    void reject() throws Exception {
+        final String accessToken = "accessToken";
+        final long runningCrewId = 1L;
+        final long memberId = 1L;
+
+        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/reject/" + memberId)
+                .header("Authorization", accessToken))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "participation/reject",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
 }

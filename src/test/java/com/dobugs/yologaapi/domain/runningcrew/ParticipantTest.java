@@ -129,4 +129,30 @@ class ParticipantTest {
                 .hasMessageContaining("참여 요청인 상태가 아닙니다.");
         }
     }
+
+    @DisplayName("참여 요청 거절 테스트")
+    @Nested
+    public class reject {
+
+        @DisplayName("참여 요청을 거절한다")
+        @Test
+        void success() {
+            final long memberId = 1L;
+            final Participant member = Participant.member(runningCrew, memberId);
+
+            member.reject();
+
+            assertThat(member.getStatus()).isEqualTo(ParticipantType.REJECTED);
+        }
+
+        @DisplayName("참여 요청중이 아니면 예외가 발생한다")
+        @Test
+        void memberIsNotRequested() {
+            final Participant member = Participant.host(runningCrew);
+
+            assertThatThrownBy(member::reject)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여 요청인 상태가 아닙니다.");
+        }
+    }
 }

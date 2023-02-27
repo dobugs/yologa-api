@@ -64,6 +64,11 @@ public class Participant extends BaseEntity {
         this.status = ParticipantType.PARTICIPATING;
     }
 
+    public void reject() {
+        validateMemberIsRequested(memberId);
+        this.status = ParticipantType.REJECTED;
+    }
+
     private void validateMemberIsRequested(final Long memberId) {
         if (!status.isRequested()) {
             throw new IllegalArgumentException(String.format("참여 요청인 상태가 아닙니다. [%s, %s]", memberId, status.getName()));

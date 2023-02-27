@@ -54,4 +54,14 @@ public class ParticipationController {
         participationService.accept(accessToken, runningCrewId, memberId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/reject/{memberId}")
+    public ResponseEntity<Void> reject(
+        @RequestHeader("Authorization") final String accessToken,
+        @PathVariable final Long runningCrewId,
+        @PathVariable final Long memberId
+    ) {
+        participationService.reject(accessToken, runningCrewId, memberId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -153,6 +153,12 @@ public class RunningCrew extends BaseEntity {
         participants.accept(memberId);
     }
 
+    public void reject(final Long hostId, final Long memberId) {
+        validateMemberIsHost(hostId);
+        validateMemberIsNotHost(memberId);
+        participants.reject(memberId);
+    }
+
     private void initializeProgress() {
         final int number = participants.getNumberOrParticipants();
         if (number == 1 && status.isCreatedOrReady()) {

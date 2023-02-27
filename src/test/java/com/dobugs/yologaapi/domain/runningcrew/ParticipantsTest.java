@@ -149,6 +149,38 @@ class ParticipantsTest {
         }
     }
 
+    @DisplayName("참여 요청 거절 테스트")
+    @Nested
+    public class reject {
+
+        @DisplayName("참여 요청을 거절한다")
+        @Test
+        void success() {
+            final long memberId = 2L;
+            final Participants participants = new Participants(runningCrew);
+            participants.temporaryJoin(runningCrew, memberId);
+
+            participants.reject(memberId);
+
+            final Optional<Participant> participant = participants.getValue().stream()
+                .filter(value -> value.getMemberId().equals(memberId))
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.REJECTED);
+        }
+
+        @DisplayName("참여자가 아닐 경우 예외가 발생한다")
+        @Test
+        void memberIsNotParticipant() {
+            final long memberId = 2L;
+            final Participants participants = new Participants(runningCrew);
+
+            assertThatThrownBy(() -> participants.reject(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여자가 아닙니다.");
+        }
+    }
+
     @DisplayName("인원수가 더 많은 지에 대한 테스트")
     @Nested
     public class validateCapacityIsOver {

@@ -472,4 +472,50 @@ class RunningCrewTest {
                 .hasMessageContaining("이미 완료되었습니다.");
         }
     }
+
+    @DisplayName("참여 요청 거절 테스트")
+    @Nested
+    public class reject {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("참여 요청을 거절한다")
+        @Test
+        void success() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.participate(memberId);
+
+            runningCrew.reject(HOST_ID, memberId);
+
+            final Optional<Participant> participant = runningCrew.getParticipants()
+                .getValue()
+                .stream()
+                .filter(value -> value.getMemberId().equals(memberId))
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.REJECTED);
+        }
+
+        @DisplayName("승인자가 호스트가 아닐 경우 예외가 발생한다")
+        @Test
+        void memberIsNotHost() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            assertThatThrownBy(() -> runningCrew.reject(memberId, memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("호스트가 아닙니다.");
+        }
+
+        @DisplayName("호스트일 경우 예외가 발생한다")
+        @Test
+        void memberIsHost() {
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            assertThatThrownBy(() -> runningCrew.reject(HOST_ID, HOST_ID))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("러닝크루의 호스트입니다.");
+        }
+    }
 }
