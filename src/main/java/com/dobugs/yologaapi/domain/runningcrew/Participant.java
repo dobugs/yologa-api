@@ -35,16 +35,18 @@ public class Participant extends BaseEntity {
     @JoinColumn(name = "running_crew_id")
     private RunningCrew runningCrew;
 
-    public Participant(final RunningCrew runningCrew) {
-        this.memberId = runningCrew.getMemberId();
-        this.status = ParticipantType.PARTICIPATING;
+    public Participant(final Long memberId, final ParticipantType status, final RunningCrew runningCrew) {
+        this.memberId = memberId;
+        this.status = status;
         this.runningCrew = runningCrew;
     }
 
-    public Participant(final Long memberId, final RunningCrew runningCrew) {
-        this.memberId = memberId;
-        this.status = ParticipantType.REQUESTED;
-        this.runningCrew = runningCrew;
+    public static Participant host(final RunningCrew runningCrew) {
+        return new Participant(runningCrew.getMemberId(), ParticipantType.PARTICIPATING, runningCrew);
+    }
+
+    public static Participant member(final RunningCrew runningCrew, final Long memberId) {
+        return new Participant(memberId, ParticipantType.REQUESTED, runningCrew);
     }
 
     public void withdraw() {

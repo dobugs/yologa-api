@@ -29,12 +29,12 @@ class ParticipantTest {
         @DisplayName("호스트 객체를 생성한다")
         @Test
         void memberIsHost() {
-            final Participant participant = new Participant(runningCrew);
+            final Participant host = Participant.host(runningCrew);
 
             assertAll(
-                () -> assertThat(participant.getMemberId()).isEqualTo(HOST_ID),
-                () -> assertThat(participant.getStatus()).isEqualTo(ParticipantType.PARTICIPATING),
-                () -> assertThat(participant.getRunningCrew()).isEqualTo(runningCrew)
+                () -> assertThat(host.getMemberId()).isEqualTo(HOST_ID),
+                () -> assertThat(host.getStatus()).isEqualTo(ParticipantType.PARTICIPATING),
+                () -> assertThat(host.getRunningCrew()).isEqualTo(runningCrew)
             );
         }
 
@@ -42,12 +42,12 @@ class ParticipantTest {
         @Test
         void memberIsParticipant() {
             final long memberId = 1L;
-            final Participant participant = new Participant(memberId, runningCrew);
+            final Participant member = Participant.member(runningCrew, memberId);
 
             assertAll(
-                () -> assertThat(participant.getMemberId()).isEqualTo(memberId),
-                () -> assertThat(participant.getStatus()).isEqualTo(ParticipantType.REQUESTED),
-                () -> assertThat(participant.getRunningCrew()).isEqualTo(runningCrew)
+                () -> assertThat(member.getMemberId()).isEqualTo(memberId),
+                () -> assertThat(member.getStatus()).isEqualTo(ParticipantType.REQUESTED),
+                () -> assertThat(member.getRunningCrew()).isEqualTo(runningCrew)
             );
         }
     }
@@ -59,7 +59,7 @@ class ParticipantTest {
         @DisplayName("탈퇴한다")
         @Test
         void success() {
-            final Participant participant = new Participant(runningCrew);
+            final Participant participant = Participant.host(runningCrew);
 
             participant.withdraw();
 
@@ -70,9 +70,9 @@ class ParticipantTest {
         @Test
         void memberIsNotParticipating() {
             final long memberId = 1L;
-            final Participant participant = new Participant(memberId, runningCrew);
+            final Participant member = Participant.member(runningCrew, memberId);
 
-            assertThatThrownBy(participant::withdraw)
+            assertThatThrownBy(member::withdraw)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("참여중인 상태가 아닙니다.");
         }
@@ -86,7 +86,7 @@ class ParticipantTest {
         @Test
         void memberIsRequested() {
             final long memberId = 1L;
-            final Participant participant = new Participant(memberId, runningCrew);
+            final Participant participant = Participant.member(runningCrew, memberId);
 
             final boolean requested = participant.isRequested();
 
@@ -96,7 +96,7 @@ class ParticipantTest {
         @DisplayName("요청 중이 아닐 경우 false 를 반환한다")
         @Test
         void memberIsNotRequested() {
-            final Participant participant = new Participant(runningCrew);
+            final Participant participant = Participant.host(runningCrew);
 
             final boolean requested = participant.isRequested();
 

@@ -19,12 +19,12 @@ public class Participants {
     private List<Participant> value = new ArrayList<>();
 
     public Participants(final RunningCrew runningCrew) {
-        value.add(new Participant(runningCrew));
+        value.add(Participant.host(runningCrew));
     }
 
     public void add(final RunningCrew runningCrew, final Long memberId) {
         validateMemberIsNotParticipant(memberId);
-        value.add(new Participant(memberId, runningCrew));
+        value.add(Participant.member(runningCrew, memberId));
     }
 
     public void delete(final Long memberId) {
