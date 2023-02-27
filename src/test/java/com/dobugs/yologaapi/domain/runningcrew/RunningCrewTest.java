@@ -330,12 +330,12 @@ class RunningCrewTest {
             runningCrew.participate(memberId);
             runningCrew.cancel(memberId);
 
-            final List<Long> idsOfParticipants = runningCrew.getParticipants()
+            final Participant participant = runningCrew.getParticipants()
                 .getValue()
                 .stream()
-                .map(Participant::getMemberId)
-                .toList();
-            assertThat(idsOfParticipants).doesNotContain(memberId);
+                .filter(value -> value.getMemberId().equals(memberId))
+                .findFirst().get();
+            assertThat(participant.getStatus()).isEqualTo(ParticipantType.CANCELLED);
         }
 
         @DisplayName("호스트일 경우 예외가 발생한다")

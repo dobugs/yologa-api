@@ -29,8 +29,7 @@ public class Participants {
 
     public void cancel(final Long memberId) {
         final Participant participant = findParticipant(memberId);
-        validateMemberIsRequested(participant);
-        value.remove(participant);
+        participant.cancel();
     }
 
     public void withdraw(final Long memberId) {
@@ -50,14 +49,6 @@ public class Participants {
             if (participant.getMemberId().equals(memberId)) {
                 throw new IllegalArgumentException(String.format("이미 참여중입니다. [%s, %s]", memberId, participant.getStatus().getName()));
             }
-        }
-    }
-
-    private void validateMemberIsRequested(final Participant participant) {
-        if (!participant.isRequested()) {
-            throw new IllegalArgumentException(String.format(
-                "참여 요청인 상태가 아닙니다. [%s, %s]", participant.getMemberId(), participant.getStatus().getName()
-            ));
         }
     }
 

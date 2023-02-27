@@ -4,7 +4,6 @@ import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -103,7 +102,8 @@ class ParticipationServiceTest {
                 .stream()
                 .filter(value -> value.getMemberId().equals(MEMBER_ID))
                 .findFirst();
-            assertThat(participant).isEmpty();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.CANCELLED);
         }
     }
 }

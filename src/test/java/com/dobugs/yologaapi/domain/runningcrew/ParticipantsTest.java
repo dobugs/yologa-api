@@ -67,11 +67,10 @@ class ParticipantsTest {
 
             participants.cancel(memberId);
 
-            final List<Long> idsOfParticipants = participants.getValue()
-                .stream()
-                .map(Participant::getMemberId)
-                .toList();
-            assertThat(idsOfParticipants).doesNotContain(memberId);
+            final Participant participant = participants.getValue().stream()
+                .filter(value -> value.getMemberId().equals(memberId))
+                .findFirst().get();
+            assertThat(participant.getStatus()).isEqualTo(ParticipantType.CANCELLED);
         }
 
         @DisplayName("참여자가 아닐 경우 예외가 발생한다")

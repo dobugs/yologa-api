@@ -52,6 +52,32 @@ class ParticipantTest {
         }
     }
 
+    @DisplayName("참여 요청 취소 테스트")
+    @Nested
+    public class cancel {
+
+        @DisplayName("참여 요청했던 것을 취소한다")
+        @Test
+        void success() {
+            final long memberId = 1L;
+            final Participant member = Participant.member(runningCrew, memberId);
+
+            member.cancel();
+
+            assertThat(member.getStatus()).isEqualTo(ParticipantType.CANCELLED);
+        }
+
+        @DisplayName("참여 요청중이 아니면 예외가 발생한다")
+        @Test
+        void memberIsNotRequested() {
+            final Participant participant = Participant.host(runningCrew);
+
+            assertThatThrownBy(participant::cancel)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여 요청인 상태가 아닙니다.");
+        }
+    }
+
     @DisplayName("탈퇴 테스트")
     @Nested
     public class withdraw {

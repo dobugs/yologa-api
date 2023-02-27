@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ParticipantType {
 
     REQUESTED("참여 요청"),
+    CANCELLED("참여 요청 취소"),
     PARTICIPATING("참여중"),
     REJECTED("참여 거절"),
     WITHDRAWN("탈퇴"),
