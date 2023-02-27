@@ -59,8 +59,9 @@ public class Participant extends BaseEntity {
         this.status = ParticipantType.WITHDRAWN;
     }
 
-    public boolean isRequested() {
-        return status.isRequested();
+    public void accept() {
+        validateMemberIsRequested(memberId);
+        this.status = ParticipantType.PARTICIPATING;
     }
 
     private void validateMemberIsRequested(final Long memberId) {

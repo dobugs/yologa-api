@@ -107,4 +107,65 @@ class ParticipationServiceTest {
             assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.CANCELLED);
         }
     }
+
+    @DisplayName("탈퇴 테스트")
+    @Nested
+    public class withdraw {
+
+        @DisplayName("러닝크루에 탈퇴한다")
+        @Test
+        void success() {
+            final long runningCrewId = 0L;
+
+            final String memberServiceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            final String hostServiceToken = createToken(HOST_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(memberServiceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            given(tokenGenerator.extract(hostServiceToken)).willReturn(new UserTokenResponse(HOST_ID, PROVIDER, ACCESS_TOKEN));
+
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
+
+            participationService.participate(memberServiceToken, runningCrewId);
+            participationService.accept(hostServiceToken, runningCrewId, MEMBER_ID);
+            participationService.withdraw(memberServiceToken, runningCrewId);
+
+            final Optional<Participant> participant = runningCrew.getParticipants()
+                .getValue()
+                .stream()
+                .filter(value -> value.getMemberId().equals(MEMBER_ID))
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
+        }
+    }
+
+    @DisplayName("참여 요청 승인 테스트")
+    @Nested
+    public class accept {
+
+        @DisplayName("러닝크루 참여 요청을 승인한다")
+        @Test
+        void success() {
+            final long runningCrewId = 0L;
+
+            final String memberServiceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            final String hostServiceToken = createToken(HOST_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(memberServiceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            given(tokenGenerator.extract(hostServiceToken)).willReturn(new UserTokenResponse(HOST_ID, PROVIDER, ACCESS_TOKEN));
+
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
+
+            participationService.participate(memberServiceToken, runningCrewId);
+            participationService.accept(hostServiceToken, runningCrewId, MEMBER_ID);
+
+            final Optional<Participant> participant = runningCrew.getParticipants()
+                .getValue()
+                .stream()
+                .filter(value -> value.getMemberId().equals(MEMBER_ID))
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.PARTICIPATING);
+        }
+    }
 }

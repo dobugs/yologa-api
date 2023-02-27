@@ -44,4 +44,14 @@ public class ParticipationController {
         participationService.withdraw(accessToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/accept/{memberId}")
+    public ResponseEntity<Void> accept(
+        @RequestHeader("Authorization") final String accessToken,
+        @PathVariable final Long runningCrewId,
+        @PathVariable final Long memberId
+    ) {
+        participationService.accept(accessToken, runningCrewId, memberId);
+        return ResponseEntity.ok().build();
+    }
 }

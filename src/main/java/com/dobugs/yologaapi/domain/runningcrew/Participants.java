@@ -37,6 +37,11 @@ public class Participants {
         participant.withdraw();
     }
 
+    public void accept(final Long memberId) {
+        final Participant participant = findParticipant(memberId);
+        participant.accept();
+    }
+
     public void validateCapacityIsOver(final Capacity capacity) {
         final int numberOfParticipants = value.size();
         if (!capacity.isLeft(numberOfParticipants)) {

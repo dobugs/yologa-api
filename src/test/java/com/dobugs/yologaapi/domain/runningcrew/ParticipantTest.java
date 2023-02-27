@@ -104,29 +104,29 @@ class ParticipantTest {
         }
     }
 
-    @DisplayName("요청 중인지에 대한 테스트")
+    @DisplayName("참여 요청 승인 테스트")
     @Nested
-    public class isRequested {
+    public class accept {
 
-        @DisplayName("요청 중일 경우 true 를 반환한다")
+        @DisplayName("참여 요청을 승인한다")
         @Test
-        void memberIsRequested() {
+        void success() {
             final long memberId = 1L;
-            final Participant participant = Participant.member(runningCrew, memberId);
+            final Participant member = Participant.member(runningCrew, memberId);
 
-            final boolean requested = participant.isRequested();
+            member.accept();
 
-            assertThat(requested).isTrue();
+            assertThat(member.getStatus()).isEqualTo(ParticipantType.PARTICIPATING);
         }
 
-        @DisplayName("요청 중이 아닐 경우 false 를 반환한다")
+        @DisplayName("참여 요청중이 아니면 예외가 발생한다")
         @Test
         void memberIsNotRequested() {
-            final Participant participant = Participant.host(runningCrew);
+            final Participant member = Participant.host(runningCrew);
 
-            final boolean requested = participant.isRequested();
-
-            assertThat(requested).isFalse();
+            assertThatThrownBy(member::accept)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여 요청인 상태가 아닙니다.");
         }
     }
 }

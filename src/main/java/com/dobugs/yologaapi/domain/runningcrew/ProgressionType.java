@@ -22,7 +22,10 @@ public enum ProgressionType {
     }
 
     public boolean isCreatedOrReady() {
-        final List<ProgressionType> readied = List.of(CREATED, READY);
-        return readied.contains(this);
+        return List.of(CREATED, READY).contains(this);
+    }
+
+    public boolean isCreatedOrReadyOrInProgress() {
+        return List.of(CREATED, READY, IN_PROGRESS).contains(this);
     }
 }
