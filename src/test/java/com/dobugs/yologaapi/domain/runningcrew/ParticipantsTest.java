@@ -37,11 +37,11 @@ class ParticipantsTest {
 
             participants.temporaryJoin(runningCrew, memberId);
 
-            final List<Long> idsOfParticipants = participants.getValue()
-                .stream()
-                .map(Participant::getMemberId)
-                .toList();
-            assertThat(idsOfParticipants).contains(memberId);
+            final Optional<Participant> participant = participants.getValue().stream()
+                .filter(value -> value.getMemberId().equals(memberId))
+                .findFirst();
+            assertThat(participant).isPresent();
+            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.REQUESTED);
         }
 
         @DisplayName("이미 존재하는 사용자를 추가하면 예외가 발생한다")
@@ -94,12 +94,15 @@ class ParticipantsTest {
         @DisplayName("탈퇴한다")
         @Test
         void success() {
+            final long memberId = 2L;
             final Participants participants = new Participants(runningCrew);
+            participants.temporaryJoin(runningCrew, memberId);
+            participants.accept(memberId);
 
-            participants.withdraw(HOST_ID);
+            participants.withdraw(memberId);
 
             final Optional<Participant> participant = participants.getValue().stream()
-                .filter(value -> value.getMemberId().equals(HOST_ID))
+                .filter(value -> value.getMemberId().equals(memberId))
                 .findFirst();
             assertThat(participant).isPresent();
             assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
