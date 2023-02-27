@@ -276,18 +276,6 @@ class RunningCrewTest {
                 .hasMessageContaining("러닝크루의 호스트입니다.");
         }
 
-        @DisplayName("기존에 참여되어 있으면 예외가 발생한다")
-        @Test
-        void memberIsParticipant() {
-            final long memberId = 1L;
-            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
-            runningCrew.participate(memberId);
-
-            assertThatThrownBy(() -> runningCrew.participate(memberId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("이미 참여중입니다.");
-        }
-
         @DisplayName("수용 인원이 다 찼을 경우 예외가 발생한다")
         @Test
         void capacityIsFull() {
@@ -371,6 +359,35 @@ class RunningCrewTest {
             assertThatThrownBy(() -> runningCrew.cancel(memberId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("참여자가 아닙니다.");
+        }
+    }
+
+    @DisplayName("탈퇴 테스트")
+    @Nested
+    public class withdraw {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("탈퇴한다")
+        @Test
+        void success() {
+            final long memberId = 1L;
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            runningCrew.participate(memberId);
+            // todo: 참여 요청 승인 구현 후 테스트 작성..
+        }
+
+        @DisplayName("탈퇴 후 참여자가 호스트뿐이고 러닝크루 상태가 생성 또는 준비 상태이면 '생성' 상태로 변환된다")
+        @Test
+        void participantIsOnlyOne() {
+
+        }
+
+        @DisplayName("호스트일 경우 예외가 발생한다")
+        @Test
+        void memberIsHost() {
+
         }
     }
 }

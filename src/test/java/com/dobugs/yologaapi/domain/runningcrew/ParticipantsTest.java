@@ -24,9 +24,9 @@ class ParticipantsTest {
         runningCrew = createRunningCrew(HOST_ID);
     }
 
-    @DisplayName("참여자 추가 테스트")
+    @DisplayName("참여자 요청 추가 테스트")
     @Nested
-    public class add {
+    public class temporaryJoin {
 
         @DisplayName("참여자를 추가한다")
         @Test
@@ -34,7 +34,7 @@ class ParticipantsTest {
             final long memberId = 2L;
             final Participants participants = new Participants(runningCrew);
 
-            participants.add(runningCrew, memberId);
+            participants.temporaryJoin(runningCrew, memberId);
 
             final List<Long> idsOfParticipants = participants.getValue()
                 .stream()
@@ -48,24 +48,24 @@ class ParticipantsTest {
         void memberIsAlreadyParticipant() {
             final Participants participants = new Participants(runningCrew);
 
-            assertThatThrownBy(() -> participants.add(runningCrew, HOST_ID))
+            assertThatThrownBy(() -> participants.temporaryJoin(runningCrew, HOST_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 참여중입니다.");
         }
     }
 
-    @DisplayName("참여자 삭제 테스트")
+    @DisplayName("참여자 요청 취소 테스트")
     @Nested
-    public class delete {
+    public class cancel {
 
-        @DisplayName("참여자를 삭제한다")
+        @DisplayName("참여자 요청을 취소한다")
         @Test
         void success() {
             final long memberId = 2L;
             final Participants participants = new Participants(runningCrew);
-            participants.add(runningCrew, memberId);
+            participants.temporaryJoin(runningCrew, memberId);
 
-            participants.delete(memberId);
+            participants.cancel(memberId);
 
             final List<Long> idsOfParticipants = participants.getValue()
                 .stream()
@@ -80,7 +80,7 @@ class ParticipantsTest {
             final long memberId = 2L;
             final Participants participants = new Participants(runningCrew);
 
-            assertThatThrownBy(() -> participants.delete(memberId))
+            assertThatThrownBy(() -> participants.cancel(memberId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("참여자가 아닙니다.");
         }
@@ -134,74 +134,12 @@ class ParticipantsTest {
         void capacityIsLower() {
             final Capacity capacity = new Capacity(2);
             final Participants participants = new Participants(runningCrew);
-            participants.add(runningCrew, 2L);
-            participants.add(runningCrew, 3L);
+            participants.temporaryJoin(runningCrew, 2L);
+            participants.temporaryJoin(runningCrew, 3L);
 
             assertThatThrownBy(() -> participants.validateCapacityIsOver(capacity))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("참여자 수용인원이 다 찼습니다.");
-        }
-    }
-
-    @DisplayName("참여자가 아닌 것에 대한 테스트")
-    @Nested
-    public class validateMemberIsNotParticipant {
-
-        @DisplayName("참여자가 아닐 경우 예외가 발생하지 않는다")
-        @Test
-        void memberIsNotParticipant() {
-            final long memberId = 2L;
-            final Participants participants = new Participants(runningCrew);
-
-            assertThatCode(() -> participants.validateMemberIsNotParticipant(memberId))
-                .doesNotThrowAnyException();
-        }
-
-        @DisplayName("참여자일 경우 예외가 발생한다")
-        @Test
-        void memberIsParticipant() {
-            final Participants participants = new Participants(runningCrew);
-
-            assertThatThrownBy(() -> participants.validateMemberIsNotParticipant(HOST_ID))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("이미 참여중입니다.");
-        }
-    }
-
-    @DisplayName("사용자가 참여 요청을 했었지에 대한 검증 테스트")
-    @Nested
-    public class validateMemberIsRequested {
-
-        @DisplayName("이전에 참여 요청을 했었으면 예외가 발생하지 않는다")
-        @Test
-        void memberIsRequested() {
-            final long memberId = 2L;
-            final Participants participants = new Participants(runningCrew);
-            participants.add(runningCrew, memberId);
-
-            assertThatCode(() -> participants.validateMemberIsRequested(memberId))
-                .doesNotThrowAnyException();
-        }
-
-        @DisplayName("참여 요청이 아닌 다른 상태값이면 예외가 발생한다")
-        @Test
-        void memberIsNotRequested() {
-            final Participants participants = new Participants(runningCrew);
-
-            assertThatThrownBy(() -> participants.validateMemberIsRequested(HOST_ID))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("참여 요청인 상태가 아닙니다.");
-        }
-
-        @DisplayName("참여자가 아닐 경우 예외가 발생한다")
-        @Test
-        void memberIsNotParticipant() {
-            final long memberId = 2L;
-            final Participants participants = new Participants(runningCrew);
-
-            assertThatThrownBy(() -> participants.validateMemberIsRequested(memberId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("참여자가 아닙니다.");
         }
     }
 
@@ -213,8 +151,8 @@ class ParticipantsTest {
         @Test
         void success() {
             final Participants participants = new Participants(runningCrew);
-            participants.add(runningCrew, 2L);
-            participants.add(runningCrew, 3L);
+            participants.temporaryJoin(runningCrew, 2L);
+            participants.temporaryJoin(runningCrew, 3L);
 
             final int numberOrParticipants = participants.getNumberOrParticipants();
 

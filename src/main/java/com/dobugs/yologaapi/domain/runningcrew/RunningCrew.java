@@ -128,17 +128,15 @@ public class RunningCrew extends BaseEntity {
 
     public void participate(final Long memberId) {
         validateMemberIsNotHost(memberId);
-        participants.validateMemberIsNotParticipant(memberId);
         participants.validateCapacityIsOver(capacity);
         deadline.validateDeadlineIsNotOver();
         validateRunningCrewStatusIsCreatedOrReady();
-        participants.add(this, memberId);
+        participants.temporaryJoin(this, memberId);
     }
 
     public void cancel(final Long memberId) {
         validateMemberIsNotHost(memberId);
-        participants.validateMemberIsRequested(memberId);
-        participants.delete(memberId);
+        participants.cancel(memberId);
     }
 
     public void withdraw(final Long memberId) {

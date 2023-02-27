@@ -22,13 +22,14 @@ public class Participants {
         value.add(Participant.host(runningCrew));
     }
 
-    public void add(final RunningCrew runningCrew, final Long memberId) {
+    public void temporaryJoin(final RunningCrew runningCrew, final Long memberId) {
         validateMemberIsNotParticipant(memberId);
         value.add(Participant.member(runningCrew, memberId));
     }
 
-    public void delete(final Long memberId) {
+    public void cancel(final Long memberId) {
         final Participant participant = findParticipant(memberId);
+        validateMemberIsRequested(participant);
         value.remove(participant);
     }
 
@@ -44,7 +45,7 @@ public class Participants {
         }
     }
 
-    public void validateMemberIsNotParticipant(final Long memberId) {
+    private void validateMemberIsNotParticipant(final Long memberId) {
         for (final Participant participant : value) {
             if (participant.getMemberId().equals(memberId)) {
                 throw new IllegalArgumentException(String.format("이미 참여중입니다. [%s, %s]", memberId, participant.getStatus().getName()));
@@ -52,10 +53,11 @@ public class Participants {
         }
     }
 
-    public void validateMemberIsRequested(final Long memberId) {
-        final Participant participant = findParticipant(memberId);
+    private void validateMemberIsRequested(final Participant participant) {
         if (!participant.isRequested()) {
-            throw new IllegalArgumentException(String.format("참여 요청인 상태가 아닙니다. [%s, %s]", memberId, participant.getStatus().getName()));
+            throw new IllegalArgumentException(String.format(
+                "참여 요청인 상태가 아닙니다. [%s, %s]", participant.getMemberId(), participant.getStatus().getName()
+            ));
         }
     }
 
