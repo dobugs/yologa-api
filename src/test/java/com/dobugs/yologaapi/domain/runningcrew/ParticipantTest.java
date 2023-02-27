@@ -2,6 +2,7 @@ package com.dobugs.yologaapi.domain.runningcrew;
 
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrew;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -51,13 +52,39 @@ class ParticipantTest {
         }
     }
 
+    @DisplayName("탈퇴 테스트")
+    @Nested
+    public class withdraw {
+
+        @DisplayName("탈퇴한다")
+        @Test
+        void success() {
+            final Participant participant = new Participant(runningCrew);
+
+            participant.withdraw();
+
+            assertThat(participant.getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
+        }
+
+        @DisplayName("참여중이 아니면 예외가 발생한다")
+        @Test
+        void memberIsNotParticipating() {
+            final long memberId = 1L;
+            final Participant participant = new Participant(memberId, runningCrew);
+
+            assertThatThrownBy(participant::withdraw)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여중인 상태가 아닙니다.");
+        }
+    }
+
     @DisplayName("요청 중인지에 대한 테스트")
     @Nested
     public class isRequested {
 
         @DisplayName("요청 중일 경우 true 를 반환한다")
         @Test
-        void participantTypeIsRequested() {
+        void memberIsRequested() {
             final long memberId = 1L;
             final Participant participant = new Participant(memberId, runningCrew);
 
@@ -68,7 +95,7 @@ class ParticipantTest {
 
         @DisplayName("요청 중이 아닐 경우 false 를 반환한다")
         @Test
-        void participantTypeIsNotRequested() {
+        void memberIsNotRequested() {
             final Participant participant = new Participant(runningCrew);
 
             final boolean requested = participant.isRequested();

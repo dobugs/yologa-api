@@ -20,4 +20,8 @@ public enum ParticipantType {
     public boolean isRequested() {
         return this == REQUESTED;
     }
+
+    public boolean isParticipating() {
+        return this == PARTICIPATING;
+    }
 }

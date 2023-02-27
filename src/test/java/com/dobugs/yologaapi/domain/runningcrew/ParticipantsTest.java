@@ -86,6 +86,35 @@ class ParticipantsTest {
         }
     }
 
+    @DisplayName("탈퇴 테스트")
+    @Nested
+    public class withdraw {
+
+        @DisplayName("탈퇴한다")
+        @Test
+        void success() {
+            final Participants participants = new Participants(runningCrew);
+
+            participants.withdraw(HOST_ID);
+
+            final Participant participant = participants.getValue().stream()
+                .filter(value -> value.getMemberId().equals(HOST_ID))
+                .findFirst().get();
+            assertThat(participant.getStatus()).isEqualTo(ParticipantType.WITHDRAWN);
+        }
+
+        @DisplayName("참여자가 아닐 경우 예외가 발생한다")
+        @Test
+        void memberIsNotParticipant() {
+            final long memberId = 2L;
+            final Participants participants = new Participants(runningCrew);
+
+            assertThatThrownBy(() -> participants.withdraw(memberId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여자가 아닙니다.");
+        }
+    }
+
     @DisplayName("인원수가 더 많은 지에 대한 테스트")
     @Nested
     public class validateCapacityIsOver {
@@ -173,6 +202,23 @@ class ParticipantsTest {
             assertThatThrownBy(() -> participants.validateMemberIsRequested(memberId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("참여자가 아닙니다.");
+        }
+    }
+
+    @DisplayName("참여중인 사용자 수 조회 테스트")
+    @Nested
+    public class getNumberOrParticipants {
+
+        @DisplayName("참여자 목록 중 '참여중' 인 사용자의 수를 조회한다")
+        @Test
+        void success() {
+            final Participants participants = new Participants(runningCrew);
+            participants.add(runningCrew, 2L);
+            participants.add(runningCrew, 3L);
+
+            final int numberOrParticipants = participants.getNumberOrParticipants();
+
+            assertThat(numberOrParticipants).isEqualTo(1);
         }
     }
 }

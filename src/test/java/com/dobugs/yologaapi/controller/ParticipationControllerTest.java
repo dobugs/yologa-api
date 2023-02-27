@@ -73,4 +73,21 @@ class ParticipationControllerTest {
             )
         ;
     }
+
+    @DisplayName("러닝크루에 탈퇴한다")
+    @Test
+    void withdraw() throws Exception {
+        final String accessToken = "accessToken";
+        final long runningCrewId = 1L;
+
+        mockMvc.perform(post(BASIC_URL + "/" + runningCrewId + "/withdraw")
+                .header("Authorization", accessToken))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "participation/withdraw",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
 }

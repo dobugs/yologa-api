@@ -58,3 +58,9 @@ Request
 include::{snippets}/participation/cancel/http-request.adoc[]
 Response
 include::{snippets}/participation/cancel/http-response.adoc[]
+
+== 러닝크루 탈퇴
+Request
+include::{snippets}/participation/withdraw/http-request.adoc[]
+Response
+include::{snippets}/participation/withdraw/http-response.adoc[]

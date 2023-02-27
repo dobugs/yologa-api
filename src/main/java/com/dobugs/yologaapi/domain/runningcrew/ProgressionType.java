@@ -21,7 +21,7 @@ public enum ProgressionType {
         this.name = name;
     }
 
-    public boolean isReady() {
+    public boolean isCreatedOrReady() {
         final List<ProgressionType> readied = List.of(CREATED, READY);
         return readied.contains(this);
     }

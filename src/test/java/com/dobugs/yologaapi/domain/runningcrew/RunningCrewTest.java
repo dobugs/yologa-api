@@ -323,7 +323,7 @@ class RunningCrewTest {
 
             assertThatThrownBy(() -> runningCrew.participate(memberId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("이미 시작되었습니다.");
+                .hasMessageContaining("이미 진행중이거나 완료되었습니다.");
         }
     }
 

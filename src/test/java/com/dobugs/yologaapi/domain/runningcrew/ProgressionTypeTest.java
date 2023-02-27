@@ -10,27 +10,27 @@ import org.junit.jupiter.api.Test;
 @DisplayName("ProgressionType 도메인 테스트")
 class ProgressionTypeTest {
 
-    @DisplayName("시작 테스트")
+    @DisplayName("생성 또는 준비에 대한 테스트")
     @Nested
-    public class isReady {
+    public class isCreatedOrReady {
 
-        @DisplayName("준비중이면 true 를 반환한다")
+        @DisplayName("생성 또는 준비중이면 true 를 반환한다")
         @Test
-        void ready() {
+        void createdOrReady() {
             assertAll(
-                () -> assertThat(ProgressionType.CREATED.isReady()).isTrue(),
-                () -> assertThat(ProgressionType.READY.isReady()).isTrue()
+                () -> assertThat(ProgressionType.CREATED.isCreatedOrReady()).isTrue(),
+                () -> assertThat(ProgressionType.READY.isCreatedOrReady()).isTrue()
             );
         }
 
-        @DisplayName("준비가 끝났으면 false 를 반환한다")
+        @DisplayName("생성 또는 준비중이 아니면 false 를 반환한다")
         @Test
-        void notReady() {
+        void notCreatedAndReady() {
             assertAll(
-                () -> assertThat(ProgressionType.IN_PROGRESS.isReady()).isFalse(),
-                () -> assertThat(ProgressionType.COMPLETED.isReady()).isFalse(),
-                () -> assertThat(ProgressionType.CANCELLED.isReady()).isFalse(),
-                () -> assertThat(ProgressionType.EXPIRED.isReady()).isFalse()
+                () -> assertThat(ProgressionType.IN_PROGRESS.isCreatedOrReady()).isFalse(),
+                () -> assertThat(ProgressionType.COMPLETED.isCreatedOrReady()).isFalse(),
+                () -> assertThat(ProgressionType.CANCELLED.isCreatedOrReady()).isFalse(),
+                () -> assertThat(ProgressionType.EXPIRED.isCreatedOrReady()).isFalse()
             );
         }
     }

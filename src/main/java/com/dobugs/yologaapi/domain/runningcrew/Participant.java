@@ -47,7 +47,18 @@ public class Participant extends BaseEntity {
         this.runningCrew = runningCrew;
     }
 
+    public void withdraw() {
+        validateMemberIsParticipating(memberId);
+        this.status = ParticipantType.WITHDRAWN;
+    }
+
     public boolean isRequested() {
         return status.isRequested();
+    }
+
+    private void validateMemberIsParticipating(final Long memberId) {
+        if (!status.isParticipating()) {
+            throw new IllegalArgumentException(String.format("참여중인 상태가 아닙니다. [%s, %s]", memberId, status.getName()));
+        }
     }
 }

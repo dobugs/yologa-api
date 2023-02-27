@@ -131,7 +131,7 @@ public class RunningCrew extends BaseEntity {
         participants.validateMemberIsNotParticipant(memberId);
         participants.validateCapacityIsOver(capacity);
         deadline.validateDeadlineIsNotOver();
-        validateRunningCrewStatusIsReady();
+        validateRunningCrewStatusIsCreatedOrReady();
         participants.add(this, memberId);
     }
 
@@ -139,6 +139,19 @@ public class RunningCrew extends BaseEntity {
         validateMemberIsNotHost(memberId);
         participants.validateMemberIsRequested(memberId);
         participants.delete(memberId);
+    }
+
+    public void withdraw(final Long memberId) {
+        validateMemberIsNotHost(memberId);
+        participants.withdraw(memberId);
+        initializeProgress();
+    }
+
+    private void initializeProgress() {
+        final int number = participants.getNumberOrParticipants();
+        if (number == 1 && status.isCreatedOrReady()) {
+            status = ProgressionType.CREATED;
+        }
     }
 
     private void validateMemberIsHost(final Long memberId) {
@@ -179,9 +192,9 @@ public class RunningCrew extends BaseEntity {
         }
     }
 
-    private void validateRunningCrewStatusIsReady() {
-        if (!status.isReady()) {
-            throw new IllegalArgumentException(String.format("이미 시작되었습니다. [%s]", status.getName()));
+    private void validateRunningCrewStatusIsCreatedOrReady() {
+        if (!status.isCreatedOrReady()) {
+            throw new IllegalArgumentException(String.format("이미 진행중이거나 완료되었습니다. [%s]", status.getName()));
         }
     }
 
