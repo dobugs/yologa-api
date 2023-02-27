@@ -32,7 +32,7 @@ class RunningCrewRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    @DisplayName("러닝크루 아이디를 이용하여 러닝크루 정보를 조회하는 테스트")
+    @DisplayName("러닝크루 아이디를 이용하여 러닝크루 정보 조회")
     @Nested
     public class findByIdAndArchivedIsTrue {
 
@@ -75,7 +75,7 @@ class RunningCrewRepositoryTest {
         }
     }
 
-    @DisplayName("내 주변에 있는 러닝크루 목록을 조회한다")
+    @DisplayName("내 주변 러닝크루 목록 조회")
     @Nested
     public class findNearby {
 

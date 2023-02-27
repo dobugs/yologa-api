@@ -5,17 +5,19 @@ import lombok.Getter;
 @Getter
 public enum ParticipantType {
 
-    REQUESTED("참여 요청"),
-    CANCELLED("참여 요청 취소"),
-    PARTICIPATING("참여중"),
-    REJECTED("참여 거절"),
-    WITHDRAWN("탈퇴"),
+    REQUESTED("참여 요청", "REQUESTED"),
+    CANCELLED("참여 요청 취소", "CANCELLED"),
+    PARTICIPATING("참여중", "PARTICIPATING"),
+    REJECTED("참여 거절", "REJECTED"),
+    WITHDRAWN("탈퇴", "WITHDRAWN"),
     ;
 
-    private final String name;
+    private final String description;
+    private final String savedName;
 
-    ParticipantType(final String name) {
-        this.name = name;
+    ParticipantType(final String description, final String savedName) {
+        this.description = description;
+        this.savedName = savedName;
     }
 
     public boolean isRequested() {

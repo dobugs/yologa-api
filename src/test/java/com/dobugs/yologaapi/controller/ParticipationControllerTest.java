@@ -1,11 +1,15 @@
 package com.dobugs.yologaapi.controller;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +24,8 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.dobugs.yologaapi.service.ParticipationService;
+import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
+import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
@@ -39,6 +45,27 @@ class ParticipationControllerTest {
 
     @MockBean
     private ParticipationService participationService;
+
+    @DisplayName("러닝크루 참여자 목록 정보를 조회한다")
+    @Test
+    void findParticipants() throws Exception {
+        final long runningCrewId = 1L;
+
+        final ParticipantResponse participant1 = new ParticipantResponse(1L, "유콩");
+        final ParticipantResponse participant2 = new ParticipantResponse(2L, "건");
+        final ParticipantsResponse response = new ParticipantsResponse(List.of(participant1, participant2));
+
+        given(participationService.findParticipants(runningCrewId)).willReturn(response);
+
+        mockMvc.perform(get(BASIC_URL + "/" + runningCrewId + "/participants"))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "participation/findParticipants",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
 
     @DisplayName("러닝크루에 참여 요청을 한다")
     @Test

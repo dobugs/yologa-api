@@ -72,13 +72,13 @@ public class Participant extends BaseEntity {
 
     private void validateMemberIsRequested(final Long memberId) {
         if (!status.isRequested()) {
-            throw new IllegalArgumentException(String.format("참여 요청인 상태가 아닙니다. [%s, %s]", memberId, status.getName()));
+            throw new IllegalArgumentException(String.format("참여 요청인 상태가 아닙니다. [%s, %s]", memberId, status.getDescription()));
         }
     }
 
     private void validateMemberIsParticipating(final Long memberId) {
         if (!status.isParticipating()) {
-            throw new IllegalArgumentException(String.format("참여중인 상태가 아닙니다. [%s, %s]", memberId, status.getName()));
+            throw new IllegalArgumentException(String.format("참여중인 상태가 아닙니다. [%s, %s]", memberId, status.getDescription()));
         }
     }
 }

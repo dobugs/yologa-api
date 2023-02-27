@@ -4,6 +4,7 @@ import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.dobugs.yologaapi.domain.runningcrew.Participant;
 import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
+import com.dobugs.yologaapi.repository.ParticipantRepository;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
+import com.dobugs.yologaapi.repository.dto.response.ParticipantDto;
+import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
+import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
@@ -38,11 +43,14 @@ class ParticipationServiceTest {
     private RunningCrewRepository runningCrewRepository;
 
     @Mock
+    private ParticipantRepository participantRepository;
+
+    @Mock
     private TokenGenerator tokenGenerator;
 
     @BeforeEach
     void setUp() {
-        participationService = new ParticipationService(runningCrewRepository, tokenGenerator);
+        participationService = new ParticipationService(runningCrewRepository, participantRepository, tokenGenerator);
     }
 
     private String createToken(final Long memberId, final String provider, final String token) {
@@ -51,6 +59,50 @@ class ParticipationServiceTest {
             .claim("provider", provider)
             .claim("token", token)
             .compact();
+    }
+
+    @DisplayName("러닝크루 참여자 목록 조회 테스트")
+    @Nested
+    public class findParticipants {
+
+        @DisplayName("러닝크루 참여자의 목록을 조회한다")
+        @Test
+        void success() {
+            final long runningCrewId = 0L;
+
+            final long memberId1 = 1L;
+            final long memberId2 = 2L;
+            given(participantRepository.findParticipants(runningCrewId, ParticipantType.PARTICIPATING.getSavedName()))
+                .willReturn(List.of(new ParticipantDtoImpl(memberId1, "유콩"), new ParticipantDtoImpl(memberId2, "건")));
+
+            final ParticipantsResponse response = participationService.findParticipants(runningCrewId);
+
+            final List<Long> idsOfParticipants = response.participants().stream()
+                .map(ParticipantResponse::id)
+                .toList();
+            assertThat(idsOfParticipants).containsExactly(memberId1, memberId2);
+        }
+
+        private class ParticipantDtoImpl implements ParticipantDto {
+
+            private final Long id;
+            private final String nickname;
+
+            public ParticipantDtoImpl(final Long id, final String nickname) {
+                this.id = id;
+                this.nickname = nickname;
+            }
+
+            @Override
+            public Long getId() {
+                return id;
+            }
+
+            @Override
+            public String getNickname() {
+                return nickname;
+            }
+        }
     }
 
     @DisplayName("참여 요청 테스트")

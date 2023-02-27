@@ -59,7 +59,7 @@ public class Participants {
     private void validateMemberIsNotParticipant(final Long memberId) {
         for (final Participant participant : value) {
             if (participant.getMemberId().equals(memberId)) {
-                throw new IllegalArgumentException(String.format("이미 참여중입니다. [%s, %s]", memberId, participant.getStatus().getName()));
+                throw new IllegalArgumentException(String.format("이미 참여중입니다. [%s, %s]", memberId, participant.getStatus().getDescription()));
             }
         }
     }
