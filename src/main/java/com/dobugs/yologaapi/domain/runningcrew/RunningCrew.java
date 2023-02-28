@@ -39,7 +39,10 @@ public class RunningCrew extends BaseEntity {
     private Point arrival;
 
     @Enumerated(value = EnumType.STRING)
-    private RunningCrewProgression status;
+    private ProgressionType status;
+
+    @Embedded
+    private Participants participants;
 
     @Embedded
     private Capacity capacity;
@@ -73,7 +76,8 @@ public class RunningCrew extends BaseEntity {
         this.memberId = memberId;
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
-        this.status = RunningCrewProgression.CREATED;
+        this.status = ProgressionType.CREATED;
+        this.participants = new Participants(this);
         this.capacity = capacity;
         this.scheduledStartDate = scheduledStartDate;
         this.scheduledEndDate = scheduledEndDate;
@@ -90,6 +94,8 @@ public class RunningCrew extends BaseEntity {
     ) {
         validateMemberIsHost(memberId);
         validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
+        this.participants.validateCapacityIsOver(capacity);
+
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
         this.capacity = capacity;
@@ -108,6 +114,7 @@ public class RunningCrew extends BaseEntity {
     public void start(final Long memberId) {
         validateMemberIsHost(memberId);
         validateRunningCrewDoesNotStart();
+        status = ProgressionType.IN_PROGRESS;
         implementedStartDate = LocalDateTime.now();
     }
 
@@ -115,12 +122,59 @@ public class RunningCrew extends BaseEntity {
         validateMemberIsHost(memberId);
         validateRunningCrewStart();
         validateRunningCrewDoesNotEnd();
+        status = ProgressionType.COMPLETED;
         implementedEndDate = LocalDateTime.now();
+    }
+
+    public void participate(final Long memberId) {
+        validateMemberIsNotHost(memberId);
+        participants.validateCapacityIsOver(capacity);
+        deadline.validateDeadlineIsNotOver();
+        validateRunningCrewStatusIsCreatedOrReady();
+        participants.temporaryJoin(this, memberId);
+    }
+
+    public void cancel(final Long memberId) {
+        validateMemberIsNotHost(memberId);
+        participants.cancel(memberId);
+    }
+
+    public void withdraw(final Long memberId) {
+        validateMemberIsNotHost(memberId);
+        participants.withdraw(memberId);
+        initializeProgress();
+    }
+
+    public void accept(final Long hostId, final Long memberId) {
+        validateMemberIsHost(hostId);
+        validateMemberIsNotHost(memberId);
+        deadline.validateDeadlineIsNotOver();
+        validateRunningCrewStatusIsCreatedOrReadyOrInProgress();
+        participants.accept(memberId);
+    }
+
+    public void reject(final Long hostId, final Long memberId) {
+        validateMemberIsHost(hostId);
+        validateMemberIsNotHost(memberId);
+        participants.reject(memberId);
+    }
+
+    private void initializeProgress() {
+        final int number = participants.getNumberOrParticipants();
+        if (number == 1 && status.isCreatedOrReady()) {
+            status = ProgressionType.CREATED;
+        }
     }
 
     private void validateMemberIsHost(final Long memberId) {
         if (!this.memberId.equals(memberId)) {
             throw new IllegalArgumentException(String.format("호스트가 아닙니다. [%s]", memberId));
+        }
+    }
+
+    private void validateMemberIsNotHost(final Long memberId) {
+        if (this.memberId.equals(memberId)) {
+            throw new IllegalArgumentException(String.format("러닝크루의 호스트입니다. [%s]", memberId));
         }
     }
 
@@ -147,6 +201,18 @@ public class RunningCrew extends BaseEntity {
     private void validateRunningCrewDoesNotEnd() {
         if (implementedEndDate != null) {
             throw new IllegalArgumentException(String.format("이미 종료되었습니다. [%s]", implementedEndDate));
+        }
+    }
+
+    private void validateRunningCrewStatusIsCreatedOrReady() {
+        if (!status.isCreatedOrReady()) {
+            throw new IllegalArgumentException(String.format("이미 진행중이거나 완료되었습니다. [%s]", status.getName()));
+        }
+    }
+
+    private void validateRunningCrewStatusIsCreatedOrReadyOrInProgress() {
+        if (!status.isCreatedOrReadyOrInProgress()) {
+            throw new IllegalArgumentException(String.format("이미 완료되었습니다. [%s]", status.getName()));
         }
     }
 

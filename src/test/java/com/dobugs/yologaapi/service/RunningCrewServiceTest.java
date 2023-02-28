@@ -9,6 +9,7 @@ import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -25,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
+import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
@@ -219,7 +221,10 @@ class RunningCrewServiceTest {
 
             runningCrewService.start(serviceToken, runningCrewId);
 
-            assertThat(savedRunningCrew.getImplementedStartDate()).isNotNull();
+            assertAll(
+                () -> assertThat(savedRunningCrew.getImplementedStartDate()).isNotNull(),
+                () -> assertThat(savedRunningCrew.getStatus()).isEqualTo(ProgressionType.IN_PROGRESS)
+            );
         }
 
         @DisplayName("존재하지 않는 아이디로 러닝크루를 시작할 수 없다")
@@ -252,7 +257,10 @@ class RunningCrewServiceTest {
 
             runningCrewService.end(serviceToken, runningCrewId);
 
-            assertThat(savedRunningCrew.getImplementedEndDate()).isNotNull();
+            assertAll(
+                () -> assertThat(savedRunningCrew.getImplementedEndDate()).isNotNull(),
+                () -> assertThat(savedRunningCrew.getStatus()).isEqualTo(ProgressionType.COMPLETED)
+            );
         }
 
         @DisplayName("존재하지 않는 아이디로 러닝크루를 종료할 수 없다")

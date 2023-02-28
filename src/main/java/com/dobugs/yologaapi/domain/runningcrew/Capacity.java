@@ -21,6 +21,10 @@ public class Capacity {
         this.value = value;
     }
 
+    public boolean isLeft(final int number) {
+        return number < value;
+    }
+
     private void validateCapacityIsOverStandard(final int value) {
         if (value < MINIMUM) {
             throw new IllegalArgumentException(String.format("인원은 %d 명이어야 합니다. [%d]", MINIMUM, value));

@@ -21,6 +21,13 @@ public class Deadline {
         this.value = value;
     }
 
+    public void validateDeadlineIsNotOver() {
+        final LocalDateTime now = LocalDateTime.now();
+        if (value.isBefore(now)) {
+            throw new IllegalArgumentException("마감기한이 지났습니다.");
+        }
+    }
+
     private void validateDeadlineIsAfterThanNow(final LocalDateTime value) {
         if (value.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException(String.format("마감 기한이 현재 시간보다 이전입니다. [%s]", value));
