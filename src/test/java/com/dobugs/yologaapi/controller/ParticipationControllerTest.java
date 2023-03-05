@@ -1,5 +1,7 @@
 package com.dobugs.yologaapi.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -22,6 +24,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.dobugs.yologaapi.service.ParticipationService;
 import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
@@ -50,14 +54,20 @@ class ParticipationControllerTest {
     @Test
     void findParticipants() throws Exception {
         final long runningCrewId = 1L;
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", String.valueOf(0));
+        params.add("size", String.valueOf(10));
 
         final ParticipantResponse participant1 = new ParticipantResponse(1L, "유콩");
         final ParticipantResponse participant2 = new ParticipantResponse(2L, "건");
-        final ParticipantsResponse response = new ParticipantsResponse(List.of(participant1, participant2));
+        final ParticipantsResponse response = new ParticipantsResponse(
+            2, 0, 10, List.of(participant1, participant2)
+        );
 
-        given(participationService.findParticipants(runningCrewId)).willReturn(response);
+        given(participationService.findParticipants(eq(runningCrewId), any())).willReturn(response);
 
-        mockMvc.perform(get(BASIC_URL + "/" + runningCrewId + "/participants"))
+        mockMvc.perform(get(BASIC_URL + "/" + runningCrewId + "/participants")
+                .params(params))
             .andExpect(status().isOk())
             .andDo(document(
                 "participation/findParticipants",
