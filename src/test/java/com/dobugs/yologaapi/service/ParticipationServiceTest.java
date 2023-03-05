@@ -25,7 +25,7 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.ParticipantRepository;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.repository.dto.response.ParticipantDto;
-import com.dobugs.yologaapi.service.dto.request.ParticipantsRequest;
+import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 import com.dobugs.yologaapi.support.TokenGenerator;
@@ -74,7 +74,7 @@ class ParticipationServiceTest {
         @Test
         void success() {
             final long runningCrewId = 0L;
-            final ParticipantsRequest request = new ParticipantsRequest(0, 10);
+            final PagingRequest request = new PagingRequest(0, 10);
 
             final long memberId1 = 1L;
             final long memberId2 = 2L;

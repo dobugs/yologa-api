@@ -11,7 +11,7 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.ParticipantRepository;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.repository.dto.response.ParticipantDto;
-import com.dobugs.yologaapi.service.dto.request.ParticipantsRequest;
+import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
@@ -28,7 +28,7 @@ public class ParticipationService {
     private final TokenGenerator tokenGenerator;
 
     @Transactional(readOnly = true)
-    public ParticipantsResponse findParticipants(final Long runningCrewId, final ParticipantsRequest request) {
+    public ParticipantsResponse findParticipants(final Long runningCrewId, final PagingRequest request) {
         final Pageable pageable = PageRequest.of(request.page(), request.size());
         final Page<ParticipantDto> response = participantRepository.findParticipants(runningCrewId, ParticipantType.PARTICIPATING.getSavedName(), pageable);
         return ParticipantsResponse.from(response);

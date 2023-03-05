@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dobugs.yologaapi.service.ParticipationService;
-import com.dobugs.yologaapi.service.dto.request.ParticipantsRequest;
+import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class ParticipationController {
     @GetMapping("/participants")
     public ResponseEntity<ParticipantsResponse> findParticipants(
         @PathVariable final Long runningCrewId,
-        @ModelAttribute final ParticipantsRequest request
+        @ModelAttribute final PagingRequest request
     ) {
         final ParticipantsResponse response = participationService.findParticipants(runningCrewId, request);
         return ResponseEntity.ok(response);
