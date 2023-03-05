@@ -2,7 +2,10 @@ package com.dobugs.yologaapi.service;
 
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrew;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 
 import com.dobugs.yologaapi.domain.runningcrew.Participant;
 import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
@@ -21,6 +25,7 @@ import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.ParticipantRepository;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.repository.dto.response.ParticipantDto;
+import com.dobugs.yologaapi.service.dto.request.ParticipantsRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 import com.dobugs.yologaapi.support.TokenGenerator;
@@ -69,15 +74,21 @@ class ParticipationServiceTest {
         @Test
         void success() {
             final long runningCrewId = 0L;
+            final ParticipantsRequest request = new ParticipantsRequest(0, 10);
 
             final long memberId1 = 1L;
             final long memberId2 = 2L;
-            given(participantRepository.findParticipants(runningCrewId, ParticipantType.PARTICIPATING.getSavedName()))
-                .willReturn(List.of(new ParticipantDtoImpl(memberId1, "유콩"), new ParticipantDtoImpl(memberId2, "건")));
+            final List<ParticipantDto> participantDtos = List.of(new ParticipantDtoImpl(memberId1, "유콩"), new ParticipantDtoImpl(memberId2, "건"));
+            final Page<ParticipantDto> page = mock(Page.class);
+            given(page.getTotalElements()).willReturn(0L);
+            given(page.getNumber()).willReturn(0);
+            given(page.getSize()).willReturn(0);
+            given(page.getContent()).willReturn(participantDtos);
+            given(participantRepository.findParticipants(eq(runningCrewId), eq(ParticipantType.PARTICIPATING.getSavedName()), any())).willReturn(page);
 
-            final ParticipantsResponse response = participationService.findParticipants(runningCrewId);
+            final ParticipantsResponse response = participationService.findParticipants(runningCrewId, request);
 
-            final List<Long> idsOfParticipants = response.participants().stream()
+            final List<Long> idsOfParticipants = response.content().stream()
                 .map(ParticipantResponse::id)
                 .toList();
             assertThat(idsOfParticipants).containsExactly(memberId1, memberId2);
