@@ -171,6 +171,34 @@ class RunningCrewControllerTest {
         ;
     }
 
+    @DisplayName("내가 참여한 러닝크루 목록을 조회한다")
+    @Test
+    void findParticipated() throws Exception {
+        final String accessToken = "accessToken";
+        final String status = ProgressionType.CREATED.getSavedName();
+        final int page = 0;
+        final int size = 10;
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("status", status);
+        params.add("page", String.valueOf(page));
+        params.add("size", String.valueOf(size));
+
+        final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, page, size);
+        final RunningCrewsResponse response = new RunningCrewsResponse(1, page, size, List.of(createRunningCrewResponse(1L)));
+        given(runningCrewService.findParticipated(accessToken, request)).willReturn(response);
+
+        mockMvc.perform(get(BASIC_URL + "/participated")
+                .header("Authorization", accessToken)
+                .params(params))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "running-crew/findParticipated",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
+
     @DisplayName("러닝크루의 상세정보를 조회한다")
     @Test
     void findById() throws Exception {

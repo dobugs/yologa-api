@@ -66,6 +66,15 @@ public class RunningCrewController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/participated")
+    public ResponseEntity<RunningCrewsResponse> findParticipated(
+        @RequestHeader("Authorization") final String accessToken,
+        @ModelAttribute final RunningCrewStatusRequest request
+    ) {
+        final RunningCrewsResponse response = runningCrewService.findParticipated(accessToken, request);
+        return ResponseEntity.ok().body(response);
+    }
+
     @GetMapping("/{runningCrewId}")
     public ResponseEntity<RunningCrewResponse> findById(@PathVariable final Long runningCrewId) {
         final RunningCrewResponse response = runningCrewService.findById(runningCrewId);

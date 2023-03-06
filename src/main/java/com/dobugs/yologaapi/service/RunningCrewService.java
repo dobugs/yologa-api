@@ -80,6 +80,17 @@ public class RunningCrewService {
     }
 
     @Transactional(readOnly = true)
+    public RunningCrewsResponse findParticipated(final String serviceToken, final RunningCrewStatusRequest request) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
+
+        final ProgressionType progressionType = selectProgressionType(request.status());
+        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Page<RunningCrew> runningCrews = findParticipatedRunningCrews(memberId, progressionType, pageable);
+        return RunningCrewsResponse.from(runningCrews);
+    }
+
+    @Transactional(readOnly = true)
     public RunningCrewResponse findById(final Long runningCrewId) {
         final RunningCrew runningCrew = findRunningCrewBy(runningCrewId);
         return RunningCrewResponse.from(runningCrew);
@@ -123,6 +134,14 @@ public class RunningCrewService {
             return runningCrewRepository.findByMemberIdAndArchivedIsTrue(memberId, pageable);
         }
         return runningCrewRepository.findByMemberIdAndStatusAndArchivedIsTrue(memberId, progressionType, pageable);
+    }
+
+    private Page<RunningCrew> findParticipatedRunningCrews(final Long memberId, final ProgressionType progressionType, final Pageable pageable) {
+        final String participating = ParticipantType.PARTICIPATING.getSavedName();
+        if (progressionType == null) {
+            return runningCrewRepository.findParticipated(memberId, participating, pageable);
+        }
+        return runningCrewRepository.findParticipatedByStatus(memberId, progressionType.getSavedName(), participating, pageable);
     }
 
     private ProgressionType selectProgressionType(final String status) {

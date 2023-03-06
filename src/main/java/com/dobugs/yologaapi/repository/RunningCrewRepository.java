@@ -53,4 +53,50 @@ public interface RunningCrewRepository extends JpaRepository<RunningCrew, Long> 
     Page<RunningCrew> findByMemberIdAndArchivedIsTrue(final Long memberId, final Pageable pageable);
 
     Page<RunningCrew> findByMemberIdAndStatusAndArchivedIsTrue(final Long memberId, final ProgressionType progressionType, final Pageable pageable);
+
+    @Query(
+        value = "SELECT rc.*\n"
+            + "FROM running_crew AS rc\n"
+            + "JOIN participant AS p\n"
+            + "ON rc.id = p.running_crew_id\n"
+            + "WHERE\n"
+            + "p.member_id = ?1 AND p.status = ?2 AND p.archived = true\n"
+            + "AND\n"
+            + "rc.archived = true\n"
+            + ";",
+        countQuery = "SELECT count(rc.id)\n"
+            + "FROM running_crew AS rc\n"
+            + "JOIN participant AS p\n"
+            + "ON rc.id = p.running_crew_id\n"
+            + "WHERE\n"
+            + "p.member_id = ?1 AND p.status = ?2 AND p.archived = true\n"
+            + "AND\n"
+            + "rc.archived = true\n"
+            + ";",
+        nativeQuery = true
+    )
+    Page<RunningCrew> findParticipated(final Long memberId, final String participantStatus, final Pageable pageable);
+
+    @Query(
+        value = "SELECT rc.*\n"
+            + "FROM running_crew AS rc\n"
+            + "JOIN participant AS p\n"
+            + "ON rc.id = p.running_crew_id\n"
+            + "WHERE\n"
+            + "p.member_id = ?1 AND p.status = ?3 AND p.archived = true\n"
+            + "AND\n"
+            + "rc.status = ?2 AND rc.archived = true\n"
+            + ";",
+        countQuery = "SELECT count(rc.id)\n"
+            + "FROM running_crew AS rc\n"
+            + "JOIN participant AS p\n"
+            + "ON rc.id = p.running_crew_id\n"
+            + "WHERE\n"
+            + "p.member_id = ?1 AND p.status = ?3 AND p.archived = true\n"
+            + "AND\n"
+            + "rc.status = ?2 AND rc.archived = true\n"
+            + ";",
+        nativeQuery = true
+    )
+    Page<RunningCrew> findParticipatedByStatus(final Long memberId, final String runningCrewStatus, final String participantStatus, final Pageable pageable);
 }

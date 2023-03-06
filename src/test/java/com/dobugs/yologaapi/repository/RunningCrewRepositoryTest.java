@@ -209,4 +209,52 @@ class RunningCrewRepositoryTest {
             assertThat(runningCrews.getContent()).isEmpty();
         }
     }
+
+    @DisplayName("내가 참여한 러닝크루 목록 조회")
+    @Nested
+    public class findParticipated {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("내가 참여한 러닝크루 목록을 조회한다")
+        @Test
+        void success() {
+            final long memberId = -1L;
+
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.participate(memberId);
+            runningCrew.accept(HOST_ID, memberId);
+            runningCrewRepository.save(runningCrew);
+
+            final Pageable pageable = PageRequest.of(0, 5);
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findParticipated(memberId, ParticipantType.PARTICIPATING.getSavedName(), pageable);
+
+            assertThat(runningCrews.getContent()).isNotEmpty();
+        }
+    }
+
+    @DisplayName("상태값을 이용하여 내가 참여한 러닝크루 목록 조회")
+    @Nested
+    public class findParticipatedByStatus {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("상태값을 이용하여 내가 참여한 러닝크루 목록을 조회한다")
+        @Test
+        void success() {
+            final long memberId = -1L;
+
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.participate(memberId);
+            runningCrew.accept(HOST_ID, memberId);
+            runningCrewRepository.save(runningCrew);
+
+            final Pageable pageable = PageRequest.of(0, 5);
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findParticipatedByStatus(
+                memberId, ProgressionType.CREATED.getSavedName(), ParticipantType.PARTICIPATING.getSavedName(), pageable
+            );
+
+            assertThat(runningCrews.getContent()).isNotEmpty();
+        }
+    }
 }
