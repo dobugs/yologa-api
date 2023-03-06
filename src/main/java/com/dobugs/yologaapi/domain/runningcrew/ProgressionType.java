@@ -23,6 +23,14 @@ public enum ProgressionType {
         this.savedName = savedName;
     }
 
+    public static ProgressionType from(final String value) {
+        try {
+            return ProgressionType.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("잘못된 상태값입니다. [%s]", value));
+        }
+    }
+
     public boolean isCreatedOrReady() {
         return List.of(CREATED, READY).contains(this);
     }

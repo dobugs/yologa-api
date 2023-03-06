@@ -34,6 +34,7 @@ import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewStatusRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
@@ -142,6 +143,75 @@ class RunningCrewServiceTest {
                 .toList();
 
             assertThat(memberIdsOfResponse).contains(MEMBER_ID);
+        }
+    }
+
+    @DisplayName("내가 주최한 러닝크루 목록 조회")
+    @Nested
+    public class findHosted {
+
+        @DisplayName("내가 주최한 러닝크루 목록을 조회한다")
+        @Test
+        void success() {
+            final String status = "CREATED";
+
+            final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, 0, 10);
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+
+            final List<RunningCrew> runningCrews = List.of(createRunningCrew(MEMBER_ID));
+            final Page<RunningCrew> page = mock(Page.class);
+            given(page.getTotalElements()).willReturn(0L);
+            given(page.getNumber()).willReturn(10);
+            given(page.getSize()).willReturn(0);
+            given(page.getContent()).willReturn(runningCrews);
+            given(runningCrewRepository.findByMemberIdAndStatusAndArchivedIsTrue(eq(MEMBER_ID), eq(ProgressionType.CREATED), any()))
+                .willReturn(page);
+
+            final RunningCrewsResponse response = runningCrewService.findHosted(serviceToken, request);
+            final List<Long> memberIdsOfResponse = response.content().stream()
+                .map(RunningCrewResponse::host)
+                .toList();
+
+            assertThat(memberIdsOfResponse).contains(MEMBER_ID);
+        }
+
+        @DisplayName("러닝크루 상태값에 null 을 입력하면 모든 상태값의 러닝크루 목록을 조회한다")
+        @Test
+        void statusIsNull() {
+            final String status = null;
+
+            final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, 0, 10);
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+
+            final List<RunningCrew> runningCrews = List.of(createRunningCrew(MEMBER_ID));
+            final Page<RunningCrew> page = mock(Page.class);
+            given(page.getTotalElements()).willReturn(0L);
+            given(page.getNumber()).willReturn(10);
+            given(page.getSize()).willReturn(0);
+            given(page.getContent()).willReturn(runningCrews);
+            given(runningCrewRepository.findByMemberIdAndArchivedIsTrue(eq(MEMBER_ID), any())).willReturn(page);
+
+            final RunningCrewsResponse response = runningCrewService.findHosted(serviceToken, request);
+            final List<Long> memberIdsOfResponse = response.content().stream()
+                .map(RunningCrewResponse::host)
+                .toList();
+
+            assertThat(memberIdsOfResponse).contains(MEMBER_ID);
+        }
+
+        @DisplayName("잘못된 상태값을 입력하면 예외가 발생한다")
+        @Test
+        void statusIsInvalid() {
+            final String invalidStatus = "invalidStatus";
+
+            final RunningCrewStatusRequest request = new RunningCrewStatusRequest(invalidStatus, 0, 10);
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+
+            assertThatThrownBy(() -> runningCrewService.findHosted(serviceToken, request))
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

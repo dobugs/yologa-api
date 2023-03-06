@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 
 public interface RunningCrewRepository extends JpaRepository<RunningCrew, Long> {
@@ -48,4 +49,8 @@ public interface RunningCrewRepository extends JpaRepository<RunningCrew, Long> 
         nativeQuery = true
     )
     Page<RunningCrew> findInProgress(final Long memberId, final String runningCrewStatus, final String participantStatus, final Pageable pageable);
+
+    Page<RunningCrew> findByMemberIdAndArchivedIsTrue(final Long memberId, final Pageable pageable);
+
+    Page<RunningCrew> findByMemberIdAndStatusAndArchivedIsTrue(final Long memberId, final ProgressionType progressionType, final Pageable pageable);
 }

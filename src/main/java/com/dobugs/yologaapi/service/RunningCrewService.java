@@ -19,6 +19,7 @@ import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewStatusRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
@@ -68,6 +69,17 @@ public class RunningCrewService {
     }
 
     @Transactional(readOnly = true)
+    public RunningCrewsResponse findHosted(final String serviceToken, final RunningCrewStatusRequest request) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
+
+        final ProgressionType progressionType = selectProgressionType(request.status());
+        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Page<RunningCrew> runningCrews = findHostedRunningCrews(memberId, progressionType, pageable);
+        return RunningCrewsResponse.from(runningCrews);
+    }
+
+    @Transactional(readOnly = true)
     public RunningCrewResponse findById(final Long runningCrewId) {
         final RunningCrew runningCrew = findRunningCrewBy(runningCrewId);
         return RunningCrewResponse.from(runningCrew);
@@ -104,6 +116,20 @@ public class RunningCrewService {
     private RunningCrew findRunningCrewBy(final Long runningCrewId) {
         return runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)
             .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));
+    }
+
+    private Page<RunningCrew> findHostedRunningCrews(final Long memberId, final ProgressionType progressionType, final Pageable pageable) {
+        if (progressionType == null) {
+            return runningCrewRepository.findByMemberIdAndArchivedIsTrue(memberId, pageable);
+        }
+        return runningCrewRepository.findByMemberIdAndStatusAndArchivedIsTrue(memberId, progressionType, pageable);
+    }
+
+    private ProgressionType selectProgressionType(final String status) {
+        if (status == null) {
+            return null;
+        }
+        return ProgressionType.from(status);
     }
 
     private void update(final Long memberId, final RunningCrewUpdateRequest request, final RunningCrew savedRunningCrew) {

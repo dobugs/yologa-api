@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +29,6 @@ class RunningCrewRepositoryTest {
 
     @Autowired
     private RunningCrewRepository runningCrewRepository;
-
-    @Autowired
-    private TestEntityManager entityManager;
 
     @DisplayName("러닝크루 아이디를 이용하여 러닝크루 정보 조회")
     @Nested
@@ -55,9 +51,8 @@ class RunningCrewRepositoryTest {
         @Test
         void archivedIsFalse() {
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.delete(HOST_ID);
             final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
-            savedRunningCrew.delete(HOST_ID);
-            entityManager.flush();
 
             assertAll(
                 () -> assertThat(runningCrewRepository.findById(savedRunningCrew.getId())).isPresent(),
@@ -68,11 +63,11 @@ class RunningCrewRepositoryTest {
         @DisplayName("RunningCrew 가 존재하지 않을 경우 RunningCrew 를 조회하지 못한다")
         @Test
         void notExist() {
-            final long runningCrewId = 0L;
+            final long notExistRunningCrewId = 0L;
 
             assertAll(
-                () -> assertThat(runningCrewRepository.findById(runningCrewId)).isEmpty(),
-                () -> assertThat(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).isEmpty()
+                () -> assertThat(runningCrewRepository.findById(notExistRunningCrewId)).isEmpty(),
+                () -> assertThat(runningCrewRepository.findByIdAndArchivedIsTrue(notExistRunningCrewId)).isEmpty()
             );
         }
     }
@@ -118,6 +113,100 @@ class RunningCrewRepositoryTest {
             );
 
             assertThat(runningCrews).contains(savedRunningCrew);
+        }
+    }
+
+    @DisplayName("주최자 아이디를 이용하여 러닝크루 정보 조회")
+    @Nested
+    public class findByMemberIdAndArchivedIsTrue {
+
+        private static final Long HOST_ID = 0L;
+        private static final Pageable pageable = PageRequest.of(0, 5);
+
+        @DisplayName("archived 가 true 일 경우 RunningCrew 를 조회한다")
+        @Test
+        void archivedIsTrue() {
+            runningCrewRepository.save(createRunningCrew(HOST_ID));
+
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findByMemberIdAndArchivedIsTrue(HOST_ID, pageable);
+
+            assertThat(runningCrews.getContent()).isNotEmpty();
+        }
+
+        @DisplayName("archived 가 false 일 경우 RunningCrew 를 조회하지 못한다")
+        @Test
+        void archivedIsFalse() {
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.delete(HOST_ID);
+            runningCrewRepository.save(runningCrew);
+
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findByMemberIdAndArchivedIsTrue(HOST_ID, pageable);
+
+            assertThat(runningCrews.getContent()).isEmpty();
+        }
+
+        @DisplayName("주최자 정보가 존재하지 않을 경우 RunningCrew 를 조회하지 못한다")
+        @Test
+        void notExist() {
+            final long notExistHostId = -1L;
+
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findByMemberIdAndArchivedIsTrue(notExistHostId, pageable);
+
+            assertThat(runningCrews.getContent()).isEmpty();
+        }
+    }
+
+    @DisplayName("주최자 아이디와 러닝크루 상태값을 이용하여 러닝크루 정보 조회")
+    @Nested
+    public class findByMemberIdAndStatusAndArchivedIsTrue {
+
+        private static final Long HOST_ID = 0L;
+        private static final Pageable pageable = PageRequest.of(0, 5);
+
+        @DisplayName("archived 가 true 일 경우 RunningCrew 를 조회한다")
+        @Test
+        void archivedIsTrue() {
+            runningCrewRepository.save(createRunningCrew(HOST_ID));
+
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findByMemberIdAndStatusAndArchivedIsTrue(HOST_ID, ProgressionType.CREATED, pageable);
+
+            assertThat(runningCrews.getContent()).isNotEmpty();
+        }
+
+        @DisplayName("archived 가 false 일 경우 RunningCrew 를 조회하지 못한다")
+        @Test
+        void archivedIsFalse() {
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.delete(HOST_ID);
+            runningCrewRepository.save(runningCrew);
+
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findByMemberIdAndStatusAndArchivedIsTrue(HOST_ID, ProgressionType.CREATED, pageable);
+
+            assertThat(runningCrews.getContent()).isEmpty();
+        }
+
+        @DisplayName("주최자에 해당하는 정보가 않을 경우 RunningCrew 를 조회하지 못한다")
+        @Test
+        void notExistHost() {
+            final long notExistHostId = -1L;
+
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findByMemberIdAndStatusAndArchivedIsTrue(notExistHostId, ProgressionType.CREATED, pageable);
+
+            assertThat(runningCrews.getContent()).isEmpty();
+        }
+
+        @DisplayName("상태값에 해당하는 정보가 없을 경우 RunningCrew 를 조회하지 못한다")
+        @Test
+        void notExistStatus() {
+            final ProgressionType notExistProgressionType = ProgressionType.EXPIRED;
+
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.delete(HOST_ID);
+            runningCrewRepository.save(runningCrew);
+
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findByMemberIdAndStatusAndArchivedIsTrue(HOST_ID, notExistProgressionType, pageable);
+
+            assertThat(runningCrews.getContent()).isEmpty();
         }
     }
 }

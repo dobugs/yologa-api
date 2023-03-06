@@ -18,6 +18,7 @@ import com.dobugs.yologaapi.service.RunningCrewService;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewStatusRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
@@ -53,6 +54,15 @@ public class RunningCrewController {
         @ModelAttribute final PagingRequest request
     ) {
         final RunningCrewsResponse response = runningCrewService.findInProgress(accessToken, request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/hosted")
+    public ResponseEntity<RunningCrewsResponse> findHosted(
+        @RequestHeader("Authorization") final String accessToken,
+        @ModelAttribute final RunningCrewStatusRequest request
+    ) {
+        final RunningCrewsResponse response = runningCrewService.findHosted(accessToken, request);
         return ResponseEntity.ok().body(response);
     }
 
