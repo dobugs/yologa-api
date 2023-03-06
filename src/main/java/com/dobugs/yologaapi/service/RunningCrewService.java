@@ -9,16 +9,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dobugs.yologaapi.domain.runningcrew.Capacity;
 import com.dobugs.yologaapi.domain.runningcrew.Coordinates;
 import com.dobugs.yologaapi.domain.runningcrew.Deadline;
+import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
+import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.service.dto.common.CoordinatesDto;
 import com.dobugs.yologaapi.service.dto.common.DateDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
+import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
@@ -49,6 +53,18 @@ public class RunningCrewService {
             request.latitude(), request.longitude(), request.radius(), pageable
         );
         return RunningCrewFindNearbyResponse.from(runningCrews);
+    }
+
+    @Transactional(readOnly = true)
+    public RunningCrewsResponse findInProgress(final String serviceToken, final PagingRequest request) {
+        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
+        final Long memberId = userTokenResponse.memberId();
+
+        final String runningCrewStatus = ProgressionType.IN_PROGRESS.getSavedName();
+        final String participantStatus = ParticipantType.PARTICIPATING.getSavedName();
+        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Page<RunningCrew> runningCrews = runningCrewRepository.findInProgress(memberId, runningCrewStatus, participantStatus, pageable);
+        return RunningCrewsResponse.from(runningCrews);
     }
 
     @Transactional(readOnly = true)

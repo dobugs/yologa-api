@@ -206,13 +206,13 @@ public class RunningCrew extends BaseEntity {
 
     private void validateRunningCrewStatusIsCreatedOrReady() {
         if (!status.isCreatedOrReady()) {
-            throw new IllegalArgumentException(String.format("이미 진행중이거나 완료되었습니다. [%s]", status.getName()));
+            throw new IllegalArgumentException(String.format("이미 진행중이거나 완료되었습니다. [%s]", status.getDescription()));
         }
     }
 
     private void validateRunningCrewStatusIsCreatedOrReadyOrInProgress() {
         if (!status.isCreatedOrReadyOrInProgress()) {
-            throw new IllegalArgumentException(String.format("이미 완료되었습니다. [%s]", status.getName()));
+            throw new IllegalArgumentException(String.format("이미 완료되었습니다. [%s]", status.getDescription()));
         }
     }
 

@@ -39,10 +39,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.dobugs.yologaapi.service.RunningCrewService;
+import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
@@ -107,6 +109,32 @@ class RunningCrewControllerTest {
             .andExpect(status().isOk())
             .andDo(document(
                 "running-crew/findNearby",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()))
+            )
+        ;
+    }
+
+    @DisplayName("현재 진행중인 내 러닝크루 목록을 조회한다")
+    @Test
+    void findInProgress() throws Exception {
+        final String accessToken = "accessToken";
+        final int page = 0;
+        final int size = 10;
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", String.valueOf(page));
+        params.add("size", String.valueOf(size));
+
+        final PagingRequest request = new PagingRequest(page, size);
+        final RunningCrewsResponse response = new RunningCrewsResponse(1, page, size, List.of(createRunningCrewResponse(1L)));
+        given(runningCrewService.findInProgress(accessToken, request)).willReturn(response);
+
+        mockMvc.perform(get(BASIC_URL + "/in-progress")
+                .header("Authorization", accessToken)
+                .params(params))
+            .andExpect(status().isOk())
+            .andDo(document(
+                "running-crew/findInProgress",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()))
             )

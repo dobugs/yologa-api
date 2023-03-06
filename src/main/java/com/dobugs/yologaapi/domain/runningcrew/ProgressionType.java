@@ -7,18 +7,20 @@ import lombok.Getter;
 @Getter
 public enum ProgressionType {
 
-    CREATED("생성"),
-    READY("준비"),
-    IN_PROGRESS("진행중"),
-    COMPLETED("완료"),
-    CANCELLED("취소"),
-    EXPIRED("만료"),
+    CREATED("생성", "CREATED"),
+    READY("준비", "READY"),
+    IN_PROGRESS("진행중", "IN_PROGRESS"),
+    COMPLETED("완료", "COMPLETED"),
+    CANCELLED("취소", "CANCELLED"),
+    EXPIRED("만료", "EXPIRED"),
     ;
 
-    private final String name;
+    private final String description;
+    private final String savedName;
 
-    ProgressionType(final String name) {
-        this.name = name;
+    ProgressionType(final String description, final String savedName) {
+        this.description = description;
+        this.savedName = savedName;
     }
 
     public boolean isCreatedOrReady() {

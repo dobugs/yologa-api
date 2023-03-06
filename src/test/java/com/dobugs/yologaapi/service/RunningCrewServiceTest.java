@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,13 +27,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
+import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
 import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.RunningCrewRepository;
+import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
@@ -101,13 +105,43 @@ class RunningCrewServiceTest {
 
             final Page<RunningCrew> page = mock(Page.class);
             given(page.getTotalElements()).willReturn(0L);
-            given(page.getNumber()).willReturn(0);
+            given(page.getNumber()).willReturn(10);
             given(page.getSize()).willReturn(0);
 
             given(runningCrewRepository.findNearby(any(), any(), eq(3000), any())).willReturn(page);
 
             assertThatCode(() -> runningCrewService.findNearby(request))
                 .doesNotThrowAnyException();
+        }
+    }
+
+    @DisplayName("현재 진행중인 내 러닝크루 목록 조회 테스트")
+    @Nested
+    public class findInProgress {
+
+        @DisplayName("현재 진행중인 내 러닝크루 목록을 조회한다")
+        @Test
+        void success() {
+            final PagingRequest request = new PagingRequest(0, 10);
+            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
+            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+
+            final List<RunningCrew> runningCrews = List.of(createRunningCrew(MEMBER_ID));
+            final Page<RunningCrew> page = mock(Page.class);
+            given(page.getTotalElements()).willReturn(0L);
+            given(page.getNumber()).willReturn(10);
+            given(page.getSize()).willReturn(0);
+            given(page.getContent()).willReturn(runningCrews);
+
+            given(runningCrewRepository.findInProgress(eq(MEMBER_ID), eq(ProgressionType.IN_PROGRESS.getSavedName()),
+                eq(ParticipantType.PARTICIPATING.getSavedName()), any())).willReturn(page);
+
+            final RunningCrewsResponse response = runningCrewService.findInProgress(serviceToken, request);
+            final List<Long> memberIdsOfResponse = response.content().stream()
+                .map(RunningCrewResponse::host)
+                .toList();
+
+            assertThat(memberIdsOfResponse).contains(MEMBER_ID);
         }
     }
 

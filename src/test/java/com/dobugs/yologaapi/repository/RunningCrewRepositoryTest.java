@@ -19,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
+import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -94,6 +96,28 @@ class RunningCrewRepositoryTest {
             final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(LATITUDE, LONGITUDE, 100, pageable);
 
             assertThat(runningCrews).hasSizeGreaterThanOrEqualTo(count);
+        }
+    }
+
+    @DisplayName("현재 진행중인 내 러닝크루 목록 조회")
+    @Nested
+    public class findInProgress {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("현재 진행중인 내 러닝크루 목록을 조회한다")
+        @Test
+        void success() {
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.start(HOST_ID);
+            final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
+
+            final Pageable pageable = PageRequest.of(0, 5);
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findInProgress(
+                HOST_ID, ProgressionType.IN_PROGRESS.getSavedName(), ParticipantType.PARTICIPATING.getSavedName(), pageable
+            );
+
+            assertThat(runningCrews).contains(savedRunningCrew);
         }
     }
 }
