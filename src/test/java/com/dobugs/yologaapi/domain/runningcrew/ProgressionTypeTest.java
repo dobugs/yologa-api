@@ -36,6 +36,29 @@ class ProgressionTypeTest {
         }
     }
 
+    @DisplayName("생성에 대한 테스트")
+    @Nested
+    public class isCreated {
+
+        @DisplayName("생성 상태이면 true 를 반환한다")
+        @Test
+        void created() {
+            assertThat(ProgressionType.CREATED.isCreated()).isTrue();
+        }
+
+        @DisplayName("생성 상태가 아니면 false 를 반환한다")
+        @Test
+        void notCreated() {
+            assertAll(
+                () -> assertThat(ProgressionType.READY.isCreated()).isFalse(),
+                () -> assertThat(ProgressionType.IN_PROGRESS.isCreated()).isFalse(),
+                () -> assertThat(ProgressionType.COMPLETED.isCreated()).isFalse(),
+                () -> assertThat(ProgressionType.CANCELLED.isCreated()).isFalse(),
+                () -> assertThat(ProgressionType.EXPIRED.isCreated()).isFalse()
+            );
+        }
+    }
+
     @DisplayName("생성 또는 준비에 대한 테스트")
     @Nested
     public class isCreatedOrReady {

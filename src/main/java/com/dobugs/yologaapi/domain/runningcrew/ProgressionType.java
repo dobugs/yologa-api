@@ -31,6 +31,10 @@ public enum ProgressionType {
         }
     }
 
+    public boolean isCreated() {
+        return this.equals(CREATED);
+    }
+
     public boolean isCreatedOrReady() {
         return List.of(CREATED, READY).contains(this);
     }

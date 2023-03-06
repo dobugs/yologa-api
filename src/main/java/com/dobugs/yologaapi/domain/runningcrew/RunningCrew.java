@@ -151,6 +151,7 @@ public class RunningCrew extends BaseEntity {
         deadline.validateDeadlineIsNotOver();
         validateRunningCrewStatusIsCreatedOrReadyOrInProgress();
         participants.accept(memberId);
+        ready();
     }
 
     public void reject(final Long hostId, final Long memberId) {
@@ -163,6 +164,12 @@ public class RunningCrew extends BaseEntity {
         final int number = participants.getNumberOrParticipants();
         if (number == 1 && status.isCreatedOrReady()) {
             status = ProgressionType.CREATED;
+        }
+    }
+
+    private void ready() {
+        if (status.isCreated()) {
+            status = ProgressionType.READY;
         }
     }
 
@@ -216,7 +223,7 @@ public class RunningCrew extends BaseEntity {
         }
     }
 
-    private Point  wktToPoint(final Coordinates coordinates) {
+    private Point wktToPoint(final Coordinates coordinates) {
         final String wellKnownText = String.format("POINT(%f %f)", coordinates.longitude(), coordinates.latitude());
         try {
             return (Point) new WKTReader().read(wellKnownText);

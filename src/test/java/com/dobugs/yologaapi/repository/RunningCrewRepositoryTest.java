@@ -251,7 +251,7 @@ class RunningCrewRepositoryTest {
 
             final Pageable pageable = PageRequest.of(0, 5);
             final Page<RunningCrew> runningCrews = runningCrewRepository.findParticipatedByStatus(
-                memberId, ProgressionType.CREATED.getSavedName(), ParticipantType.PARTICIPATING.getSavedName(), pageable
+                memberId, ProgressionType.READY.getSavedName(), ParticipantType.PARTICIPATING.getSavedName(), pageable
             );
 
             assertThat(runningCrews.getContent()).isNotEmpty();

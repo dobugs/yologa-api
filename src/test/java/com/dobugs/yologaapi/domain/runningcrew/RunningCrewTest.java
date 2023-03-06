@@ -420,7 +420,10 @@ class RunningCrewTest {
                 .filter(value -> value.getMemberId().equals(memberId))
                 .findFirst();
             assertThat(participant).isPresent();
-            assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.PARTICIPATING);
+            assertAll(
+                () -> assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.PARTICIPATING),
+                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.READY)
+            );
         }
 
         @DisplayName("승인자가 호스트가 아닐 경우 예외가 발생한다")
