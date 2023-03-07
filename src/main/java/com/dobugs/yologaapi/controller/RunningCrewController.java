@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dobugs.yologaapi.service.RunningCrewService;
+import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewFindNearbyRequest;
+import com.dobugs.yologaapi.service.dto.request.RunningCrewStatusRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
+import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,6 +45,33 @@ public class RunningCrewController {
     @GetMapping
     public ResponseEntity<RunningCrewFindNearbyResponse> findNearby(@ModelAttribute final RunningCrewFindNearbyRequest request) {
         final RunningCrewFindNearbyResponse response = runningCrewService.findNearby(request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/in-progress")
+    public ResponseEntity<RunningCrewsResponse> findInProgress(
+        @RequestHeader("Authorization") final String accessToken,
+        @ModelAttribute final PagingRequest request
+    ) {
+        final RunningCrewsResponse response = runningCrewService.findInProgress(accessToken, request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/hosted")
+    public ResponseEntity<RunningCrewsResponse> findHosted(
+        @RequestHeader("Authorization") final String accessToken,
+        @ModelAttribute final RunningCrewStatusRequest request
+    ) {
+        final RunningCrewsResponse response = runningCrewService.findHosted(accessToken, request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/participated")
+    public ResponseEntity<RunningCrewsResponse> findParticipated(
+        @RequestHeader("Authorization") final String accessToken,
+        @ModelAttribute final RunningCrewStatusRequest request
+    ) {
+        final RunningCrewsResponse response = runningCrewService.findParticipated(accessToken, request);
         return ResponseEntity.ok().body(response);
     }
 

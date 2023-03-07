@@ -151,6 +151,7 @@ public class RunningCrew extends BaseEntity {
         deadline.validateDeadlineIsNotOver();
         validateRunningCrewStatusIsCreatedOrReadyOrInProgress();
         participants.accept(memberId);
+        ready();
     }
 
     public void reject(final Long hostId, final Long memberId) {
@@ -163,6 +164,12 @@ public class RunningCrew extends BaseEntity {
         final int number = participants.getNumberOrParticipants();
         if (number == 1 && status.isCreatedOrReady()) {
             status = ProgressionType.CREATED;
+        }
+    }
+
+    private void ready() {
+        if (status.isCreated()) {
+            status = ProgressionType.READY;
         }
     }
 
@@ -206,17 +213,17 @@ public class RunningCrew extends BaseEntity {
 
     private void validateRunningCrewStatusIsCreatedOrReady() {
         if (!status.isCreatedOrReady()) {
-            throw new IllegalArgumentException(String.format("이미 진행중이거나 완료되었습니다. [%s]", status.getName()));
+            throw new IllegalArgumentException(String.format("이미 진행중이거나 완료되었습니다. [%s]", status.getDescription()));
         }
     }
 
     private void validateRunningCrewStatusIsCreatedOrReadyOrInProgress() {
         if (!status.isCreatedOrReadyOrInProgress()) {
-            throw new IllegalArgumentException(String.format("이미 완료되었습니다. [%s]", status.getName()));
+            throw new IllegalArgumentException(String.format("이미 완료되었습니다. [%s]", status.getDescription()));
         }
     }
 
-    private Point  wktToPoint(final Coordinates coordinates) {
+    private Point wktToPoint(final Coordinates coordinates) {
         final String wellKnownText = String.format("POINT(%f %f)", coordinates.longitude(), coordinates.latitude());
         try {
             return (Point) new WKTReader().read(wellKnownText);
