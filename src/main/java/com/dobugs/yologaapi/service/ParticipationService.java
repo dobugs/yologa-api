@@ -1,7 +1,6 @@
 package com.dobugs.yologaapi.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +12,7 @@ import com.dobugs.yologaapi.repository.RunningCrewRepository;
 import com.dobugs.yologaapi.repository.dto.response.ParticipantDto;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
+import com.dobugs.yologaapi.support.PagingGenerator;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
@@ -26,10 +26,11 @@ public class ParticipationService {
     private final RunningCrewRepository runningCrewRepository;
     private final ParticipantRepository participantRepository;
     private final TokenGenerator tokenGenerator;
+    private final PagingGenerator pagingGenerator;
 
     @Transactional(readOnly = true)
     public ParticipantsResponse findParticipants(final Long runningCrewId, final PagingRequest request) {
-        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Pageable pageable = pagingGenerator.from(request.page(), request.size());
         final Page<ParticipantDto> response = participantRepository.findParticipants(runningCrewId, ParticipantType.PARTICIPATING.getSavedName(), pageable);
         return ParticipantsResponse.from(response);
     }

@@ -28,6 +28,7 @@ import com.dobugs.yologaapi.repository.dto.response.ParticipantDto;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
+import com.dobugs.yologaapi.support.PagingGenerator;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
@@ -53,9 +54,12 @@ class ParticipationServiceTest {
     @Mock
     private TokenGenerator tokenGenerator;
 
+    @Mock
+    private PagingGenerator pagingGenerator;
+
     @BeforeEach
     void setUp() {
-        participationService = new ParticipationService(runningCrewRepository, participantRepository, tokenGenerator);
+        participationService = new ParticipationService(runningCrewRepository, participantRepository, tokenGenerator, pagingGenerator);
     }
 
     private String createToken(final Long memberId, final String provider, final String token) {

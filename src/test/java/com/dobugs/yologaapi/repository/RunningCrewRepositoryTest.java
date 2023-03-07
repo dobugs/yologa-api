@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
@@ -87,7 +86,7 @@ class RunningCrewRepositoryTest {
                 runningCrewRepository.save(createRunningCrew(HOST_ID));
             }
 
-            final Pageable pageable = PageRequest.of(0, 5);
+            final Pageable pageable = Pageable.unpaged();
             final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(LATITUDE, LONGITUDE, 100, pageable);
 
             assertThat(runningCrews).hasSizeGreaterThanOrEqualTo(count);
@@ -107,7 +106,7 @@ class RunningCrewRepositoryTest {
             runningCrew.start(HOST_ID);
             final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
 
-            final Pageable pageable = PageRequest.of(0, 5);
+            final Pageable pageable = Pageable.unpaged();
             final Page<RunningCrew> runningCrews = runningCrewRepository.findInProgress(
                 HOST_ID, ProgressionType.IN_PROGRESS.getSavedName(), ParticipantType.PARTICIPATING.getSavedName(), pageable
             );
@@ -121,7 +120,7 @@ class RunningCrewRepositoryTest {
     public class findByMemberIdAndArchivedIsTrue {
 
         private static final Long HOST_ID = 0L;
-        private static final Pageable pageable = PageRequest.of(0, 5);
+        private static final Pageable pageable = Pageable.unpaged();
 
         @DisplayName("archived 가 true 일 경우 RunningCrew 를 조회한다")
         @Test
@@ -161,7 +160,7 @@ class RunningCrewRepositoryTest {
     public class findByMemberIdAndStatusAndArchivedIsTrue {
 
         private static final Long HOST_ID = 0L;
-        private static final Pageable pageable = PageRequest.of(0, 5);
+        private static final Pageable pageable = Pageable.unpaged();
 
         @DisplayName("archived 가 true 일 경우 RunningCrew 를 조회한다")
         @Test
@@ -226,7 +225,7 @@ class RunningCrewRepositoryTest {
             runningCrew.accept(HOST_ID, memberId);
             runningCrewRepository.save(runningCrew);
 
-            final Pageable pageable = PageRequest.of(0, 5);
+            final Pageable pageable = Pageable.unpaged();
             final Page<RunningCrew> runningCrews = runningCrewRepository.findParticipated(memberId, ParticipantType.PARTICIPATING.getSavedName(), pageable);
 
             assertThat(runningCrews.getContent()).isNotEmpty();
@@ -249,7 +248,7 @@ class RunningCrewRepositoryTest {
             runningCrew.accept(HOST_ID, memberId);
             runningCrewRepository.save(runningCrew);
 
-            final Pageable pageable = PageRequest.of(0, 5);
+            final Pageable pageable = Pageable.unpaged();
             final Page<RunningCrew> runningCrews = runningCrewRepository.findParticipatedByStatus(
                 memberId, ProgressionType.READY.getSavedName(), ParticipantType.PARTICIPATING.getSavedName(), pageable
             );
