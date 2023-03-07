@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
@@ -47,7 +46,7 @@ class ParticipantRepositoryTest {
             }
             final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
 
-            final Pageable pageable = PageRequest.of(0, MEMBERS.size() + 2);
+            final Pageable pageable = Pageable.unpaged();
             final Page<ParticipantDto> response = participantRepository.findParticipants(savedRunningCrew.getId(), ParticipantType.PARTICIPATING.getSavedName(), pageable);
 
             assertThat(response).hasSize(MEMBERS.size() + 1);

@@ -38,6 +38,7 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewStatusRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
+import com.dobugs.yologaapi.support.PagingGenerator;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
@@ -59,9 +60,12 @@ class RunningCrewServiceTest {
     @Mock
     private TokenGenerator tokenGenerator;
 
+    @Mock
+    private PagingGenerator pagingGenerator;
+
     @BeforeEach
     void setUp() {
-        runningCrewService = new RunningCrewService(runningCrewRepository, tokenGenerator);
+        runningCrewService = new RunningCrewService(runningCrewRepository, tokenGenerator, pagingGenerator);
     }
 
     private String createToken(final Long memberId, final String provider, final String token) {

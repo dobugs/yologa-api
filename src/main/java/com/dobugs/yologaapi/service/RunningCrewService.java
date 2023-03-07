@@ -1,7 +1,6 @@
 package com.dobugs.yologaapi.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +23,7 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
+import com.dobugs.yologaapi.support.PagingGenerator;
 import com.dobugs.yologaapi.support.TokenGenerator;
 import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
@@ -36,6 +36,7 @@ public class RunningCrewService {
 
     private final RunningCrewRepository runningCrewRepository;
     private final TokenGenerator tokenGenerator;
+    private final PagingGenerator pagingGenerator;
 
     public long create(final String serviceToken, final RunningCrewCreateRequest request) {
         final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
@@ -49,7 +50,7 @@ public class RunningCrewService {
 
     @Transactional(readOnly = true)
     public RunningCrewFindNearbyResponse findNearby(final RunningCrewFindNearbyRequest request) {
-        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Pageable pageable = pagingGenerator.from(request.page(), request.size());
         final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(
             request.latitude(), request.longitude(), request.radius(), pageable
         );
@@ -63,7 +64,7 @@ public class RunningCrewService {
 
         final String runningCrewStatus = ProgressionType.IN_PROGRESS.getSavedName();
         final String participantStatus = ParticipantType.PARTICIPATING.getSavedName();
-        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Pageable pageable = pagingGenerator.from(request.page(), request.size());
         final Page<RunningCrew> runningCrews = runningCrewRepository.findInProgress(memberId, runningCrewStatus, participantStatus, pageable);
         return RunningCrewsResponse.from(runningCrews);
     }
@@ -74,7 +75,7 @@ public class RunningCrewService {
         final Long memberId = userTokenResponse.memberId();
 
         final ProgressionType progressionType = selectProgressionType(request.status());
-        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Pageable pageable = pagingGenerator.from(request.page(), request.size());
         final Page<RunningCrew> runningCrews = findHostedRunningCrews(memberId, progressionType, pageable);
         return RunningCrewsResponse.from(runningCrews);
     }
@@ -85,7 +86,7 @@ public class RunningCrewService {
         final Long memberId = userTokenResponse.memberId();
 
         final ProgressionType progressionType = selectProgressionType(request.status());
-        final Pageable pageable = PageRequest.of(request.page(), request.size());
+        final Pageable pageable = pagingGenerator.from(request.page(), request.size());
         final Page<RunningCrew> runningCrews = findParticipatedRunningCrews(memberId, progressionType, pageable);
         return RunningCrewsResponse.from(runningCrews);
     }
