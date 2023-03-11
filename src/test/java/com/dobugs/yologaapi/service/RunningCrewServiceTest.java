@@ -46,10 +46,6 @@ import com.dobugs.yologaapi.support.fixture.ServiceTokenFixture;
 @DisplayName("RunningCrew 서비스 테스트")
 class RunningCrewServiceTest {
 
-    private static final Long MEMBER_ID = 0L;
-    private static final String PROVIDER = "google";
-    private static final String ACCESS_TOKEN = "accessToken";
-
     private RunningCrewService runningCrewService;
 
     @Mock
@@ -66,6 +62,10 @@ class RunningCrewServiceTest {
     @DisplayName("러닝크루 생성 테스트")
     @Nested
     public class create {
+
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
 
         @DisplayName("러닝크루를 생성한다")
         @Test
@@ -114,6 +114,10 @@ class RunningCrewServiceTest {
     @Nested
     public class findInProgress {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+
         @DisplayName("현재 진행중인 내 러닝크루 목록을 조회한다")
         @Test
         void success() {
@@ -146,6 +150,10 @@ class RunningCrewServiceTest {
     @DisplayName("내가 주최한 러닝크루 목록 조회")
     @Nested
     public class findHosted {
+
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
 
         @DisplayName("내가 주최한 러닝크루 목록을 조회한다")
         @Test
@@ -226,6 +234,9 @@ class RunningCrewServiceTest {
     public class findParticipated {
 
         private static final Long HOST_ID = -1L;
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
 
         @DisplayName("내가 참여한 러닝크루 목록을 조회한다")
         @Test
@@ -335,6 +346,10 @@ class RunningCrewServiceTest {
     @Nested
     public class update {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+
         @DisplayName("러닝크루를 수정한다")
         @Test
         void success() {
@@ -374,6 +389,10 @@ class RunningCrewServiceTest {
     @Nested
     public class delete {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+
         @DisplayName("러닝크루를 삭제한다")
         @Test
         void success() {
@@ -411,6 +430,10 @@ class RunningCrewServiceTest {
     @DisplayName("러닝크루 시작 테스트")
     @Nested
     public class start {
+
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
 
         @DisplayName("러닝크루를 시작한다")
         @Test
@@ -452,6 +475,10 @@ class RunningCrewServiceTest {
     @DisplayName("러닝크루 종료 테스트")
     @Nested
     public class end {
+
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
 
         @DisplayName("러닝크루를 종료한다")
         @Test

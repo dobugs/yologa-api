@@ -36,11 +36,6 @@ import com.dobugs.yologaapi.support.fixture.ServiceTokenFixture;
 @DisplayName("Participation 서비스 테스트")
 class ParticipationServiceTest {
 
-    private static final Long MEMBER_ID = 0L;
-    private static final String PROVIDER = "google";
-    private static final String ACCESS_TOKEN = "accessToken";
-    private static final Long HOST_ID = 1L;
-
     private ParticipationService participationService;
 
     @Mock
@@ -111,6 +106,11 @@ class ParticipationServiceTest {
     @Nested
     public class participate {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루에 참여 요청을 한다")
         @Test
         void success() {
@@ -139,6 +139,11 @@ class ParticipationServiceTest {
     @DisplayName("참여 요청 취소 테스트")
     @Nested
     public class cancel {
+
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
 
         @DisplayName("러닝크루에 참여 요청 취소를 한다")
         @Test
@@ -169,6 +174,11 @@ class ParticipationServiceTest {
     @DisplayName("탈퇴 테스트")
     @Nested
     public class withdraw {
+
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
 
         @DisplayName("러닝크루에 탈퇴한다")
         @Test
@@ -207,6 +217,11 @@ class ParticipationServiceTest {
     @Nested
     public class accept {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루 참여 요청을 승인한다")
         @Test
         void success() {
@@ -242,6 +257,11 @@ class ParticipationServiceTest {
     @DisplayName("참여 요청 거절 테스트")
     @Nested
     public class reject {
+
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
 
         @DisplayName("러닝크루 참여 요청을 거절한다")
         @Test
