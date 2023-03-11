@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dobugs.yologaapi.auth.dto.response.ServiceToken;
 import com.dobugs.yologaapi.domain.runningcrew.Capacity;
 import com.dobugs.yologaapi.domain.runningcrew.Coordinates;
 import com.dobugs.yologaapi.domain.runningcrew.Deadline;
@@ -24,8 +25,6 @@ import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
 import com.dobugs.yologaapi.support.PagingGenerator;
-import com.dobugs.yologaapi.support.TokenGenerator;
-import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,14 +34,10 @@ import lombok.RequiredArgsConstructor;
 public class RunningCrewService {
 
     private final RunningCrewRepository runningCrewRepository;
-    private final TokenGenerator tokenGenerator;
     private final PagingGenerator pagingGenerator;
 
-    public long create(final String serviceToken, final RunningCrewCreateRequest request) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
-
-        final RunningCrew runningCrew = convertToRunningCrew(memberId, request);
+    public long create(final ServiceToken serviceToken, final RunningCrewCreateRequest request) {
+        final RunningCrew runningCrew = convertToRunningCrew(serviceToken.memberId(), request);
         final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
 
         return savedRunningCrew.getId();
@@ -58,36 +53,27 @@ public class RunningCrewService {
     }
 
     @Transactional(readOnly = true)
-    public RunningCrewsResponse findInProgress(final String serviceToken, final PagingRequest request) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
-
+    public RunningCrewsResponse findInProgress(final ServiceToken serviceToken, final PagingRequest request) {
         final String runningCrewStatus = ProgressionType.IN_PROGRESS.getSavedName();
         final String participantStatus = ParticipantType.PARTICIPATING.getSavedName();
         final Pageable pageable = pagingGenerator.from(request.page(), request.size());
-        final Page<RunningCrew> runningCrews = runningCrewRepository.findInProgress(memberId, runningCrewStatus, participantStatus, pageable);
+        final Page<RunningCrew> runningCrews = runningCrewRepository.findInProgress(serviceToken.memberId(), runningCrewStatus, participantStatus, pageable);
         return RunningCrewsResponse.from(runningCrews);
     }
 
     @Transactional(readOnly = true)
-    public RunningCrewsResponse findHosted(final String serviceToken, final RunningCrewStatusRequest request) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
-
+    public RunningCrewsResponse findHosted(final ServiceToken serviceToken, final RunningCrewStatusRequest request) {
         final ProgressionType progressionType = selectProgressionType(request.status());
         final Pageable pageable = pagingGenerator.from(request.page(), request.size());
-        final Page<RunningCrew> runningCrews = findHostedRunningCrews(memberId, progressionType, pageable);
+        final Page<RunningCrew> runningCrews = findHostedRunningCrews(serviceToken.memberId(), progressionType, pageable);
         return RunningCrewsResponse.from(runningCrews);
     }
 
     @Transactional(readOnly = true)
-    public RunningCrewsResponse findParticipated(final String serviceToken, final RunningCrewStatusRequest request) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
-
+    public RunningCrewsResponse findParticipated(final ServiceToken serviceToken, final RunningCrewStatusRequest request) {
         final ProgressionType progressionType = selectProgressionType(request.status());
         final Pageable pageable = pagingGenerator.from(request.page(), request.size());
-        final Page<RunningCrew> runningCrews = findParticipatedRunningCrews(memberId, progressionType, pageable);
+        final Page<RunningCrew> runningCrews = findParticipatedRunningCrews(serviceToken.memberId(), progressionType, pageable);
         return RunningCrewsResponse.from(runningCrews);
     }
 
@@ -97,32 +83,24 @@ public class RunningCrewService {
         return RunningCrewResponse.from(runningCrew);
     }
 
-    public void update(final String serviceToken, final Long runningCrewId, final RunningCrewUpdateRequest request) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
+    public void update(final ServiceToken serviceToken, final Long runningCrewId, final RunningCrewUpdateRequest request) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        update(memberId, request, savedRunningCrew);
+        update(serviceToken.memberId(), request, savedRunningCrew);
     }
 
-    public void delete(final String serviceToken, final Long runningCrewId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
+    public void delete(final ServiceToken serviceToken, final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.delete(memberId);
+        savedRunningCrew.delete(serviceToken.memberId());
     }
 
-    public void start(final String serviceToken, final Long runningCrewId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
+    public void start(final ServiceToken serviceToken, final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.start(memberId);
+        savedRunningCrew.start(serviceToken.memberId());
     }
 
-    public void end(final String serviceToken, final Long runningCrewId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
+    public void end(final ServiceToken serviceToken, final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.end(memberId);
+        savedRunningCrew.end(serviceToken.memberId());
     }
 
     private RunningCrew findRunningCrewBy(final Long runningCrewId) {

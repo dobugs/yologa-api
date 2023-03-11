@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
+import com.dobugs.yologaapi.auth.dto.response.ServiceToken;
 import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
 import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
@@ -39,10 +40,7 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
 import com.dobugs.yologaapi.support.PagingGenerator;
-import com.dobugs.yologaapi.support.TokenGenerator;
-import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
-
-import io.jsonwebtoken.Jwts;
+import com.dobugs.yologaapi.support.fixture.ServiceTokenFixture;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RunningCrew 서비스 테스트")
@@ -58,22 +56,11 @@ class RunningCrewServiceTest {
     private RunningCrewRepository runningCrewRepository;
 
     @Mock
-    private TokenGenerator tokenGenerator;
-
-    @Mock
     private PagingGenerator pagingGenerator;
 
     @BeforeEach
     void setUp() {
-        runningCrewService = new RunningCrewService(runningCrewRepository, tokenGenerator, pagingGenerator);
-    }
-
-    private String createToken(final Long memberId, final String provider, final String token) {
-        return Jwts.builder()
-            .claim("memberId", memberId)
-            .claim("provider", provider)
-            .claim("token", token)
-            .compact();
+        runningCrewService = new RunningCrewService(runningCrewRepository, pagingGenerator);
     }
 
     @DisplayName("러닝크루 생성 테스트")
@@ -84,8 +71,11 @@ class RunningCrewServiceTest {
         @Test
         void success() {
             final RunningCrewCreateRequest request = createRunningCrewCreateRequest();
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
             given(savedRunningCrew.getId()).willReturn(MEMBER_ID);
@@ -128,8 +118,11 @@ class RunningCrewServiceTest {
         @Test
         void success() {
             final PagingRequest request = new PagingRequest(0, 10);
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final List<RunningCrew> runningCrews = List.of(createRunningCrew(MEMBER_ID));
             final Page<RunningCrew> page = mock(Page.class);
@@ -160,8 +153,11 @@ class RunningCrewServiceTest {
             final String status = "CREATED";
 
             final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, 0, 10);
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final List<RunningCrew> runningCrews = List.of(createRunningCrew(MEMBER_ID));
             final Page<RunningCrew> page = mock(Page.class);
@@ -186,8 +182,11 @@ class RunningCrewServiceTest {
             final String status = null;
 
             final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, 0, 10);
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final List<RunningCrew> runningCrews = List.of(createRunningCrew(MEMBER_ID));
             final Page<RunningCrew> page = mock(Page.class);
@@ -211,8 +210,11 @@ class RunningCrewServiceTest {
             final String invalidStatus = "invalidStatus";
 
             final RunningCrewStatusRequest request = new RunningCrewStatusRequest(invalidStatus, 0, 10);
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             assertThatThrownBy(() -> runningCrewService.findHosted(serviceToken, request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -231,8 +233,11 @@ class RunningCrewServiceTest {
             final String status = "CREATED";
 
             final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, 0, 10);
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final List<RunningCrew> runningCrews = List.of(createRunningCrew(HOST_ID));
             final Page<RunningCrew> page = mock(Page.class);
@@ -258,8 +263,11 @@ class RunningCrewServiceTest {
             final String status = null;
 
             final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, 0, 10);
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final List<RunningCrew> runningCrews = List.of(createRunningCrew(HOST_ID));
             final Page<RunningCrew> page = mock(Page.class);
@@ -283,8 +291,11 @@ class RunningCrewServiceTest {
             final String invalidStatus = "invalidStatus";
 
             final RunningCrewStatusRequest request = new RunningCrewStatusRequest(invalidStatus, 0, 10);
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             assertThatThrownBy(() -> runningCrewService.findParticipated(serviceToken, request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -329,8 +340,11 @@ class RunningCrewServiceTest {
         void success() {
             final long runningCrewId = 0L;
             final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew savedRunningCrew = mock(RunningCrew.class);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
@@ -344,8 +358,11 @@ class RunningCrewServiceTest {
         void isShouldExist() {
             final long notExistRunningCrewId = 0L;
             final RunningCrewUpdateRequest request = createRunningCrewUpdateRequest();
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             assertThatThrownBy(() -> runningCrewService.update(serviceToken, notExistRunningCrewId, request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -361,8 +378,11 @@ class RunningCrewServiceTest {
         @Test
         void success() {
             final long runningCrewId = 1L;
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
@@ -376,8 +396,11 @@ class RunningCrewServiceTest {
         @Test
         void isShouldExist() {
             final long notExistId = 0L;
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             assertThatThrownBy(() -> runningCrewService.delete(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -393,8 +416,11 @@ class RunningCrewServiceTest {
         @Test
         void success() {
             final long runningCrewId = 1L;
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
@@ -411,8 +437,11 @@ class RunningCrewServiceTest {
         @Test
         void isShouldExist() {
             final long notExistId = 0L;
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             assertThatThrownBy(() -> runningCrewService.start(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -428,8 +457,11 @@ class RunningCrewServiceTest {
         @Test
         void success() {
             final long runningCrewId = 1L;
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew savedRunningCrew = createRunningCrew(MEMBER_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(savedRunningCrew));
@@ -447,8 +479,11 @@ class RunningCrewServiceTest {
         @Test
         void isShouldExist() {
             final long notExistId = 0L;
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             assertThatThrownBy(() -> runningCrewService.end(serviceToken, notExistId))
                 .isInstanceOf(IllegalArgumentException.class)

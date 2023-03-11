@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dobugs.yologaapi.auth.Authorized;
+import com.dobugs.yologaapi.auth.ExtractAuthorization;
+import com.dobugs.yologaapi.auth.dto.response.ServiceToken;
 import com.dobugs.yologaapi.service.RunningCrewService;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
@@ -37,10 +38,10 @@ public class RunningCrewController {
     @Authorized
     @PostMapping
     public ResponseEntity<Void> create(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @RequestBody final RunningCrewCreateRequest request
     ) {
-        final long runningCrewId = runningCrewService.create(accessToken, request);
+        final long runningCrewId = runningCrewService.create(serviceToken, request);
         return ResponseEntity.created(URI.create("/api/v1/running-crews/" + runningCrewId)).build();
     }
 
@@ -53,30 +54,30 @@ public class RunningCrewController {
     @Authorized
     @GetMapping("/in-progress")
     public ResponseEntity<RunningCrewsResponse> findInProgress(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @ModelAttribute final PagingRequest request
     ) {
-        final RunningCrewsResponse response = runningCrewService.findInProgress(accessToken, request);
+        final RunningCrewsResponse response = runningCrewService.findInProgress(serviceToken, request);
         return ResponseEntity.ok().body(response);
     }
 
     @Authorized
     @GetMapping("/hosted")
     public ResponseEntity<RunningCrewsResponse> findHosted(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @ModelAttribute final RunningCrewStatusRequest request
     ) {
-        final RunningCrewsResponse response = runningCrewService.findHosted(accessToken, request);
+        final RunningCrewsResponse response = runningCrewService.findHosted(serviceToken, request);
         return ResponseEntity.ok().body(response);
     }
 
     @Authorized
     @GetMapping("/participated")
     public ResponseEntity<RunningCrewsResponse> findParticipated(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @ModelAttribute final RunningCrewStatusRequest request
     ) {
-        final RunningCrewsResponse response = runningCrewService.findParticipated(accessToken, request);
+        final RunningCrewsResponse response = runningCrewService.findParticipated(serviceToken, request);
         return ResponseEntity.ok().body(response);
     }
 
@@ -89,41 +90,41 @@ public class RunningCrewController {
     @Authorized
     @PutMapping("/{runningCrewId}")
     public ResponseEntity<Void> update(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId,
         @RequestBody final RunningCrewUpdateRequest request
     ) {
-        runningCrewService.update(accessToken, runningCrewId, request);
+        runningCrewService.update(serviceToken, runningCrewId, request);
         return ResponseEntity.ok().build();
     }
 
     @Authorized
     @DeleteMapping("/{runningCrewId}")
     public ResponseEntity<Void> delete(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId
     ) {
-        runningCrewService.delete(accessToken, runningCrewId);
+        runningCrewService.delete(serviceToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 
     @Authorized
     @PostMapping("/{runningCrewId}/start")
     public ResponseEntity<Void> start(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId
     ) {
-        runningCrewService.start(accessToken, runningCrewId);
+        runningCrewService.start(serviceToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 
     @Authorized
     @PostMapping("/{runningCrewId}/end")
     public ResponseEntity<Void> end(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId
     ) {
-        runningCrewService.end(accessToken, runningCrewId);
+        runningCrewService.end(serviceToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 }
