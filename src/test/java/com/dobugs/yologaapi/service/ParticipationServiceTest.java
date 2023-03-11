@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
+import com.dobugs.yologaapi.auth.dto.response.ServiceToken;
 import com.dobugs.yologaapi.domain.runningcrew.Participant;
 import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
@@ -29,19 +30,11 @@ import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 import com.dobugs.yologaapi.support.PagingGenerator;
-import com.dobugs.yologaapi.support.TokenGenerator;
-import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
-
-import io.jsonwebtoken.Jwts;
+import com.dobugs.yologaapi.support.fixture.ServiceTokenFixture;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Participation 서비스 테스트")
 class ParticipationServiceTest {
-
-    private static final Long MEMBER_ID = 0L;
-    private static final String PROVIDER = "google";
-    private static final String ACCESS_TOKEN = "accessToken";
-    private static final Long HOST_ID = 1L;
 
     private ParticipationService participationService;
 
@@ -52,22 +45,11 @@ class ParticipationServiceTest {
     private ParticipantRepository participantRepository;
 
     @Mock
-    private TokenGenerator tokenGenerator;
-
-    @Mock
     private PagingGenerator pagingGenerator;
 
     @BeforeEach
     void setUp() {
-        participationService = new ParticipationService(runningCrewRepository, participantRepository, tokenGenerator, pagingGenerator);
-    }
-
-    private String createToken(final Long memberId, final String provider, final String token) {
-        return Jwts.builder()
-            .claim("memberId", memberId)
-            .claim("provider", provider)
-            .claim("token", token)
-            .compact();
+        participationService = new ParticipationService(runningCrewRepository, participantRepository, pagingGenerator);
     }
 
     @DisplayName("러닝크루 참여자 목록 조회 테스트")
@@ -124,13 +106,20 @@ class ParticipationServiceTest {
     @Nested
     public class participate {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루에 참여 요청을 한다")
         @Test
         void success() {
             final long runningCrewId = 0L;
-
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
@@ -151,13 +140,20 @@ class ParticipationServiceTest {
     @Nested
     public class cancel {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루에 참여 요청 취소를 한다")
         @Test
         void success() {
             final long runningCrewId = 0L;
-
-            final String serviceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(serviceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken serviceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
@@ -179,15 +175,26 @@ class ParticipationServiceTest {
     @Nested
     public class withdraw {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루에 탈퇴한다")
         @Test
         void success() {
             final long runningCrewId = 0L;
 
-            final String memberServiceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            final String hostServiceToken = createToken(HOST_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(memberServiceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
-            given(tokenGenerator.extract(hostServiceToken)).willReturn(new UserTokenResponse(HOST_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken memberServiceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
+            final ServiceToken hostServiceToken = new ServiceTokenFixture.Builder()
+                .memberId(HOST_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
@@ -210,15 +217,26 @@ class ParticipationServiceTest {
     @Nested
     public class accept {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루 참여 요청을 승인한다")
         @Test
         void success() {
             final long runningCrewId = 0L;
 
-            final String memberServiceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            final String hostServiceToken = createToken(HOST_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(memberServiceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
-            given(tokenGenerator.extract(hostServiceToken)).willReturn(new UserTokenResponse(HOST_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken memberServiceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
+            final ServiceToken hostServiceToken = new ServiceTokenFixture.Builder()
+                .memberId(HOST_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
@@ -240,15 +258,26 @@ class ParticipationServiceTest {
     @Nested
     public class reject {
 
+        private static final Long MEMBER_ID = 0L;
+        private static final String PROVIDER = "google";
+        private static final String ACCESS_TOKEN = "accessToken";
+        private static final Long HOST_ID = 1L;
+
         @DisplayName("러닝크루 참여 요청을 거절한다")
         @Test
         void success() {
             final long runningCrewId = 0L;
 
-            final String memberServiceToken = createToken(MEMBER_ID, PROVIDER, ACCESS_TOKEN);
-            final String hostServiceToken = createToken(HOST_ID, PROVIDER, ACCESS_TOKEN);
-            given(tokenGenerator.extract(memberServiceToken)).willReturn(new UserTokenResponse(MEMBER_ID, PROVIDER, ACCESS_TOKEN));
-            given(tokenGenerator.extract(hostServiceToken)).willReturn(new UserTokenResponse(HOST_ID, PROVIDER, ACCESS_TOKEN));
+            final ServiceToken memberServiceToken = new ServiceTokenFixture.Builder()
+                .memberId(MEMBER_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
+            final ServiceToken hostServiceToken = new ServiceTokenFixture.Builder()
+                .memberId(HOST_ID)
+                .provider(PROVIDER)
+                .token(ACCESS_TOKEN)
+                .build();
 
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
             given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));

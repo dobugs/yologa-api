@@ -3,11 +3,12 @@ package com.dobugs.yologaapi.controller;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LATITUDE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LONGITUDE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewCreateRequest;
-import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewSummaryResponse;
-import static org.hamcrest.Matchers.is;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewResponse;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewSummaryResponse;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewUpdateRequest;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -25,16 +26,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -47,22 +41,12 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
 @WebMvcTest(RunningCrewController.class)
-@ExtendWith({RestDocumentationExtension.class, MockitoExtension.class})
 @DisplayName("RunningCrew 컨트롤러 테스트")
-class RunningCrewControllerTest {
+class RunningCrewControllerTest extends ControllerTest {
 
     private static final String BASIC_URL = "/api/v1/running-crews";
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private RunningCrewService runningCrewService;
@@ -120,7 +104,6 @@ class RunningCrewControllerTest {
     @DisplayName("현재 진행중인 내 러닝크루 목록을 조회한다")
     @Test
     void findInProgress() throws Exception {
-        final String accessToken = "accessToken";
         final int page = 0;
         final int size = 10;
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -129,10 +112,10 @@ class RunningCrewControllerTest {
 
         final PagingRequest request = new PagingRequest(page, size);
         final RunningCrewsResponse response = new RunningCrewsResponse(1, page, size, List.of(createRunningCrewResponse(1L)));
-        given(runningCrewService.findInProgress(accessToken, request)).willReturn(response);
+        given(runningCrewService.findInProgress(any(), eq(request))).willReturn(response);
 
         mockMvc.perform(get(BASIC_URL + "/in-progress")
-                .header("Authorization", accessToken)
+                .header("Authorization", "accessToken")
                 .params(params))
             .andExpect(status().isOk())
             .andDo(document(
@@ -146,7 +129,6 @@ class RunningCrewControllerTest {
     @DisplayName("내가 주최한 러닝크루 목록을 조회한다")
     @Test
     void findHosted() throws Exception {
-        final String accessToken = "accessToken";
         final String status = ProgressionType.CREATED.getSavedName();
         final int page = 0;
         final int size = 10;
@@ -157,10 +139,10 @@ class RunningCrewControllerTest {
 
         final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, page, size);
         final RunningCrewsResponse response = new RunningCrewsResponse(1, page, size, List.of(createRunningCrewResponse(1L)));
-        given(runningCrewService.findHosted(accessToken, request)).willReturn(response);
+        given(runningCrewService.findHosted(any(), eq(request))).willReturn(response);
 
         mockMvc.perform(get(BASIC_URL + "/hosted")
-                .header("Authorization", accessToken)
+                .header("Authorization", "accessToken")
                 .params(params))
             .andExpect(status().isOk())
             .andDo(document(
@@ -174,7 +156,6 @@ class RunningCrewControllerTest {
     @DisplayName("내가 참여한 러닝크루 목록을 조회한다")
     @Test
     void findParticipated() throws Exception {
-        final String accessToken = "accessToken";
         final String status = ProgressionType.CREATED.getSavedName();
         final int page = 0;
         final int size = 10;
@@ -185,10 +166,10 @@ class RunningCrewControllerTest {
 
         final RunningCrewStatusRequest request = new RunningCrewStatusRequest(status, page, size);
         final RunningCrewsResponse response = new RunningCrewsResponse(1, page, size, List.of(createRunningCrewResponse(1L)));
-        given(runningCrewService.findParticipated(accessToken, request)).willReturn(response);
+        given(runningCrewService.findParticipated(any(), eq(request))).willReturn(response);
 
         mockMvc.perform(get(BASIC_URL + "/participated")
-                .header("Authorization", accessToken)
+                .header("Authorization", "accessToken")
                 .params(params))
             .andExpect(status().isOk())
             .andDo(document(

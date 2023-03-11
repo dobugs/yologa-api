@@ -15,37 +15,20 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.dobugs.yologaapi.service.ParticipationService;
 import com.dobugs.yologaapi.service.dto.response.ParticipantResponse;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
 @WebMvcTest(ParticipationController.class)
-@ExtendWith({RestDocumentationExtension.class, MockitoExtension.class})
 @DisplayName("Participation 컨트롤러 테스트")
-class ParticipationControllerTest {
+class ParticipationControllerTest extends ControllerTest {
 
     private static final String BASIC_URL = "/api/v1/running-crews";
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private ParticipationService participationService;

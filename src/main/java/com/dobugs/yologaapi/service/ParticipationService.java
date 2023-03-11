@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dobugs.yologaapi.auth.dto.response.ServiceToken;
 import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 import com.dobugs.yologaapi.repository.ParticipantRepository;
@@ -13,8 +14,6 @@ import com.dobugs.yologaapi.repository.dto.response.ParticipantDto;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
 import com.dobugs.yologaapi.support.PagingGenerator;
-import com.dobugs.yologaapi.support.TokenGenerator;
-import com.dobugs.yologaapi.support.dto.response.UserTokenResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +24,6 @@ public class ParticipationService {
 
     private final RunningCrewRepository runningCrewRepository;
     private final ParticipantRepository participantRepository;
-    private final TokenGenerator tokenGenerator;
     private final PagingGenerator pagingGenerator;
 
     @Transactional(readOnly = true)
@@ -35,41 +33,30 @@ public class ParticipationService {
         return ParticipantsResponse.from(response);
     }
 
-    public void participate(final String serviceToken, final Long runningCrewId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
-
+    public void participate(final ServiceToken serviceToken, final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.participate(memberId);
+        savedRunningCrew.participate(serviceToken.memberId());
     }
 
-    public void cancel(final String serviceToken, final Long runningCrewId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
-
+    public void cancel(final ServiceToken serviceToken, final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.cancel(memberId);
+        savedRunningCrew.cancel(serviceToken.memberId());
     }
 
-    public void withdraw(final String serviceToken, final Long runningCrewId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long memberId = userTokenResponse.memberId();
-
+    public void withdraw(final ServiceToken serviceToken, final Long runningCrewId) {
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
-        savedRunningCrew.withdraw(memberId);
+        savedRunningCrew.withdraw(serviceToken.memberId());
     }
 
-    public void accept(final String serviceToken, final Long runningCrewId, final Long memberId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long hostId = userTokenResponse.memberId();
+    public void accept(final ServiceToken serviceToken, final Long runningCrewId, final Long memberId) {
+        final Long hostId = serviceToken.memberId();
 
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
         savedRunningCrew.accept(hostId, memberId);
     }
 
-    public void reject(final String serviceToken, final Long runningCrewId, final Long memberId) {
-        final UserTokenResponse userTokenResponse = tokenGenerator.extract(serviceToken);
-        final Long hostId = userTokenResponse.memberId();
+    public void reject(final ServiceToken serviceToken, final Long runningCrewId, final Long memberId) {
+        final Long hostId = serviceToken.memberId();
 
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
         savedRunningCrew.reject(hostId, memberId);

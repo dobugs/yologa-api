@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dobugs.yologaapi.auth.Authorized;
+import com.dobugs.yologaapi.auth.ExtractAuthorization;
+import com.dobugs.yologaapi.auth.dto.response.ServiceToken;
 import com.dobugs.yologaapi.service.ParticipationService;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
@@ -31,50 +33,55 @@ public class ParticipationController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorized
     @PostMapping("/participate")
     public ResponseEntity<Void> participate(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId
     ) {
-        participationService.participate(accessToken, runningCrewId);
+        participationService.participate(serviceToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/cancel")
     public ResponseEntity<Void> cancel(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId
     ) {
-        participationService.cancel(accessToken, runningCrewId);
+        participationService.cancel(serviceToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/withdraw")
     public ResponseEntity<Void> withdraw(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId
     ) {
-        participationService.withdraw(accessToken, runningCrewId);
+        participationService.withdraw(serviceToken, runningCrewId);
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/accept/{memberId}")
     public ResponseEntity<Void> accept(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId,
         @PathVariable final Long memberId
     ) {
-        participationService.accept(accessToken, runningCrewId, memberId);
+        participationService.accept(serviceToken, runningCrewId, memberId);
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/reject/{memberId}")
     public ResponseEntity<Void> reject(
-        @RequestHeader("Authorization") final String accessToken,
+        @ExtractAuthorization final ServiceToken serviceToken,
         @PathVariable final Long runningCrewId,
         @PathVariable final Long memberId
     ) {
-        participationService.reject(accessToken, runningCrewId, memberId);
+        participationService.reject(serviceToken, runningCrewId, memberId);
         return ResponseEntity.ok().build();
     }
 }

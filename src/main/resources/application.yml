@@ -3,4 +3,5 @@ spring:
     active: dev
   config:
     import:
+      - application-dobugs.yml
       - yologa-security/application-jwt.yml

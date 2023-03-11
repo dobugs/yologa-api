@@ -1,0 +1,3 @@
+auth:
+  host: https://api.dev.dobugs.co.kr
+  path: /api/v1/auth/login
