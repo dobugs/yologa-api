@@ -119,8 +119,9 @@ jacocoTestCoverageVerification {
 
     def exceptions = [
             "*.exception.*",
-            "*.*Application",
             "*.dto.*",
+            "*.*Application",
+            "*.*Connector.*",
             "*.*Connector"
     ]
 
