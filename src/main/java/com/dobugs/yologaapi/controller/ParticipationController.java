@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dobugs.yologaapi.auth.Authorized;
 import com.dobugs.yologaapi.service.ParticipationService;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.response.ParticipantsResponse;
@@ -31,6 +32,7 @@ public class ParticipationController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorized
     @PostMapping("/participate")
     public ResponseEntity<Void> participate(
         @RequestHeader("Authorization") final String accessToken,
@@ -40,6 +42,7 @@ public class ParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/cancel")
     public ResponseEntity<Void> cancel(
         @RequestHeader("Authorization") final String accessToken,
@@ -49,6 +52,7 @@ public class ParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/withdraw")
     public ResponseEntity<Void> withdraw(
         @RequestHeader("Authorization") final String accessToken,
@@ -58,6 +62,7 @@ public class ParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/accept/{memberId}")
     public ResponseEntity<Void> accept(
         @RequestHeader("Authorization") final String accessToken,
@@ -68,6 +73,7 @@ public class ParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/reject/{memberId}")
     public ResponseEntity<Void> reject(
         @RequestHeader("Authorization") final String accessToken,

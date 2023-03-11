@@ -3,10 +3,10 @@ package com.dobugs.yologaapi.controller;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LATITUDE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.LONGITUDE;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewCreateRequest;
-import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewSummaryResponse;
-import static org.hamcrest.Matchers.is;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewResponse;
+import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewSummaryResponse;
 import static com.dobugs.yologaapi.domain.runningcrew.fixture.RunningCrewFixture.createRunningCrewUpdateRequest;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -25,16 +25,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -47,22 +40,12 @@ import com.dobugs.yologaapi.service.dto.request.RunningCrewUpdateRequest;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewFindNearbyResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewResponse;
 import com.dobugs.yologaapi.service.dto.response.RunningCrewsResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
 @WebMvcTest(RunningCrewController.class)
-@ExtendWith({RestDocumentationExtension.class, MockitoExtension.class})
 @DisplayName("RunningCrew 컨트롤러 테스트")
-class RunningCrewControllerTest {
+class RunningCrewControllerTest extends ControllerTest {
 
     private static final String BASIC_URL = "/api/v1/running-crews";
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private RunningCrewService runningCrewService;

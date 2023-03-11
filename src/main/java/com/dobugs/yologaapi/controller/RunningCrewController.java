@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dobugs.yologaapi.auth.Authorized;
 import com.dobugs.yologaapi.service.RunningCrewService;
 import com.dobugs.yologaapi.service.dto.request.PagingRequest;
 import com.dobugs.yologaapi.service.dto.request.RunningCrewCreateRequest;
@@ -33,6 +34,7 @@ public class RunningCrewController {
 
     private final RunningCrewService runningCrewService;
 
+    @Authorized
     @PostMapping
     public ResponseEntity<Void> create(
         @RequestHeader("Authorization") final String accessToken,
@@ -48,6 +50,7 @@ public class RunningCrewController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Authorized
     @GetMapping("/in-progress")
     public ResponseEntity<RunningCrewsResponse> findInProgress(
         @RequestHeader("Authorization") final String accessToken,
@@ -57,6 +60,7 @@ public class RunningCrewController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Authorized
     @GetMapping("/hosted")
     public ResponseEntity<RunningCrewsResponse> findHosted(
         @RequestHeader("Authorization") final String accessToken,
@@ -66,6 +70,7 @@ public class RunningCrewController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Authorized
     @GetMapping("/participated")
     public ResponseEntity<RunningCrewsResponse> findParticipated(
         @RequestHeader("Authorization") final String accessToken,
@@ -81,6 +86,7 @@ public class RunningCrewController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Authorized
     @PutMapping("/{runningCrewId}")
     public ResponseEntity<Void> update(
         @RequestHeader("Authorization") final String accessToken,
@@ -91,6 +97,7 @@ public class RunningCrewController {
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @DeleteMapping("/{runningCrewId}")
     public ResponseEntity<Void> delete(
         @RequestHeader("Authorization") final String accessToken,
@@ -100,6 +107,7 @@ public class RunningCrewController {
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/{runningCrewId}/start")
     public ResponseEntity<Void> start(
         @RequestHeader("Authorization") final String accessToken,
@@ -109,6 +117,7 @@ public class RunningCrewController {
         return ResponseEntity.ok().build();
     }
 
+    @Authorized
     @PostMapping("/{runningCrewId}/end")
     public ResponseEntity<Void> end(
         @RequestHeader("Authorization") final String accessToken,
