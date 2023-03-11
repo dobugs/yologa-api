@@ -1,11 +1,14 @@
 package com.dobugs.yologaapi.auth.support;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,15 +35,16 @@ public class DobugsConnector implements Connector {
         final String authorization = request.getHeader("Authorization");
         return REST_TEMPLATE.postForEntity(
             authHost + authPath,
-            createAuthorizationHeaders(authorization),
+            createRequestEntity(authorization),
             responseType
         );
     }
 
-    private HttpHeaders createAuthorizationHeaders(final String token) {
+    private HttpEntity<MultiValueMap<String, String>> createRequestEntity(final String token) {
         final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", token);
-        return headers;
+        return new HttpEntity<>(headers);
     }
 
     private void config() {
