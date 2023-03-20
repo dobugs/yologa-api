@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.dobugs.yologaapi.auth.exception.AuthorizationException;
 import com.dobugs.yologaapi.exception.dto.response.ExceptionResponse;
-import com.dobugs.yologaapi.support.logging.UnhandledException;
+import com.dobugs.yologaapi.support.logging.UnhandledExceptional;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -18,7 +18,7 @@ public class ControllerAdvice {
 
     private static final int UNAUTHORIZED = 401;
 
-    @UnhandledException
+    @UnhandledExceptional
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleInternalServerError(Exception e) {
         final ExceptionResponse response = ExceptionResponse.from(e.getMessage());

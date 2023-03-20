@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.dobugs.yologaapi.support.exception.FileException;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -30,14 +28,15 @@ public class FileGenerator {
             writer.write(message);
             writer.newLine();
         } catch (IOException e) {
-            throw new FileException("파일 작성에 실패하였습니다");
+            System.out.println("파일 작성에 실패했습니다.");
+            e.printStackTrace();
         }
     }
 
     private File createDirectory(final String savedDirectory) {
         final File file = new File(savedDirectory);
         if (!file.exists() && !file.mkdir()) {
-            throw new FileException(String.format("폴더 생성에 실패하였습니다. [%s]", file.getName()));
+            System.out.printf("폴더 생성에 실패했습니다. [%s]\n", file.getName());
         }
         return file;
     }

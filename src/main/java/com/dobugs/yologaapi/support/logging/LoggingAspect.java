@@ -16,7 +16,7 @@ public class LoggingAspect {
 
     private final FileLogger fileLogger;
 
-    @Pointcut("@annotation(com.dobugs.yologaapi.support.logging.UnhandledException)")
+    @Pointcut("@annotation(com.dobugs.yologaapi.support.logging.UnhandledExceptional)")
     private void unhandledException() {
     }
 
