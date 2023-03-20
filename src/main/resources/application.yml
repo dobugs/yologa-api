@@ -6,3 +6,4 @@ spring:
       - application-dobugs.yml
       - application-logging.yml
       - yologa-security/application-jwt.yml
+      - yologa-security/application-slack.yml
