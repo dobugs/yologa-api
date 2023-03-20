@@ -71,6 +71,48 @@ class RunningCrewRepositoryTest {
         }
     }
 
+    @DisplayName("러닝크루 아이디를 이용하여 러닝크루 정보 조회 (비관적 락)")
+    @Nested
+    public class findByIdAndArchivedIsTrueForUpdate {
+
+        private static final Long HOST_ID = 0L;
+
+        @DisplayName("archived 가 true 일 경우 RunningCrew 를 조회한다")
+        @Test
+        void archivedIsTrue() {
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
+
+            final Optional<RunningCrew> actual = runningCrewRepository.findByIdAndArchivedIsTrueForUpdate(savedRunningCrew.getId());
+
+            assertThat(actual).isPresent();
+        }
+
+        @DisplayName("archived 가 false 일 경우 RunningCrew 를 조회하지 못한다")
+        @Test
+        void archivedIsFalse() {
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+            runningCrew.delete(HOST_ID);
+            final RunningCrew savedRunningCrew = runningCrewRepository.save(runningCrew);
+
+            assertAll(
+                () -> assertThat(runningCrewRepository.findById(savedRunningCrew.getId())).isPresent(),
+                () -> assertThat(runningCrewRepository.findByIdAndArchivedIsTrueForUpdate(savedRunningCrew.getId())).isEmpty()
+            );
+        }
+
+        @DisplayName("RunningCrew 가 존재하지 않을 경우 RunningCrew 를 조회하지 못한다")
+        @Test
+        void notExist() {
+            final long notExistRunningCrewId = 0L;
+
+            assertAll(
+                () -> assertThat(runningCrewRepository.findById(notExistRunningCrewId)).isEmpty(),
+                () -> assertThat(runningCrewRepository.findByIdAndArchivedIsTrueForUpdate(notExistRunningCrewId)).isEmpty()
+            );
+        }
+    }
+
     @DisplayName("내 주변 러닝크루 목록 조회")
     @Nested
     public class findNearby {

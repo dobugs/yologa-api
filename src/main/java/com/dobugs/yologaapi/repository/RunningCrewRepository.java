@@ -5,14 +5,21 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 
+import jakarta.persistence.LockModeType;
+
 public interface RunningCrewRepository extends JpaRepository<RunningCrew, Long> {
 
     Optional<RunningCrew> findByIdAndArchivedIsTrue(final Long id);
+
+    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT r FROM RunningCrew r WHERE r.id = :id AND r.archived = true")
+    Optional<RunningCrew> findByIdAndArchivedIsTrueForUpdate(final Long id);
 
     @Query(
         value = "SELECT *\n"
