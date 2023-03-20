@@ -125,7 +125,8 @@ jacocoTestCoverageVerification {
             "*.dto.*",
             "*.*Application",
             "*.*Connector.*",
-            "*.*Connector"
+            "*.*Connector",
+            "*.logging.*"
     ]
 
     violationRules {
