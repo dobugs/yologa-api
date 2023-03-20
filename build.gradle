@@ -126,6 +126,8 @@ jacocoTestCoverageVerification {
             "*.*Application",
             "*.*Connector.*",
             "*.*Connector",
+            "*.*Generator.*",
+            "*.*Generator",
             "*.logging.*"
     ]
 

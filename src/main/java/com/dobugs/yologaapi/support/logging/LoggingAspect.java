@@ -1,12 +1,20 @@
 package com.dobugs.yologaapi.support.logging;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Aspect
 public class LoggingAspect {
+
+    private final FileLogger fileLogger;
 
     @Pointcut("@annotation(com.dobugs.yologaapi.support.logging.UnhandledException)")
     private void unhandledException() {
@@ -22,7 +30,16 @@ public class LoggingAspect {
     private void printStackTrace(final ProceedingJoinPoint joinPoint) {
         final Object[] args = joinPoint.getArgs();
         if (args.length > 0 && args[0] instanceof final Exception exception) {
-            exception.printStackTrace();
+            final String stackTrace = getStackTrace(exception);
+            System.out.println(stackTrace);
+            fileLogger.write(stackTrace);
         }
+    }
+
+    private String getStackTrace(final Exception exception) {
+        final StringWriter stringWriter = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(stringWriter);
+        exception.printStackTrace(printWriter);
+        return stringWriter.toString();
     }
 }
