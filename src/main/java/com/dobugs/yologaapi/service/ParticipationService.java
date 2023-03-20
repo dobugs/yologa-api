@@ -34,7 +34,7 @@ public class ParticipationService {
     }
 
     public void participate(final ServiceToken serviceToken, final Long runningCrewId) {
-        final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
+        final RunningCrew savedRunningCrew = findRunningCrewForUpdate(runningCrewId);
         savedRunningCrew.participate(serviceToken.memberId());
     }
 
@@ -44,7 +44,7 @@ public class ParticipationService {
     }
 
     public void withdraw(final ServiceToken serviceToken, final Long runningCrewId) {
-        final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
+        final RunningCrew savedRunningCrew = findRunningCrewForUpdate(runningCrewId);
         savedRunningCrew.withdraw(serviceToken.memberId());
     }
 
@@ -64,6 +64,11 @@ public class ParticipationService {
 
     private RunningCrew findRunningCrewBy(final Long runningCrewId) {
         return runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)
+            .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));
+    }
+
+    private RunningCrew findRunningCrewForUpdate(final Long runningCrewId) {
+        return runningCrewRepository.findByIdAndArchivedIsTrueForUpdate(runningCrewId)
             .orElseThrow(() -> new IllegalArgumentException(String.format("러닝크루가 존재하지 않습니다. [%d]", runningCrewId)));
     }
 }
