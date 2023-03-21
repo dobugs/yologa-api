@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class LoggingAspect {
 
     private final FileLogger fileLogger;
+    private final SlackLogger slackLogger;
 
     @Pointcut("@annotation(com.dobugs.yologaapi.support.logging.UnhandledExceptional)")
     private void unhandledException() {
@@ -33,6 +34,7 @@ public class LoggingAspect {
             final String stackTrace = getStackTrace(exception);
             System.out.println(stackTrace);
             fileLogger.write(stackTrace);
+            slackLogger.alert(exception.getMessage(), stackTrace);
         }
     }
 
