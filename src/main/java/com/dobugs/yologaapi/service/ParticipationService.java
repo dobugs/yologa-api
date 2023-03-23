@@ -50,7 +50,7 @@ public class ParticipationService {
 
     public void accept(final ServiceToken serviceToken, final Long runningCrewId, final Long memberId) {
         final Long hostId = serviceToken.memberId();
-        final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
+        final RunningCrew savedRunningCrew = findRunningCrewForUpdate(runningCrewId);
         savedRunningCrew.accept(hostId, memberId);
     }
 
