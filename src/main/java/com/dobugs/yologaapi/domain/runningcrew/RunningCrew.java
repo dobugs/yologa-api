@@ -161,7 +161,7 @@ public class RunningCrew extends BaseEntity {
     }
 
     private void initializeProgress() {
-        final int number = participants.getNumberOrParticipants();
+        final int number = participants.getNumberOfParticipants();
         if (number == 1 && status.isCreatedOrReady()) {
             status = ProgressionType.CREATED;
         }
@@ -230,5 +230,9 @@ public class RunningCrew extends BaseEntity {
         } catch (ParseException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
+    }
+
+    public int getNumberOfParticipants() {
+        return participants.getNumberOfParticipants();
     }
 }
