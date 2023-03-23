@@ -237,8 +237,4 @@ public class RunningCrew extends BaseEntity {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
-
-    public int getNumberOfParticipants() {
-        return participants.getNumberOfParticipants();
-    }
 }
