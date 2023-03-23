@@ -35,11 +35,16 @@ class RunningCrewTest {
         @DisplayName("러닝크루를 생성한다")
         @Test
         void success() {
-            assertThatCode(() -> new RunningCrew(
+            final RunningCrew runningCrew = new RunningCrew(
                 HOST_ID, COORDINATES, COORDINATES, new Capacity(RUNNING_CREW_CAPACITY),
                 NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
                 RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
-            )).doesNotThrowAnyException();
+            );
+            assertAll(
+                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.CREATED),
+                () -> assertThat(runningCrew.getParticipants().getValue()).hasSize(1),
+                () -> assertThat(runningCrew.getNumberOfParticipants()).isEqualTo(1)
+            );
         }
 
         @DisplayName("시작 시간은 종료 시간보다 앞서있어야 한다")
@@ -384,7 +389,8 @@ class RunningCrewTest {
             assertThat(participant).isPresent();
             assertAll(
                 () -> assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.WITHDRAWN),
-                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.CREATED)
+                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.CREATED),
+                () -> assertThat(runningCrew.getNumberOfParticipants()).isEqualTo(1)
             );
         }
 
@@ -422,7 +428,8 @@ class RunningCrewTest {
             assertThat(participant).isPresent();
             assertAll(
                 () -> assertThat(participant.get().getStatus()).isEqualTo(ParticipantType.PARTICIPATING),
-                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.READY)
+                () -> assertThat(runningCrew.getStatus()).isEqualTo(ProgressionType.READY),
+                () -> assertThat(runningCrew.getNumberOfParticipants()).isEqualTo(2)
             );
         }
 
