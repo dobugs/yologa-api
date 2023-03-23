@@ -50,14 +50,12 @@ public class ParticipationService {
 
     public void accept(final ServiceToken serviceToken, final Long runningCrewId, final Long memberId) {
         final Long hostId = serviceToken.memberId();
-
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
         savedRunningCrew.accept(hostId, memberId);
     }
 
     public void reject(final ServiceToken serviceToken, final Long runningCrewId, final Long memberId) {
         final Long hostId = serviceToken.memberId();
-
         final RunningCrew savedRunningCrew = findRunningCrewBy(runningCrewId);
         savedRunningCrew.reject(hostId, memberId);
     }
