@@ -128,7 +128,8 @@ jacocoTestCoverageVerification {
             "*.*Connector",
             "*.*Generator.*",
             "*.*Generator",
-            "*.logging.*"
+            "*.logging.*",
+            "*.test.*"
     ]
 
     violationRules {

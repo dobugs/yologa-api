@@ -9,6 +9,16 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
+        allowLocalhostForTest(registry);
+        allowGlobal(registry);
+    }
+
+    private void allowLocalhostForTest(final CorsRegistry registry) {
+        registry.addMapping("/api/vi/test/**")
+            .allowedOrigins("http://localhost");
+    }
+
+    private void allowGlobal(final CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOrigins("*")
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
