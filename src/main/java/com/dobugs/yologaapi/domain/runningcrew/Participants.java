@@ -64,7 +64,7 @@ public class Participants {
         }
     }
 
-    public int getNumberOrParticipants() {
+    public int getNumberOfParticipants() {
         final List<Participant> participants = value.stream()
             .filter(value -> value.getStatus().isParticipating())
             .toList();

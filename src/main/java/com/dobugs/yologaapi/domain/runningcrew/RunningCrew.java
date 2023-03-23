@@ -48,6 +48,9 @@ public class RunningCrew extends BaseEntity {
     private Capacity capacity;
 
     @Column(nullable = false)
+    private int numberOfParticipants;
+
+    @Column(nullable = false)
     private LocalDateTime scheduledStartDate;
 
     @Column(nullable = false)
@@ -79,6 +82,7 @@ public class RunningCrew extends BaseEntity {
         this.status = ProgressionType.CREATED;
         this.participants = new Participants(this);
         this.capacity = capacity;
+        this.numberOfParticipants = participants.getNumberOfParticipants();
         this.scheduledStartDate = scheduledStartDate;
         this.scheduledEndDate = scheduledEndDate;
         this.deadline = deadline;
@@ -142,6 +146,7 @@ public class RunningCrew extends BaseEntity {
     public void withdraw(final Long memberId) {
         validateMemberIsNotHost(memberId);
         participants.withdraw(memberId);
+        numberOfParticipants = participants.getNumberOfParticipants();
         initializeProgress();
     }
 
@@ -151,6 +156,7 @@ public class RunningCrew extends BaseEntity {
         deadline.validateDeadlineIsNotOver();
         validateRunningCrewStatusIsCreatedOrReadyOrInProgress();
         participants.accept(memberId);
+        numberOfParticipants = participants.getNumberOfParticipants();
         ready();
     }
 
@@ -161,7 +167,7 @@ public class RunningCrew extends BaseEntity {
     }
 
     private void initializeProgress() {
-        final int number = participants.getNumberOrParticipants();
+        final int number = participants.getNumberOfParticipants();
         if (number == 1 && status.isCreatedOrReady()) {
             status = ProgressionType.CREATED;
         }

@@ -198,7 +198,6 @@ class ParticipationServiceTest {
                 .build();
 
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
-            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
             given(runningCrewRepository.findByIdAndArchivedIsTrueForUpdate(runningCrewId)).willReturn(Optional.of(runningCrew));
 
             participationService.participate(memberServiceToken, runningCrewId);
@@ -241,7 +240,6 @@ class ParticipationServiceTest {
                 .build();
 
             final RunningCrew runningCrew = createRunningCrew(HOST_ID);
-            given(runningCrewRepository.findByIdAndArchivedIsTrue(runningCrewId)).willReturn(Optional.of(runningCrew));
             given(runningCrewRepository.findByIdAndArchivedIsTrueForUpdate(runningCrewId)).willReturn(Optional.of(runningCrew));
 
             participationService.participate(memberServiceToken, runningCrewId);
