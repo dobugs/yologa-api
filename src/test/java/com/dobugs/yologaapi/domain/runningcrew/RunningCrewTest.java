@@ -110,6 +110,26 @@ class RunningCrewTest {
             )).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("시작 시간은 종료 시간보다 앞서있어야 합니다.");
         }
+
+        @DisplayName("수용 인원은 현재 참여중인 인원보다 커야 한다")
+        @Test
+        void capacityIsLowerThanNumberOfParticipants() {
+            final Capacity capacity = new Capacity(2);
+            final RunningCrew runningCrew = createRunningCrew(HOST_ID);
+
+            runningCrew.participate(1L);
+            runningCrew.accept(HOST_ID, 1L);
+            runningCrew.participate(2L);
+            runningCrew.accept(HOST_ID, 2L);
+
+            assertThatThrownBy(() -> runningCrew.update(
+                HOST_ID,
+                COORDINATES, COORDINATES, capacity,
+                NOW, AFTER_ONE_HOUR, new Deadline(AFTER_ONE_HOUR),
+                RUNNING_CREW_TITLE, RUNNING_CREW_DESCRIPTION
+            )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("참여자 수용인원이 다 찼습니다.");
+        }
     }
 
     @DisplayName("러닝크루 삭제 테스트")

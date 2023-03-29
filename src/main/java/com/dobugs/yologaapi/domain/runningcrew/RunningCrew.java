@@ -98,7 +98,7 @@ public class RunningCrew extends BaseEntity {
     ) {
         validateMemberIsHost(memberId);
         validateStartIsBeforeThanEnd(scheduledStartDate, scheduledEndDate);
-        this.participants.validateCapacityIsOver(capacity);
+        validateCapacityIsOverThanNumberOfParticipants(capacity);
 
         this.departure = wktToPoint(departure);
         this.arrival = wktToPoint(arrival);
@@ -196,6 +196,12 @@ public class RunningCrew extends BaseEntity {
             throw new IllegalArgumentException(
                 String.format("시작 시간은 종료 시간보다 앞서있어야 합니다. [start : %s / end : %s]", start, end)
             );
+        }
+    }
+
+    private void validateCapacityIsOverThanNumberOfParticipants(final Capacity capacity) {
+        if (!capacity.isLeft(numberOfParticipants)) {
+            throw new IllegalArgumentException("참여자 수용인원이 다 찼습니다.");
         }
     }
 
