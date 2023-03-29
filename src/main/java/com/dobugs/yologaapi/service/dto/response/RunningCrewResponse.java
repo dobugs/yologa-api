@@ -7,7 +7,7 @@ import com.dobugs.yologaapi.service.dto.common.DatesDto;
 import com.dobugs.yologaapi.service.dto.common.LocationsDto;
 
 public record RunningCrewResponse(Long id, String title, Long host, LocationsDto location, String status,
-                                  int capacity, int numberOfParticipants, DatesDto date, LocalDateTime deadline,
+                                  int capacity, DatesDto date, LocalDateTime deadline,
                                   String description) {
 
     public static RunningCrewResponse from(final RunningCrew runningCrew) {
@@ -18,7 +18,6 @@ public record RunningCrewResponse(Long id, String title, Long host, LocationsDto
             LocationsDto.from(runningCrew.getDeparture(), runningCrew.getArrival()),
             runningCrew.getStatus().name(),
             runningCrew.getCapacity().getValue(),
-            runningCrew.getNumberOfParticipants(),
             DatesDto.from(
                 runningCrew.getScheduledStartDate(), runningCrew.getScheduledEndDate(),
                 runningCrew.getImplementedStartDate(), runningCrew.getImplementedEndDate()

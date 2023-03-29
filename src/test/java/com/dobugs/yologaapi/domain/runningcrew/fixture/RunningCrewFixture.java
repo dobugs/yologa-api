@@ -34,7 +34,6 @@ public class RunningCrewFixture {
 
     public static final String RUNNING_CREW_TITLE = "열심히 달릴 사람~~";
     public static final int RUNNING_CREW_CAPACITY = 10;
-    public static final int NUMBER_OF_PARTICIPANTS = 1;
     public static final String RUNNING_CREW_DESCRIPTION = "정말 열심히 달릴 사람만 모집해요!!! XD";
 
     public static final LocalDateTime NOW = LocalDateTime.now();
@@ -118,7 +117,7 @@ public class RunningCrewFixture {
     public static RunningCrewResponse createRunningCrewResponse(final Long runningCrewId) {
         return new RunningCrewResponse(
             runningCrewId, RUNNING_CREW_TITLE, 1L, LOCATIONS_DTO, ProgressionType.CREATED.name(),
-            RUNNING_CREW_CAPACITY, NUMBER_OF_PARTICIPANTS, DATES_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
+            RUNNING_CREW_CAPACITY, DATES_DTO, AFTER_ONE_HOUR, RUNNING_CREW_DESCRIPTION
         );
     }
 
@@ -132,7 +131,6 @@ public class RunningCrewFixture {
         given(runningCrew.getArrival()).willReturn(point);
         given(runningCrew.getStatus()).willReturn(ProgressionType.CREATED);
         given(runningCrew.getCapacity()).willReturn(new Capacity(RUNNING_CREW_CAPACITY));
-        given(runningCrew.getNumberOfParticipants()).willReturn(NUMBER_OF_PARTICIPANTS);
         given(runningCrew.getDeadline()).willReturn(new Deadline(AFTER_ONE_HOUR));
 
         return runningCrew;
