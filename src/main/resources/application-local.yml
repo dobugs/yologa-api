@@ -4,3 +4,4 @@ spring:
       on-profile: local
     import:
       - application-local-db.yml
+      - application-local-dobugs.yml
