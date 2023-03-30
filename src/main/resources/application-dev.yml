@@ -3,5 +3,4 @@ spring:
     activate:
       on-profile: dev
     import:
-      - application-dev-dobugs.yml
       - yologa-security/application-dev-db.yml
