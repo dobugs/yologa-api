@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev
+  config:
+    import:
+      - application-dobugs.yml
+      - application-logging.yml
+      - yologa-security/application-jwt.yml
+      - yologa-security/application-slack.yml
+server:
+  tomcat:
+    threads:
+      max: 10

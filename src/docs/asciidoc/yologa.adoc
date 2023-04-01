@@ -1,0 +1,28 @@
+= YOLOGA API 명세
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+:dobugs-member-server-url: https://api.dev.dobugs.co.kr/docs
+:dobugs-member-server-auth-html: /auth.html
+:dobugs-member-server-member-html: /member.html
+
+== 욜로가 서버 API
+
+=== API 접근 정보
+* https://api.dev.yologa.dobugs.co.kr
+
+=== API 명세
+* link:running-crew.html[러닝크루 API, window=_blank]
+
+== 두벅스 사용자 서버 API
+
+=== API 접근 정보
+* https://api.dev.dobugs.co.kr
+
+=== API 명세
+* {dobugs-member-server-url}{dobugs-member-server-auth-html}[인증 API, window=_blank]
+* {dobugs-member-server-url}{dobugs-member-server-member-html}[사용자 API, window=_blank]
