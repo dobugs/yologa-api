@@ -43,3 +43,5 @@
 - [✨ 욜로가 방문하기](https://dev.yologa.dobugs.co.kr/)
 
 - [📘 활동 기록 보러가기](https://github.com/dobugs/yologa-api/wiki/%ED%99%9C%EB%8F%99-%EA%B8%B0%EB%A1%9D)
+
+- [🙋🏻‍♀️ 두벅스 사용자 프로젝트 구경하기](https://github.com/dobugs/yologa-authentication-api)
