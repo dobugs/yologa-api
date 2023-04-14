@@ -52,6 +52,7 @@ API 기능은 [API 문서](https://api.dev.yologa.dobugs.co.kr/docs/yologa.html)
 ## 욜로가 서비스 이용해보기
 
 - [✨ 욜로가 방문하기](https://dev.yologa.dobugs.co.kr/)
+- [🧐 욜로가 피드백 남기러가기](https://docs.google.com/forms/d/e/1FAIpQLSdLTkQt065GpSj4DIN8m1xAV4ZegSunFaqhWOOehd3on-JSww/viewform)
 - [📘 활동 기록 보러가기](https://github.com/dobugs/yologa-api/wiki/%ED%99%9C%EB%8F%99-%EA%B8%B0%EB%A1%9D)
 - [📑 API 문서 보러가기](https://api.dev.yologa.dobugs.co.kr/docs/yologa.html)
 - [🙋🏻‍♀️ 두벅스 사용자 프로젝트 구경하기](https://github.com/dobugs/yologa-authentication-api)
