@@ -17,6 +17,17 @@
 - 러닝크루를 소규모로 진행하고 싶다면, 원하는 사람만 승인하도록 허가할 수 있어요. 🤫
 - 목표했던 시간과 실제로 러닝했던 시간들을 기록하여 러닝 이력들을 관리하세요! 🏃🏻‍♀️🏃🏻
 
+#### 잠깐! ✋🏻
+FE 의 개인 사정으로 화면이 아직 구현되지 않는 기능들이 있습니다.
+
+API 기능은 [API 문서](https://api.dev.yologa.dobugs.co.kr/docs/yologa.html) 로 확인 부탁드립니다. 🙇🏻‍♀️
+
+- 화면과 API 모두 동작하는 기능
+  - OAuth2.0 로그인 (구글, 카카오), AccessToken 재발급, 로그아웃
+  - 내 정보 조회, 수정, 프로필 수정
+- 동작하는 API
+  - 모든 기능 구현 완료
+
 <br>
 
 ## 기술 스택
@@ -41,7 +52,10 @@
 ## 욜로가 서비스 이용해보기
 
 - [✨ 욜로가 방문하기](https://dev.yologa.dobugs.co.kr/)
-
 - [📘 활동 기록 보러가기](https://github.com/dobugs/yologa-api/wiki/%ED%99%9C%EB%8F%99-%EA%B8%B0%EB%A1%9D)
-
+- [📑 API 문서 보러가기](https://api.dev.yologa.dobugs.co.kr/docs/yologa.html)
 - [🙋🏻‍♀️ 두벅스 사용자 프로젝트 구경하기](https://github.com/dobugs/yologa-authentication-api)
+
+<br>
+
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fdobugs%2Fyologa-api&count_bg=%2355B8E3&title_bg=%23000000&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
