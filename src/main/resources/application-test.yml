@@ -3,4 +3,4 @@ spring:
     activate:
       on-profile: test
     import:
-      - application-test-db.yml
+      - test/application-test-db.yml

@@ -3,8 +3,8 @@ spring:
     active: test
   config:
     import:
-      - application-dobugs.yml
-      - application-logging.yml
+      - common/application-dobugs.yml
+      - common/application-logging.yml
       - yologa-security/application-jwt.yml
       - yologa-security/application-slack.yml
 server:
