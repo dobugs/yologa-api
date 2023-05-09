@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,10 +22,15 @@ import com.dobugs.yologaapi.domain.runningcrew.ParticipantType;
 import com.dobugs.yologaapi.domain.runningcrew.ProgressionType;
 import com.dobugs.yologaapi.domain.runningcrew.RunningCrew;
 
+import jakarta.persistence.EntityManager;
+
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 @DisplayName("RunningCrew 레포지토리 테스트")
 class RunningCrewRepositoryTest {
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     private RunningCrewRepository runningCrewRepository;
@@ -117,7 +123,24 @@ class RunningCrewRepositoryTest {
     @Nested
     public class findNearby {
 
+        private static final String ALIAS_FORMAT = "CREATE ALIAS IF NOT EXISTS %s FOR \"%s.%s.%s\"";
+        private static final String PACKAGE_PATH = "com.dobugs.yologaapi.repository";
+        private static final String CLASS_NAME = "H2Function";
+        private static final String CUSTOM_METHOD_FORMAT = String.format(ALIAS_FORMAT, "%s", PACKAGE_PATH, CLASS_NAME, "%s");
+        private static final String ST_DISTANCE_SPHERE = "ST_Distance_Sphere";
+        private static final String POINT = "POINT";
+
         private static final Long HOST_ID = 0L;
+
+        @BeforeEach
+        void setUp() {
+            entityManager
+                .createNativeQuery(String.format(CUSTOM_METHOD_FORMAT, ST_DISTANCE_SPHERE, ST_DISTANCE_SPHERE))
+                .executeUpdate();
+            entityManager
+                .createNativeQuery(String.format(CUSTOM_METHOD_FORMAT, POINT, POINT))
+                .executeUpdate();
+        }
 
         @DisplayName("내 주변에 있는 러닝크루 목록을 조회한다")
         @Test
@@ -129,9 +152,9 @@ class RunningCrewRepositoryTest {
             }
 
             final Pageable pageable = Pageable.unpaged();
-            final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(LATITUDE, LONGITUDE, 100, pageable);
+            final Page<RunningCrew> runningCrews = runningCrewRepository.findNearby(LATITUDE, LONGITUDE, 1000, pageable);
 
-            assertThat(runningCrews).hasSizeGreaterThanOrEqualTo(count);
+            assertThat(runningCrews).hasSize(count);
         }
     }
 
